@@ -1,31 +1,35 @@
 package plateau;
 
 public class Case {
-    private int x;
-    private int y;
+    private int nbCouronne;
+    private Terrain terrain;
 
-    public Case (int x, int y){
-        this.x = x;
-        this.y = y;
+    public Case (int nbCouronne, Terrain ter){
+        this.nbCouronne = nbCouronne;
+        this.terrain = ter;
     }
 
-    public int getX() {
-        return x;
+    public int getNbCouronne() {
+        return nbCouronne;
     }
 
-    public void setX(int x) {
-        this.x = x;
+    public void setNbCouronne(int nbCouronne) {
+        this.nbCouronne = nbCouronne;
     }
 
-    public int getY() {
-        return y;
+    public Terrain getTerrain()
+    {
+        return this.terrain;
     }
 
-    public void setY(int y) {
-        this.y = y;
+    public void setTerrain(Terrain terrain)
+    {
+        this.terrain = terrain;
     }
 
-    public String toString(){
-        return "("+x+";"+y+")";
+    public String toString()
+    {
+        return this.nbCouronne + " / " + this.terrain.name();
     }
+
 }
