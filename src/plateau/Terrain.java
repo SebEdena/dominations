@@ -5,6 +5,7 @@ import java.lang.String;
 public enum Terrain
 {
     Champs,
+    Chateau,
     Foret,
     Mer,
     Prairie,
@@ -27,6 +28,8 @@ public enum Terrain
                 return Montagne;
             case "Mine" :
                 return Mine;
+            case "Chateau" :
+                return Chateau;
             default :
                 return null;
         }
