@@ -2,9 +2,9 @@ package plateau;
 
 
 
-public class Domino
+public class Domino implements IDomino
 {
-    private static final int nbCasesDomino = 2;
+    private static int nbCasesDomino = 2;
     private Case[] cases = new Case[nbCasesDomino];
     private int identifiant;
 
@@ -13,6 +13,16 @@ public class Domino
         this.cases[0] = c1;
         this.cases[1] = c2;
         this.identifiant = valeur;
+    }
+
+    public Case[] getCase()
+    {
+        return this.cases;
+    }
+
+    public int getIdentifiant()
+    {
+        return this.identifiant;
     }
 
     public String toString()
