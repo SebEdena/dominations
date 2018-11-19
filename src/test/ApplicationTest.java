@@ -12,6 +12,6 @@ public class ApplicationTest {
     public void CaseTest(){
         Case casePlateau = new Case(1, Terrain.Champs);
         assertTrue(casePlateau.getNbCouronne() == 1);
-        assertTrue(casePlateau.getTerrain().equals(Terrain.Champs.name()));
+        assertEquals(casePlateau.getTerrain().name(),Terrain.Champs.name());
     }
 }
