@@ -11,13 +11,13 @@ public enum Roi
     {
         switch(couleur)
         {
-            case "Champs" :
+            case "Rose" :
                 return Rose;
-            case "Foret" :
+            case "Jaune" :
                 return Jaune;
-            case "Mer" :
+            case "Vert" :
                 return Vert;
-            case "Prairie" :
+            case "Bleu" :
                 return Bleu;
             default :
                 return null;
