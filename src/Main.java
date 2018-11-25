@@ -4,7 +4,6 @@ import plateau.Terrain;
 import util.CSVParser;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Main {

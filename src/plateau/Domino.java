@@ -4,7 +4,7 @@ package plateau;
 
 public class Domino implements IDomino
 {
-    private static int nbCasesDomino = 2;
+    public static final int nbCasesDomino = 2;
     private Case[] cases = new Case[nbCasesDomino];
     private int identifiant;
 
@@ -15,18 +15,25 @@ public class Domino implements IDomino
         this.identifiant = valeur;
     }
 
-    public Case[] getCase()
+    @Override
+    public Case[] getCases()
     {
         return this.cases;
     }
 
+    @Override
     public int getIdentifiant()
     {
         return this.identifiant;
     }
 
+    @Override
+    public int getNbCases() {
+        return nbCasesDomino;
+    }
+
     public String toString()
     {
-        return identifiant + " / " + cases[0].toString() + " / " + cases[1].toString();
+        return "[Id: " + identifiant + ", Case 1: " + cases[0].toString() + ", Case 2: " + cases[1].toString()+ "]";
     }
 }
