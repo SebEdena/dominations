@@ -1,5 +1,6 @@
 package test;
 
+import jeu.Jeu;
 import jeu.Joueur;
 import jeu.Roi;
 import org.junit.Test;

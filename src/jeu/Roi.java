@@ -7,7 +7,24 @@ public enum Roi
     Vert,
     Bleu;
 
-    public static Roi getRoi(String couleur)
+    public static Roi getRoiInt(int enumCouleur)
+    {
+        switch(enumCouleur)
+        {
+            case 0 :
+                return Rose;
+            case 1 :
+                return Jaune;
+            case 2 :
+                return Vert;
+            case 3 :
+                return Bleu;
+            default :
+                return null;
+        }
+    }
+
+    public static Roi getRoiCol(String couleur)
     {
         switch(couleur)
         {

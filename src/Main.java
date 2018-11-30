@@ -1,3 +1,4 @@
+import jeu.Jeu;
 import plateau.Case;
 import plateau.Domino;
 import plateau.Terrain;
