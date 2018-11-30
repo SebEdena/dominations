@@ -68,4 +68,68 @@ public class Plateau {
         return sb.toString();
     }
 
+    public int CalculPoint()
+    {
+        int sommePoints = 0;
+        List<Case> pileCasesVisitees = new ArrayList<Case>();
+        for(int i = 0; i < NB_COL_LIG; i++)
+        {
+            for(int j = 0 ; j < NB_COL_LIG; j++)
+            {
+                if(this.tableau[i][j] != null && !pileCasesVisitees.contains(this.tableau[i][j]) && this.tableau[i][j].getTerrain() != Terrain.Chateau)
+                {
+                    Case caseTemoin = tableau[i][j];
+                    List<Case> casesSimilaires = new ArrayList<Case>();
+                    rechercheCaseSimilaire(i,j, pileCasesVisitees, caseTemoin, casesSimilaires);
+
+                    int couronne = 0;
+                    int compteurCase = 0;
+                    for(Case c : casesSimilaires)
+                    {
+                        compteurCase++;
+                        couronne = couronne + c.getNbCouronne();
+                    }
+                    sommePoints = sommePoints + compteurCase * couronne;
+                    //System.out.println(sommePoints);
+                }
+                else
+                {
+
+                }
+            }
+        }
+        return sommePoints;
+    }
+
+    private void rechercheCaseSimilaire(int x, int y, List<Case> pileCasesVisitees, Case caseTemoin, List<Case> casesAdjacentes)
+    {
+        casesAdjacentes.add(caseTemoin);
+        pileCasesVisitees.add(caseTemoin);
+        List<Case> casesTrouvées = new ArrayList<Case>();
+
+        if(x - 1 >= 0 && tableau[x-1][y] != null && tableau[x-1][y].getTerrain() == caseTemoin.getTerrain() && !pileCasesVisitees.contains(tableau[x-1][y]))
+        {
+            casesTrouvées.add(tableau[x - 1][y]);
+            pileCasesVisitees.add(tableau[x - 1][y]);
+            rechercheCaseSimilaire(x-1,y,pileCasesVisitees,tableau[x-1][y],casesAdjacentes);
+        }
+        if(y - 1 >= 0 && tableau[x][y-1] != null && tableau[x][y - 1].getTerrain() == caseTemoin.getTerrain() && !pileCasesVisitees.contains(tableau[x][y - 1]))
+        {
+            casesTrouvées.add(tableau[x][y - 1]);
+            pileCasesVisitees.add(tableau[x][y - 1]);
+            rechercheCaseSimilaire(x,y-1,pileCasesVisitees,tableau[x][y-1],casesAdjacentes);
+        }
+        if(x + 1 < NB_COL_LIG && tableau[x+1][y] != null && tableau[x+1][y].getTerrain() == caseTemoin.getTerrain() && !pileCasesVisitees.contains(tableau[x+1][y]))
+        {
+            casesTrouvées.add(tableau[x+1][y]);
+            pileCasesVisitees.add(tableau[x+1][y]);
+            rechercheCaseSimilaire(x+1,y,pileCasesVisitees,tableau[x+1][y],casesAdjacentes);
+        }
+        if(y + 1 < NB_COL_LIG && tableau[x][y+1] != null && tableau[x][y + 1].getTerrain() == caseTemoin.getTerrain() && !pileCasesVisitees.contains(tableau[x][y + 1]))
+        {
+            casesTrouvées.add(tableau[x][y + 1]);
+            pileCasesVisitees.add(tableau[x][y + 1]);
+            rechercheCaseSimilaire(x,y + 1,pileCasesVisitees,tableau[x][y + 1],casesAdjacentes);
+        }
+    }
 }
