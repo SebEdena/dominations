@@ -153,33 +153,6 @@ public class Plateau {
         }
     }
 
-    public String affichePlateau(){
-        List<String[]> cases = new ArrayList<String[]>();
-        StringBuilder sb = new StringBuilder();
-        String separateurCase = Case.getSeparateurPlateau();
-        for(int i = 0; i < NB_COL_LIG; i++){
-            for(int j = 0; j < NB_COL_LIG; j++){
-                if(tableau[i][j] == null){
-                    cases.add(("    " + separateurCase + "    ").split(separateurCase));
-                }else{
-                    cases.add(tableau[i][j].affichagePlateau().split(separateurCase));
-                }
-            }
-            for(int j = 0; j < 2*NB_COL_LIG; j++){
-                String casePlateau = cases.get(j % NB_COL_LIG)[j/NB_COL_LIG];
-                sb.append(casePlateau);
-                if(j % NB_COL_LIG != NB_COL_LIG - 1){
-                    sb.append("\t");
-                }else{
-                    sb.append("\n");
-                }
-            }
-            sb.append("\n");
-            cases.clear();
-        }
-        return sb.toString();
-    }
-
     public int CalculPoint()
     {
         int sommePoints = 0;
@@ -243,5 +216,32 @@ public class Plateau {
             pileCasesVisitees.add(tableau[x][y + 1]);
             rechercheCaseSimilaire(x,y + 1,pileCasesVisitees,tableau[x][y + 1],casesAdjacentes);
         }
+    }
+
+    public String affichePlateau(){
+        List<String[]> cases = new ArrayList<String[]>();
+        StringBuilder sb = new StringBuilder();
+        String separateurCase = Case.getSeparateurPlateau();
+        for(int i = 0; i < NB_COL_LIG; i++){
+            for(int j = 0; j < NB_COL_LIG; j++){
+                if(tableau[i][j] == null){
+                    cases.add(("    " + separateurCase + "    ").split(separateurCase));
+                }else{
+                    cases.add(tableau[i][j].affichagePlateau().split(separateurCase));
+                }
+            }
+            for(int j = 0; j < 2*NB_COL_LIG; j++){
+                String casePlateau = cases.get(j % NB_COL_LIG)[j/NB_COL_LIG];
+                sb.append(casePlateau);
+                if(j % NB_COL_LIG != NB_COL_LIG - 1){
+                    sb.append("\t");
+                }else{
+                    sb.append("\n");
+                }
+            }
+            sb.append("\n");
+            cases.clear();
+        }
+        return sb.toString();
     }
 }
