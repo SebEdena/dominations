@@ -6,7 +6,7 @@ public class Tuile implements IDomino
 
     public Tuile()
     {
-        this.caseTuile = new Case(0, Terrain.Chateau);
+        this.caseTuile = new Case(0, Terrain.CHATEAU);
     }
 
     public Case[] getCases()

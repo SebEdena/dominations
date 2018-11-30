@@ -4,13 +4,13 @@ package plateau;
 import java.lang.String;
 public enum Terrain
 {
-    Champs("CHAM"),
-    Chateau("CHAT"),
-    Foret("FORE"),
-    Mer("MER-"),
-    Prairie("PRAI"),
-    Montagne("MONT"),
-    Mine("MINE");
+    CHAMPS("CHAM"),
+    CHATEAU("CHAT"),
+    FORET("FORE"),
+    MER("MER-"),
+    PRAIRIE("PRAI"),
+    MONTAGNE("MONT"),
+    MINE("MINE");
 
     private String diminutif;
 
@@ -23,19 +23,19 @@ public enum Terrain
         switch(nom)
         {
             case "Champs" :
-                return Champs;
+                return CHAMPS;
             case "Foret" :
-                return Foret;
+                return FORET;
             case "Mer" :
-                return Mer;
+                return MER;
             case "Prairie" :
-                return Prairie;
+                return PRAIRIE;
             case "Montagne" :
-                return Montagne;
+                return MONTAGNE;
             case "Mine" :
-                return Mine;
+                return MINE;
             case "Chateau" :
-                return Chateau;
+                return CHATEAU;
             default :
                 return null;
         }

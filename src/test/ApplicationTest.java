@@ -1,6 +1,5 @@
 package test;
 
-import jeu.Jeu;
 import jeu.Joueur;
 import jeu.Roi;
 import org.junit.Test;
@@ -13,9 +12,9 @@ public class ApplicationTest {
 
     @Test
     public void CaseTest(){
-        Case casePlateau = new Case(1, Terrain.Champs);
+        Case casePlateau = new Case(1, Terrain.CHAMPS);
         assertTrue(casePlateau.getNbCouronne() == 1);
-        assertEquals(casePlateau.getTerrain().name(),Terrain.Champs.name());
+        assertEquals(casePlateau.getTerrain().name(),Terrain.CHAMPS.name());
     }
 
     @Test

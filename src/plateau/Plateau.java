@@ -1,12 +1,10 @@
 package plateau;
 
+import com.sun.org.apache.xpath.internal.operations.Or;
 import exceptions.DominoException;
 import exceptions.TuileException;
-import javafx.util.Pair;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
 
 public class Plateau {
@@ -39,16 +37,16 @@ public class Plateau {
             }
         }else{
             if(tuileAjoutee){
-                if((erreur = placementValide(d, xCase, yCase, indexCase, sens)) != null){
+              /*  if((erreur = placementValide(d, xCase, yCase, indexCase, sens)) != null){
                     throw new DominoException(erreur);
-                }else{
+                }else{*/
                     int indexAutreCase = Math.abs(indexCase - 1);
-                    int[] translation = calculTranslation(d, xCase, yCase, indexCase, sens);
+/*                    int[] translation = calculTranslation(d, xCase, yCase, indexCase, sens);
                     if(translation[0] != 0 && translation[1] != 0){
                         xCase += translation[0];
                         yCase += translation[1];
                         translationPlateau(translation);
-                    }
+                    }*/
 
                     Case[] tmpCases = d.getCases();
                     tableau[xCase][yCase] = tmpCases[indexCase];
@@ -58,7 +56,7 @@ public class Plateau {
                     if(yCase < minY) minY = yCase;
                     if(yCase > maxY) maxY = yCase;
                     dominos.add(d);
-                }
+                //}
             }else{
                 throw new TuileException("La tuile du chateau n'a pas encore été placée !");
             }
@@ -89,16 +87,23 @@ public class Plateau {
             for(Orientation o : Orientation.values()){
                 if(indexCase == i){
                     if(!o.equals(sens) &&
-                            tableau[xCase+o.getOffsetX()][yCase+o.getOffsetY()].getTerrain()
-                                    .equals(d.getCases()[indexCase].getTerrain())){
+                            (tableau[xCase+o.getOffsetX()][yCase+o.getOffsetY()].getTerrain()
+                                    .equals(d.getCases()[indexCase].getTerrain()) ||
+                                    tableau[xCase+o.getOffsetX()][yCase+o.getOffsetY()].getTerrain()
+                                            .equals(Terrain.CHATEAU))){
                         isValid[indexCase] = true;
                     }
                 } else {
                     if(!o.equals(sens.getOppose())&&
-                            tableau[xCase2+o.getOffsetX()][yCase2+o.getOffsetY()].getTerrain()
-                                    .equals(d.getCases()[indexAutreCase].getTerrain())){
+                            (tableau[xCase2+o.getOffsetX()][yCase2+o.getOffsetY()].getTerrain()
+                                    .equals(d.getCases()[indexAutreCase].getTerrain())||
+                            tableau[xCase+o.getOffsetX()][yCase+o.getOffsetY()].getTerrain()
+                                    .equals(Terrain.CHATEAU))){
                         isValid[indexAutreCase] = true;
                     }
+                }
+                if(isValid[i]){
+                    break;
                 }
             }
         }
@@ -144,16 +149,20 @@ public class Plateau {
         return deplacement;
     }
 
-    private void translationPlateau(int[] deplacement) throws DominoException {
+    private void translationPlateau(int[] deplacement) {
         Case[][] newPlateau = new Case[NB_COL_LIG][NB_COL_LIG];
         for(int i = 0; i < NB_COL_LIG; i++){
             for(int j = 0; j < NB_COL_LIG; j++){
-
+                if(i+deplacement[0] > 0 && i + deplacement[0] < NB_COL_LIG &&
+                        j+deplacement[1] > 0 && j+deplacement[1] < NB_COL_LIG){
+                    newPlateau[i+deplacement[0]][j+deplacement[1]] = tableau[i][j];
+                }
             }
         }
+        tableau = newPlateau;
     }
 
-    public int CalculPoint()
+    public int calculPoint()
     {
         int sommePoints = 0;
         List<Case> pileCasesVisitees = new ArrayList<Case>();
@@ -161,7 +170,8 @@ public class Plateau {
         {
             for(int j = 0 ; j < NB_COL_LIG; j++)
             {
-                if(this.tableau[i][j] != null && !pileCasesVisitees.contains(this.tableau[i][j]) && this.tableau[i][j].getTerrain() != Terrain.Chateau)
+                if(this.tableau[i][j] != null && !pileCasesVisitees.contains(this.tableau[i][j]) &&
+                        !this.tableau[i][j].getTerrain().equals(Terrain.CHATEAU))
                 {
                     Case caseTemoin = tableau[i][j];
                     List<Case> casesSimilaires = new ArrayList<Case>();
@@ -177,10 +187,6 @@ public class Plateau {
                     sommePoints = sommePoints + compteurCase * couronne;
                     //System.out.println(sommePoints);
                 }
-                else
-                {
-
-                }
             }
         }
         return sommePoints;
@@ -192,29 +198,19 @@ public class Plateau {
         pileCasesVisitees.add(caseTemoin);
         List<Case> casesTrouvées = new ArrayList<Case>();
 
-        if(x - 1 >= 0 && tableau[x-1][y] != null && tableau[x-1][y].getTerrain() == caseTemoin.getTerrain() && !pileCasesVisitees.contains(tableau[x-1][y]))
+        for(Orientation o : Orientation.values())
         {
-            casesTrouvées.add(tableau[x - 1][y]);
-            pileCasesVisitees.add(tableau[x - 1][y]);
-            rechercheCaseSimilaire(x-1,y,pileCasesVisitees,tableau[x-1][y],casesAdjacentes);
-        }
-        if(y - 1 >= 0 && tableau[x][y-1] != null && tableau[x][y - 1].getTerrain() == caseTemoin.getTerrain() && !pileCasesVisitees.contains(tableau[x][y - 1]))
-        {
-            casesTrouvées.add(tableau[x][y - 1]);
-            pileCasesVisitees.add(tableau[x][y - 1]);
-            rechercheCaseSimilaire(x,y-1,pileCasesVisitees,tableau[x][y-1],casesAdjacentes);
-        }
-        if(x + 1 < NB_COL_LIG && tableau[x+1][y] != null && tableau[x+1][y].getTerrain() == caseTemoin.getTerrain() && !pileCasesVisitees.contains(tableau[x+1][y]))
-        {
-            casesTrouvées.add(tableau[x+1][y]);
-            pileCasesVisitees.add(tableau[x+1][y]);
-            rechercheCaseSimilaire(x+1,y,pileCasesVisitees,tableau[x+1][y],casesAdjacentes);
-        }
-        if(y + 1 < NB_COL_LIG && tableau[x][y+1] != null && tableau[x][y + 1].getTerrain() == caseTemoin.getTerrain() && !pileCasesVisitees.contains(tableau[x][y + 1]))
-        {
-            casesTrouvées.add(tableau[x][y + 1]);
-            pileCasesVisitees.add(tableau[x][y + 1]);
-            rechercheCaseSimilaire(x,y + 1,pileCasesVisitees,tableau[x][y + 1],casesAdjacentes);
+            if(x + o.getOffsetX() >= 0 && x + o.getOffsetX() < NB_COL_LIG &&
+                    y + o.getOffsetY() >= 0 && y + o.getOffsetY() < NB_COL_LIG &&
+                    tableau[x + o.getOffsetX()][y + o.getOffsetY()] != null &&
+                    tableau[x + o.getOffsetX()][y + o.getOffsetY()].getTerrain().equals(caseTemoin.getTerrain()) &&
+                    !pileCasesVisitees.contains(tableau[x + o.getOffsetX()][y + o.getOffsetY()]))
+            {
+                casesTrouvées.add(tableau[x + o.getOffsetX()][y + o.getOffsetY()]);
+                pileCasesVisitees.add(tableau[x + o.getOffsetX()][y + o.getOffsetY()]);
+                rechercheCaseSimilaire(x + o.getOffsetX(), y + o.getOffsetY(),
+                        pileCasesVisitees,tableau[x + o.getOffsetX()][y + o.getOffsetY()],casesAdjacentes);
+            }
         }
     }
 

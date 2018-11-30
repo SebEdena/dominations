@@ -27,7 +27,7 @@ public class MainLaurent {
             }
         }
         System.out.println(p.affichePlateau());
-        System.out.println(p.CalculPoint());
+        System.out.println(p.calculPoint());
     }
 
     public static IDomino getDomino(int id){
