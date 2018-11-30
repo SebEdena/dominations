@@ -4,13 +4,19 @@ package plateau;
 import java.lang.String;
 public enum Terrain
 {
-    Champs,
-    Chateau,
-    Foret,
-    Mer,
-    Prairie,
-    Montagne,
-    Mine;
+    Champs("CHAM"),
+    Chateau("CHAT"),
+    Foret("FORE"),
+    Mer("MER-"),
+    Prairie("PRAI"),
+    Montagne("MONT"),
+    Mine("MINE");
+
+    private String diminutif;
+
+    Terrain(String diminutif){
+        this.diminutif = diminutif;
+    }
 
     public static Terrain getTerrain(String nom)
     {
@@ -33,6 +39,10 @@ public enum Terrain
             default :
                 return null;
         }
+    }
+
+    public String getDiminutif(){
+        return this.diminutif;
     }
 }
 

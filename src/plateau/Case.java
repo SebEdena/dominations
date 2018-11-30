@@ -1,6 +1,7 @@
 package plateau;
 
 public class Case {
+    private static final String separateurPlateau = ";";
     private int nbCouronne;
     private Terrain terrain;
 
@@ -27,9 +28,16 @@ public class Case {
         this.terrain = terrain;
     }
 
-    public String toString()
-    {
-        return this.nbCouronne + " / " + this.terrain.name();
+    public static String getSeparateurPlateau(){
+        return separateurPlateau;
+    }
+
+    public String affichagePlateau(){
+        return terrain.getDiminutif() + separateurPlateau + "--C"+this.nbCouronne;
+    }
+
+    public String toString() {
+        return "{" + this.terrain.name() + ", Couronnes: " + this.nbCouronne + "}";
     }
 
 }

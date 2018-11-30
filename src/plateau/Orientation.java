@@ -10,4 +10,29 @@ public enum Orientation {
         this.offsetX = x;
         this.offsetY = y;
     }
+
+    public static Orientation getOrientation(String nom)
+    {
+        switch(nom)
+        {
+            case "Nord" :
+                return NORD;
+            case "Est" :
+                return EST;
+            case "Sud" :
+                return SUD;
+            case "Ouest" :
+                return OUEST;
+            default :
+                return null;
+        }
+    }
+
+    public int getOffsetX() {
+        return offsetX;
+    }
+
+    public int getOffsetY() {
+        return offsetY;
+    }
 }
