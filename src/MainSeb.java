@@ -12,6 +12,7 @@ public class MainSeb {
     public static List<IDomino> deckDominos = new ArrayList<IDomino>();
 
     public static void main(String[] args) throws Exception {
+        System.out.println(Orientation.values()[1].getText());
         List<String[]> exPlateau = CSVParser.parse("./test_plateau.csv", ",", true);
         fillDeck("./dominos.csv");
 

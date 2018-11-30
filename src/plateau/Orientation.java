@@ -1,14 +1,18 @@
 package plateau;
 
+import com.sun.org.apache.xpath.internal.operations.Or;
+
 public enum Orientation {
 
-    NORD(-1, 0), EST(0, 1), SUD(1, 0), OUEST(-1, 0);
+    NORD(-1, 0, "N"), EST(0, 1, "E"), SUD(1, 0, "S"), OUEST(0, -1, "O");
 
     private int offsetX, offsetY;
+    private String text;
 
-    Orientation(int x, int y){
+    Orientation(int x, int y, String text){
         this.offsetX = x;
         this.offsetY = y;
+        this.text = text;
     }
 
     public static Orientation getOrientation(String nom)
@@ -34,5 +38,17 @@ public enum Orientation {
 
     public int getOffsetY() {
         return offsetY;
+    }
+
+    public String getText() { return text; }
+
+    public Orientation getOppose(){
+        switch (this){
+            case NORD: return SUD;
+            case EST: return OUEST;
+            case SUD: return NORD;
+            case OUEST: return EST;
+            default: return null;
+        }
     }
 }
