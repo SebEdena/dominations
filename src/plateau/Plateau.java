@@ -1,6 +1,5 @@
 package plateau;
 
-import com.sun.org.apache.xpath.internal.operations.Or;
 import exceptions.DominoException;
 import exceptions.TuileException;
 
@@ -26,10 +25,7 @@ public class Plateau {
         if(d instanceof Tuile){
             if(!tuileAjoutee){
                 tableau[xCase][yCase] = d.getCases()[indexCase];
-                minX = xCase;
-                minY = yCase;
-                maxX = xCase;
-                maxY = yCase;
+                updateSizePlateau(xCase, yCase);
                 dominos.add(d);
                 tuileAjoutee = true;
             }else{
@@ -37,26 +33,23 @@ public class Plateau {
             }
         }else{
             if(tuileAjoutee){
-              /*  if((erreur = placementValide(d, xCase, yCase, indexCase, sens)) != null){
+                if((erreur = placementValide(d, xCase, yCase, indexCase, sens)) != null){
                     throw new DominoException(erreur);
-                }else{*/
+                }else{
                     int indexAutreCase = Math.abs(indexCase - 1);
-/*                    int[] translation = calculTranslation(d, xCase, yCase, indexCase, sens);
+                    int[] translation = calculTranslation(d, xCase, yCase, indexCase, sens);
                     if(translation[0] != 0 && translation[1] != 0){
                         xCase += translation[0];
                         yCase += translation[1];
                         translationPlateau(translation);
-                    }*/
+                    }
 
                     Case[] tmpCases = d.getCases();
                     tableau[xCase][yCase] = tmpCases[indexCase];
                     tableau[xCase + sens.getOffsetX()][yCase + sens.getOffsetY()] = tmpCases[indexAutreCase];
-                    if(xCase < minX) minX = xCase;
-                    if(xCase > maxX) maxX = xCase;
-                    if(yCase < minY) minY = yCase;
-                    if(yCase > maxY) maxY = yCase;
+                    updateSizePlateau(xCase, yCase);
                     dominos.add(d);
-                //}
+                }
             }else{
                 throw new TuileException("La tuile du chateau n'a pas encore été placée !");
             }
@@ -64,6 +57,8 @@ public class Plateau {
     }
 
     private String placementValide(IDomino d, int xCase, int yCase, int indexCase, Orientation sens){
+        int xCase2 = xCase + sens.getOffsetX(), yCase2 = yCase + sens.getOffsetY();
+
         if(xCase < -1 || xCase > NB_COL_LIG + 1 || yCase < -1 || yCase > NB_COL_LIG + 1 ||
                 (xCase==-1 && yCase==-1) ||
                 (xCase==-1 && yCase==NB_COL_LIG)||
@@ -76,31 +71,36 @@ public class Plateau {
             return "Impossible de placer le domino car la longueur ou largeur dépasserait la " +
                     "limite autorisée de " + NB_COL_LIG;
         }
-        if(tableau[xCase][yCase] != null || tableau[xCase+sens.getOffsetX()][yCase+sens.getOffsetY()] != null){
+        if((xCase >= 0 && xCase < NB_COL_LIG && yCase >= 0 && yCase < NB_COL_LIG &&
+                tableau[xCase][yCase] != null) ||
+                (xCase2 >= 0 && xCase2 < NB_COL_LIG && yCase2 >= 0 && yCase2 < NB_COL_LIG &&
+                        tableau[xCase2][yCase2] != null)){
             return "Au moins une des deux cases où placer le domino est déjà remplie";
         }
 
         boolean[] isValid = {false, false};
-        int xCase2 = xCase + sens.getOffsetX(), yCase2 = yCase + sens.getOffsetY();
-        int indexAutreCase = (indexCase - 1) % d.getNbCases();
+        int indexAutreCase = Math.abs(indexCase - 1);
         for(int i = 0; i < d.getNbCases(); i++){
             for(Orientation o : Orientation.values()){
-                if(indexCase == i){
-                    if(!o.equals(sens) &&
-                            (tableau[xCase+o.getOffsetX()][yCase+o.getOffsetY()].getTerrain()
-                                    .equals(d.getCases()[indexCase].getTerrain()) ||
-                                    tableau[xCase+o.getOffsetX()][yCase+o.getOffsetY()].getTerrain()
-                                            .equals(Terrain.CHATEAU))){
+                if(indexCase == i &&
+                        xCase+o.getOffsetX() >= 0 && xCase+o.getOffsetX() < NB_COL_LIG &&
+                        yCase+o.getOffsetY() >= 0 && yCase+o.getOffsetY() < NB_COL_LIG &&
+                        tableau[xCase+o.getOffsetX()][yCase+o.getOffsetY()] != null &&
+                        !o.equals(sens) &&
+                        (tableau[xCase+o.getOffsetX()][yCase+o.getOffsetY()].getTerrain()
+                                .equals(d.getCases()[indexCase].getTerrain()) ||
+                                tableau[xCase+o.getOffsetX()][yCase+o.getOffsetY()].getTerrain()
+                                        .equals(Terrain.CHATEAU))){
                         isValid[indexCase] = true;
-                    }
-                } else {
-                    if(!o.equals(sens.getOppose())&&
+                } else if(!o.equals(sens.getOppose())&&
+                        xCase2+o.getOffsetX() >= 0 && xCase2+o.getOffsetX() < NB_COL_LIG &&
+                        yCase2+o.getOffsetY() >= 0 && yCase2+o.getOffsetY() < NB_COL_LIG &&
+                        tableau[xCase2+o.getOffsetX()][yCase2+o.getOffsetY()] != null &&
                             (tableau[xCase2+o.getOffsetX()][yCase2+o.getOffsetY()].getTerrain()
                                     .equals(d.getCases()[indexAutreCase].getTerrain())||
-                            tableau[xCase+o.getOffsetX()][yCase+o.getOffsetY()].getTerrain()
+                            tableau[xCase2+o.getOffsetX()][yCase2+o.getOffsetY()].getTerrain()
                                     .equals(Terrain.CHATEAU))){
                         isValid[indexAutreCase] = true;
-                    }
                 }
                 if(isValid[i]){
                     break;
@@ -160,6 +160,24 @@ public class Plateau {
             }
         }
         tableau = newPlateau;
+    }
+
+    private void updateSizePlateau(int xCase, int yCase){
+        if(!tuileAjoutee){
+            minX = xCase;
+            maxX = xCase;
+            minY = yCase;
+            maxY = yCase;
+        }else{
+            if(xCase >= 0 && xCase < NB_COL_LIG){
+                if(xCase < minX) minX = xCase;
+                if(xCase > maxX) maxX = xCase;
+            }
+            if(xCase >= 0 && xCase < NB_COL_LIG){
+                if(yCase < minY) minY = yCase;
+                if(yCase > maxY) maxY = yCase;
+            }
+        }
     }
 
     public int calculPoint()
