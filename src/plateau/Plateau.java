@@ -38,7 +38,7 @@ public class Plateau {
                 }else{
                     int indexAutreCase = Math.abs(indexCase - 1);
                     int[] translation = calculTranslation(d, xCase, yCase, indexCase, sens);
-                    if(translation[0] != 0 && translation[1] != 0){
+                    if(translation[0] != 0 || translation[1] != 0){
                         xCase += translation[0];
                         yCase += translation[1];
                         translationPlateau(translation);
@@ -117,35 +117,38 @@ public class Plateau {
 
     private int[] calculTranslation(IDomino d, int xCase, int yCase, int indexCase, Orientation sens){
         int[] deplacement = {0, 0};
-        if(xCase <= 0) {
-            if(sens.equals(Orientation.OUEST)){
-                deplacement[0] = 1 - xCase;
-            }else {
-                deplacement[0] = 1;
-            }
-        }
-        if(xCase >= NB_COL_LIG - 1){
-            if(sens.equals(Orientation.EST)){
-                deplacement[0] = -1 + (NB_COL_LIG - xCase - 1);
-            }else {
-                deplacement[0] = -1;
-            }
-        }
         if(yCase <= 0) {
-            if(sens.equals(Orientation.NORD)){
+            if(sens.equals(Orientation.OUEST)){
                 deplacement[1] = 1 - yCase;
-            }else {
-                deplacement[1] = 1;
+            }else if(sens.equals(Orientation.EST))
+            {
+                deplacement[1] += - yCase;
             }
         }
         if(yCase >= NB_COL_LIG - 1){
-            if(sens.equals(Orientation.SUD)){
-                deplacement[1] = -1 + (NB_COL_LIG - xCase - 1);
-            }else {
-                deplacement[1] = -1;
+            if(sens.equals(Orientation.EST)){
+                deplacement[1] = -1 + (NB_COL_LIG - yCase - 1);
+            }else if(sens.equals(Orientation.OUEST))
+            {
+                deplacement[1] += NB_COL_LIG - yCase - 1;
             }
         }
-
+        if(xCase <= 0) {
+            if(sens.equals(Orientation.NORD)){
+                deplacement[0] = 1 - xCase;
+            }else if(sens.equals(Orientation.SUD))
+            {
+                deplacement[0] += - xCase;
+            }
+        }
+        if(xCase >= NB_COL_LIG - 1){
+            if(sens.equals(Orientation.SUD)){
+                deplacement[0] = -1 + (NB_COL_LIG - xCase - 1);
+            }else if(sens.equals(Orientation.NORD))
+            {
+                deplacement[0] += NB_COL_LIG - xCase - 1;
+            }
+        }
         return deplacement;
     }
 
@@ -153,8 +156,8 @@ public class Plateau {
         Case[][] newPlateau = new Case[NB_COL_LIG][NB_COL_LIG];
         for(int i = 0; i < NB_COL_LIG; i++){
             for(int j = 0; j < NB_COL_LIG; j++){
-                if(i+deplacement[0] > 0 && i + deplacement[0] < NB_COL_LIG &&
-                        j+deplacement[1] > 0 && j+deplacement[1] < NB_COL_LIG){
+                if(i+deplacement[0] >= 0 && i + deplacement[0] < NB_COL_LIG &&
+                        j+deplacement[1] >= 0 && j+deplacement[1] < NB_COL_LIG){
                     newPlateau[i+deplacement[0]][j+deplacement[1]] = tableau[i][j];
                 }
             }

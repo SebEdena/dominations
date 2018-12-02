@@ -12,7 +12,6 @@ public class MainSeb {
     public static List<IDomino> deckDominos = new ArrayList<IDomino>();
 
     public static void main(String[] args) throws Exception {
-        System.out.println(Orientation.values()[1].getText());
         List<String[]> exPlateau = CSVParser.parse("./test_plateau.csv", ",", true);
         fillDeck("./dominos.csv");
 
@@ -27,6 +26,9 @@ public class MainSeb {
                         Integer.parseInt(strs[1]), Integer.parseInt(strs[2]),
                         Integer.parseInt(strs[3]), Orientation.getOrientation(strs[4]));
             }
+            System.out.println(p.affichePlateau());
+            System.out.println("__________________");
+
         }
         System.out.println(p.affichePlateau());
     }
