@@ -2,12 +2,22 @@ package jeu;
 
 public class Joueur {
 
+    private String nomJoueur;
     private Roi couleurRoi;
     private int score;
 
-    public Joueur(Roi couleur, int score){
+    public Joueur(String nom, Roi couleur, int score){
+        nomJoueur = nom;
         this.score = score;
         couleurRoi = couleur;
+    }
+
+    public String getNomJoueur() {
+        return nomJoueur;
+    }
+
+    public void setNomJoueur(String nomJoueur) {
+        this.nomJoueur = nomJoueur;
     }
 
     public Roi getCouleurRoi() {

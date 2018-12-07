@@ -1,10 +1,10 @@
 package jeu;
 
-import plateau.Plateau;
+import plateau.*;
+import util.CSVParser;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.io.IOException;
+import java.util.*;
 
 public class Jeu {
     private static final int SCORE_DEFAUT = 0;
@@ -15,11 +15,20 @@ public class Jeu {
 
     private static Jeu instance;
     private static Scanner scan = new Scanner(System.in);
-    private static Map<Joueur, Plateau> joueurs = new HashMap<>();
     private static int nbJoueurs = 0;
 
+    private Map<Joueur, Plateau> joueurs;
+    private List<IDomino> dominosDebut;
+    private List<IDomino> dominosRestants;
+    private List<IDomino> tirage;
+
     private Jeu(){
-        intitialisationJeu();
+        try {
+            intitialisationJeu();
+        } catch (IOException e) {
+            System.err.println("Erreur lors du chargement du fichier .csv," +
+                    " veuillez recommencer.");
+        }
     }
 
     public static Jeu getInstance(){
@@ -29,7 +38,7 @@ public class Jeu {
         return instance;
     }
 
-    private void intitialisationJeu() {
+    private void intitialisationJeu() throws IOException {
         do {
             try{
                 System.out.println("Nombre de joueurs ? (2 à 4)");
@@ -38,14 +47,44 @@ public class Jeu {
                 System.out.println("Erreur de saisie");
             }
         } while(nbJoueurs < NB_JOUEURS_MIN || nbJoueurs > NB_JOUEURS_MAX);
-        allocateRoi(nbJoueurs);
+        joueurs = allocateRoi(nbJoueurs);
+        dominosDebut = chargementDominos("./dominos.csv");
     }
 
-    private void allocateRoi(int nb){
+    private Map<Joueur, Plateau> allocateRoi(int nb){
+        Map<Joueur, Plateau> listeJoueurs = new HashMap<>();
         for (int i = 0; i < nb; i++) {
-            joueurs.put(new Joueur(Roi.getRoiInt(i), SCORE_DEFAUT), new Plateau(PETIT_PLATEAU));
-            System.out.println(Roi.getRoiInt(i));
+            System.out.println("Veuillez renseigner votre pseudo : ");
+            String nom = scan.next();
+            listeJoueurs.put(new Joueur(nom, Roi.getRoiInt(i), SCORE_DEFAUT), new Plateau(PETIT_PLATEAU));
+            System.out.println(nom + " vous êtes le roi " + Roi.getRoiInt(i));
         }
+        return listeJoueurs;
+    }
+
+    private List<IDomino> chargementDominos(String path) throws IOException {
+        List<String[]> dominos = CSVParser.parse(path, ",", true);
+        List<IDomino> dominosCharges = new ArrayList<>();
+        for(String[] strs : dominos) {
+            Case case1 = new Case(Integer.parseInt(strs[0]), Terrain.getTerrain(strs[1]));
+            Case case2 = new Case(Integer.parseInt(strs[2]), Terrain.getTerrain(strs[3]));
+            IDomino domino = new Domino(case1,case2,Integer.parseInt(strs[4]));
+            dominosCharges.add(domino);
+        }
+        dominosRestants = dominosCharges;
+        return dominosCharges;
+    }
+
+    private List<IDomino> pioche(){
+        List<IDomino> pioche = new ArrayList<>();
+        Random mainInnocente = new Random();
+        /**
+         * Comparaison de liste de idominos : element de piochés et ceux restant
+         * utiliser l'enum
+         * NbJoueur.getParamsJeu(nbJoueurs).getNbDominosRetires()
+         * NbJoueur.getParamsJeu(nbJoueurs).getNbRoiParJoueur()
+         */
+        return pioche;
     }
 
 }
