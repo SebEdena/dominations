@@ -20,7 +20,7 @@ public class Jeu {
     private Map<Joueur, Plateau> joueurs;
     private List<IDomino> dominosDebut;
     private List<IDomino> dominosRestants;
-    private List<IDomino> tirage;
+    private List<IDomino> tirage = new ArrayList<>();
 
     private Jeu(){
         try {
@@ -48,7 +48,7 @@ public class Jeu {
             }
         } while(nbJoueurs < NB_JOUEURS_MIN || nbJoueurs > NB_JOUEURS_MAX);
         joueurs = allocateRoi(nbJoueurs);
-        dominosDebut = chargementDominos("./dominos.csv");
+        dominosDebut = chargementDominos("./test_pioche.csv");
     }
 
     private Map<Joueur, Plateau> allocateRoi(int nb){
@@ -75,34 +75,21 @@ public class Jeu {
         return dominosCharges;
     }
 
-    private List<IDomino> pioche(){
-        List<IDomino> pioche = new ArrayList<>();
+    public void pioche(){
         for (int i = 0; i < nbJoueurs; i++) {
-            pioche.add(piocher());
+            IDomino d = piocher();
+            System.out.println(d.toString());
+            tirage.add(d);
         }
-        return pioche;
     }
 
     private IDomino piocher(){
         Random mainInnocente = new Random();
         IDomino domino;
-        int indexDomino = 1 + mainInnocente.nextInt(dominosRestants.size());
-        if(tirage.isEmpty()){
-            domino = dominosRestants.get(indexDomino);
-            dominosRestants.remove(indexDomino);
-            return domino;
-        } else {
-            boolean dejaPioche = false;
-            do {
-                domino = dominosRestants.get(indexDomino);
-                for (IDomino d : tirage) {
-                    if(d.getIdentifiant() == domino.getIdentifiant() || dejaPioche)
-                        dejaPioche = true;
-                    else dejaPioche = false;
-                }
-            } while (dejaPioche);
-            dominosRestants.remove(indexDomino);
-            return domino;
-        }
+        int indexDomino = mainInnocente.nextInt(dominosRestants.size());
+        domino = dominosRestants.get(indexDomino);
+        dominosRestants.remove(indexDomino);
+        System.out.println(indexDomino+" "+domino);
+        return domino;
     }
 }
