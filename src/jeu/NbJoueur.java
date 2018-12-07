@@ -15,7 +15,7 @@ public enum NbJoueur {
         this.nbRoiParJoueur = nbRois;
     }
 
-    public NbJoueur getParamsJeu(int nb){
+    public static NbJoueur getParamsJeu(int nb){
         switch (nb){
             case 2 : return jeuA2;
             case 3 : return jeuA3;

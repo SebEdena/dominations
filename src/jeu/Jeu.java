@@ -77,14 +77,32 @@ public class Jeu {
 
     private List<IDomino> pioche(){
         List<IDomino> pioche = new ArrayList<>();
-        Random mainInnocente = new Random();
-        /**
-         * Comparaison de liste de idominos : element de piochés et ceux restant
-         * utiliser l'enum
-         * NbJoueur.getParamsJeu(nbJoueurs).getNbDominosRetires()
-         * NbJoueur.getParamsJeu(nbJoueurs).getNbRoiParJoueur()
-         */
+        for (int i = 0; i < nbJoueurs; i++) {
+            pioche.add(piocher());
+        }
         return pioche;
     }
 
+    private IDomino piocher(){
+        Random mainInnocente = new Random();
+        IDomino domino;
+        int indexDomino = 1 + mainInnocente.nextInt(dominosRestants.size());
+        if(tirage.isEmpty()){
+            domino = dominosRestants.get(indexDomino);
+            dominosRestants.remove(indexDomino);
+            return domino;
+        } else {
+            boolean dejaPioche = false;
+            do {
+                domino = dominosRestants.get(indexDomino);
+                for (IDomino d : tirage) {
+                    if(d.getIdentifiant() == domino.getIdentifiant() || dejaPioche)
+                        dejaPioche = true;
+                    else dejaPioche = false;
+                }
+            } while (dejaPioche);
+            dominosRestants.remove(indexDomino);
+            return domino;
+        }
+    }
 }
