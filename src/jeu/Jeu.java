@@ -14,13 +14,15 @@ public class Jeu {
     private static final int PETIT_PLATEAU = 5;
 
     private static Jeu instance;
-    private static Scanner scan = new Scanner(System.in);
-    private static int nbJoueurs = 0;
 
+    private Scanner scan = new Scanner(System.in);
     private Map<Joueur, Plateau> joueurs;
     private List<IDomino> dominosDebut;
     private List<IDomino> dominosRestants;
     private List<IDomino> tirage = new ArrayList<>();
+    private int[] listeRois;
+    private boolean plusDeDominos;
+    private int nbJoueurs = 0;
 
     private Jeu(){
         try {
@@ -53,10 +55,12 @@ public class Jeu {
 
     private Map<Joueur, Plateau> allocateRoi(int nb){
         Map<Joueur, Plateau> listeJoueurs = new HashMap<>();
+        listeRois = new int[nbJoueurs];
         for (int i = 0; i < nb; i++) {
             System.out.println("Veuillez renseigner votre pseudo : ");
             String nom = scan.next();
             listeJoueurs.put(new Joueur(nom, Roi.getRoiInt(i), SCORE_DEFAUT), new Plateau(PETIT_PLATEAU));
+            listeRois[i] = i;
             System.out.println(nom + " vous êtes le roi " + Roi.getRoiInt(i));
         }
         return listeJoueurs;
@@ -72,15 +76,23 @@ public class Jeu {
             dominosCharges.add(domino);
         }
         dominosRestants = dominosCharges;
+        plusDeDominos = false;
         return dominosCharges;
     }
 
+    private void mélangerRois(){
+        Collections.shuffle(Arrays.asList(listeRois));
+    }
+
     public void pioche(){
-        for (int i = 0; i < nbJoueurs; i++) {
-            IDomino d = piocher();
-            System.out.println(d.toString());
-            tirage.add(d);
-        }
+        if(!dominosRestants.isEmpty()){
+            Collections.shuffle(dominosRestants);
+            for (int i = 0; i < nbJoueurs; i++) {
+                IDomino d = piocher();
+                tirage.add(d);
+            }
+        } else plusDeDominos = true;
+
     }
 
     private IDomino piocher(){
@@ -89,7 +101,6 @@ public class Jeu {
         int indexDomino = mainInnocente.nextInt(dominosRestants.size());
         domino = dominosRestants.get(indexDomino);
         dominosRestants.remove(indexDomino);
-        System.out.println(indexDomino+" "+domino);
         return domino;
     }
 }
