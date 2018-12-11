@@ -26,7 +26,7 @@ public class MainLaurent {
                         Integer.parseInt(strs[3]), Orientation.getOrientation(strs[4]));
             }
         }
-        System.out.println(p.affichePlateau());
+        System.out.println(p.affichePlateau(false));
         System.out.println(p.calculPoint());
     }
 
