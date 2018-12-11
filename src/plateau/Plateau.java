@@ -25,7 +25,7 @@ public class Plateau {
         if(d instanceof Tuile){
             if(!tuileAjoutee){
                 tableau[xCase][yCase] = d.getCases()[indexCase];
-                updateSizePlateau(xCase, yCase);
+                updateSizePlateau(xCase, yCase, sens);
                 dominos.add(d);
                 tuileAjoutee = true;
             }else{
@@ -47,7 +47,7 @@ public class Plateau {
                     Case[] tmpCases = d.getCases();
                     tableau[xCase][yCase] = tmpCases[indexCase];
                     tableau[xCase + sens.getOffsetX()][yCase + sens.getOffsetY()] = tmpCases[indexAutreCase];
-                    updateSizePlateau(xCase, yCase);
+                    updateSizePlateau(xCase, yCase, sens);
                     dominos.add(d);
                 }
             }else{
@@ -163,24 +163,31 @@ public class Plateau {
             }
         }
         tableau = newPlateau;
+        minX += deplacement[0];
+        maxX += deplacement[0];
+        minY += deplacement[1];
+        maxY += deplacement[1];
     }
 
-    private void updateSizePlateau(int xCase, int yCase){
+    private void updateSizePlateau(int xCase, int yCase, Orientation sens){
         if(!tuileAjoutee){
             minX = xCase;
             maxX = xCase;
             minY = yCase;
             maxY = yCase;
         }else{
-            if(xCase >= 0 && xCase < NB_COL_LIG){
-                if(xCase < minX) minX = xCase;
-                if(xCase > maxX) maxX = xCase;
+            if(xCase + sens.getOffsetX() >= 0 && xCase + sens.getOffsetX() < NB_COL_LIG){
+                if(xCase < minX) minX = xCase + sens.getOffsetX();
+                if(xCase > maxX) maxX = xCase + sens.getOffsetX();
             }
-            if(xCase >= 0 && xCase < NB_COL_LIG){
-                if(yCase < minY) minY = yCase;
-                if(yCase > maxY) maxY = yCase;
+            if(yCase + sens.getOffsetY() >= 0 && yCase + sens.getOffsetY() < NB_COL_LIG){
+                if(yCase < minY) minY = yCase + sens.getOffsetY();
+                if(yCase > maxY) maxY = yCase + sens.getOffsetY();
             }
         }
+        System.out.println("x : ["+minX+ ","+maxX+"]");
+        System.out.println("y : ["+minY+ ","+maxY+"]");
+        System.out.println();
     }
 
     public int calculPoint()
@@ -235,25 +242,45 @@ public class Plateau {
         }
     }
 
-    public String affichePlateau(){
+    public String affichePlateau(boolean modeAjout){
+        int[] borneX = {0, NB_COL_LIG};
+        int[] borneY = {0, NB_COL_LIG};
         List<String[]> cases = new ArrayList<String[]>();
         StringBuilder sb = new StringBuilder();
         String separateurCase = Case.getSeparateurPlateau();
-        for(int i = 0; i < NB_COL_LIG; i++){
-            for(int j = 0; j < NB_COL_LIG; j++){
-                if(tableau[i][j] == null){
+
+        if(modeAjout){
+            if (maxX - minX + 1 < NB_COL_LIG) {
+                borneX[0]--;
+                borneX[1]++;
+            }
+            if (maxY - minY + 1 < NB_COL_LIG){
+                borneY[0]--;
+                borneY[1]++;
+            }
+            sb.append("   ");
+            for(int j = borneY[0]; j < borneY[1]; j++){
+                sb.append(" " + String.format("%2d", j) + " \t");
+            }
+            sb.append("\n");
+        }
+        for(int i = borneX[0]; i < borneX[1]; i++){
+            for(int j = borneY[0]; j < borneY[1]; j++){
+                if(i < 0 || i >= NB_COL_LIG || j < 0 || j >= NB_COL_LIG || tableau[i][j] == null){
                     cases.add(("    " + separateurCase + "    ").split(separateurCase));
                 }else{
                     cases.add(tableau[i][j].affichagePlateau().split(separateurCase));
                 }
             }
-            for(int j = 0; j < 2*NB_COL_LIG; j++){
-                String casePlateau = cases.get(j % NB_COL_LIG)[j/NB_COL_LIG];
+            if(modeAjout) sb.append(String.format("%2d", i)+ " ");
+            for(int j = 0; j < 2*(borneY[1] - borneY[0]); j++){
+                String casePlateau = cases.get(j % (borneY[1] - borneY[0]))[j/(borneY[1] - borneY[0])];
                 sb.append(casePlateau);
-                if(j % NB_COL_LIG != NB_COL_LIG - 1){
+                if(j % (borneY[1] - borneY[0]) != (borneY[1] - borneY[0]) - 1){
                     sb.append("\t");
                 }else{
                     sb.append("\n");
+                    if(modeAjout) sb.append("   ");
                 }
             }
             sb.append("\n");

@@ -26,11 +26,11 @@ public class MainSeb {
                         Integer.parseInt(strs[1]), Integer.parseInt(strs[2]),
                         Integer.parseInt(strs[3]), Orientation.getOrientation(strs[4]));
             }
-            System.out.println(p.affichePlateau());
+            System.out.println(p.affichePlateau(false));
             System.out.println("__________________");
 
         }
-        System.out.println(p.affichePlateau());
+        System.out.println(p.affichePlateau(false));
     }
 
     public static IDomino getDomino(int id){
