@@ -248,6 +248,7 @@ public class Plateau {
         List<String[]> cases = new ArrayList<String[]>();
         StringBuilder sb = new StringBuilder();
         String separateurCase = Case.getSeparateurPlateau();
+        String tabReplacer = "    ";
 
         if(modeAjout){
             if (maxX - minX + 1 < NB_COL_LIG) {
@@ -260,7 +261,7 @@ public class Plateau {
             }
             sb.append("   ");
             for(int j = borneY[0]; j < borneY[1]; j++){
-                sb.append(" " + String.format("%2d", j) + " \t");
+                sb.append(" " + String.format("%2d", j) + " " + tabReplacer);
             }
             sb.append("\n");
         }
@@ -277,7 +278,7 @@ public class Plateau {
                 String casePlateau = cases.get(j % (borneY[1] - borneY[0]))[j/(borneY[1] - borneY[0])];
                 sb.append(casePlateau);
                 if(j % (borneY[1] - borneY[0]) != (borneY[1] - borneY[0]) - 1){
-                    sb.append("\t");
+                    sb.append(tabReplacer);
                 }else{
                     sb.append("\n");
                     if(modeAjout) sb.append("   ");
