@@ -81,8 +81,30 @@ public class Plateau {
         boolean[] isValid = {false, false};
         int indexAutreCase = Math.abs(indexCase - 1);
         for(int i = 0; i < d.getNbCases(); i++){
+            int tmpX, tmpY;
+            Orientation aEviter;
+            if(indexCase == i){
+                tmpX = xCase;
+                tmpY = yCase;
+                aEviter = sens;
+            }else{
+                tmpX = xCase2;
+                tmpY = yCase2;
+                aEviter = sens.getOppose();
+            }
+            List<Orientation> orientations = orientationsValides(tmpX, tmpY);
             for(Orientation o : Orientation.values()){
-                if(indexCase == i &&
+                if(!o.equals(aEviter) &&
+                        tmpX+o.getOffsetX() >= 0 && tmpX+o.getOffsetX() < NB_COL_LIG &&
+                        tmpY+o.getOffsetY() >= 0 && tmpY+o.getOffsetY() < NB_COL_LIG &&
+                        tableau[tmpX+o.getOffsetX()][tmpY+o.getOffsetY()] != null &&
+                        (tableau[tmpX+o.getOffsetX()][tmpY+o.getOffsetY()].getTerrain()
+                                .equals(d.getCases()[indexCase].getTerrain()) ||
+                                tableau[tmpX+o.getOffsetX()][tmpY+o.getOffsetY()].getTerrain()
+                                        .equals(Terrain.CHATEAU))){
+                    isValid[indexCase] = true;
+                }
+                /*if(indexCase == i &&
                         xCase+o.getOffsetX() >= 0 && xCase+o.getOffsetX() < NB_COL_LIG &&
                         yCase+o.getOffsetY() >= 0 && yCase+o.getOffsetY() < NB_COL_LIG &&
                         tableau[xCase+o.getOffsetX()][yCase+o.getOffsetY()] != null &&
@@ -101,7 +123,7 @@ public class Plateau {
                             tableau[xCase2+o.getOffsetX()][yCase2+o.getOffsetY()].getTerrain()
                                     .equals(Terrain.CHATEAU))){
                         isValid[indexAutreCase] = true;
-                }
+                }*/
                 if(isValid[i]){
                     break;
                 }
