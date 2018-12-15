@@ -289,4 +289,39 @@ public class Plateau {
         }
         return sb.toString();
     }
+
+    public void possibilite(IDomino domino)
+    {
+        List<Case> casesPossible = new ArrayList<Case>();
+        for(int numeroCase = 0; numeroCase < domino.getNbCases(); numeroCase++)
+        {
+            for(int i = 0; i < NB_COL_LIG; i++)
+            {
+                for(int j = 0; j < NB_COL_LIG; j++)
+                {
+                    for(Orientation o : Orientation.values())
+                    {
+                        if(this.placementValide(domino,i,j,numeroCase,o) == null)
+                        {
+                            System.out.println(" x : " + i + " / y : " + j + " // numero case : " + numeroCase + " / domino : " + domino.toString());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private List<Orientation> orientationsValides(int xCase, int yCase)
+    {
+        List<Orientation> listeOrientationsValides= new ArrayList<Orientation>();
+        for(Orientation o : Orientation.values())
+        {
+            if(!(xCase + o.getOffsetX() < 0 || xCase + o.getOffsetX() >= NB_COL_LIG ||
+                    yCase + o.getOffsetY() < 0 || yCase + o.getOffsetY() >= NB_COL_LIG))
+            {
+                listeOrientationsValides.add(o);
+            }
+        }
+        return listeOrientationsValides;
+    }
 }
