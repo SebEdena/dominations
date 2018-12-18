@@ -93,16 +93,16 @@ public class Plateau {
                 aEviter = sens.getOppose();
             }
             List<Orientation> orientations = orientationsValides(tmpX, tmpY);
-            for(Orientation o : Orientation.values()){
+            for(Orientation o : orientations){
                 if(!o.equals(aEviter) &&
                         tmpX+o.getOffsetX() >= 0 && tmpX+o.getOffsetX() < NB_COL_LIG &&
                         tmpY+o.getOffsetY() >= 0 && tmpY+o.getOffsetY() < NB_COL_LIG &&
                         tableau[tmpX+o.getOffsetX()][tmpY+o.getOffsetY()] != null &&
                         (tableau[tmpX+o.getOffsetX()][tmpY+o.getOffsetY()].getTerrain()
-                                .equals(d.getCases()[indexCase].getTerrain()) ||
+                                .equals(d.getCases()[i].getTerrain()) ||
                                 tableau[tmpX+o.getOffsetX()][tmpY+o.getOffsetY()].getTerrain()
                                         .equals(Terrain.CHATEAU))){
-                    isValid[indexCase] = true;
+                    isValid[i] = true;
                 }
                 /*if(indexCase == i &&
                         xCase+o.getOffsetX() >= 0 && xCase+o.getOffsetX() < NB_COL_LIG &&
@@ -265,8 +265,8 @@ public class Plateau {
     }
 
     public String affichePlateau(boolean modeAjout){
-        int[] borneX = {0, NB_COL_LIG};
-        int[] borneY = {0, NB_COL_LIG};
+        int[] borneX = {minX, maxX + 1};
+        int[] borneY = {minY, maxY + 1};
         List<String[]> cases = new ArrayList<String[]>();
         StringBuilder sb = new StringBuilder();
         String separateurCase = Case.getSeparateurPlateau();
@@ -290,7 +290,11 @@ public class Plateau {
         for(int i = borneX[0]; i < borneX[1]; i++){
             for(int j = borneY[0]; j < borneY[1]; j++){
                 if(i < 0 || i >= NB_COL_LIG || j < 0 || j >= NB_COL_LIG || tableau[i][j] == null){
-                    cases.add(("    " + separateurCase + "    ").split(separateurCase));
+                    if((i < 0 || i >= NB_COL_LIG) && (j < 0 || j >= NB_COL_LIG)){
+                        cases.add(("XXXX" + separateurCase + "XXXX").split(separateurCase));
+                    }else{
+                        cases.add(("    " + separateurCase + "    ").split(separateurCase));
+                    }
                 }else{
                     cases.add(tableau[i][j].affichagePlateau().split(separateurCase));
                 }
