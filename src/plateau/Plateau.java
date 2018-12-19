@@ -1,6 +1,5 @@
 package plateau;
 
-import com.sun.org.apache.xpath.internal.operations.Or;
 import exceptions.DominoException;
 import exceptions.TuileException;
 
@@ -26,10 +25,7 @@ public class Plateau {
         if(d instanceof Tuile){
             if(!tuileAjoutee){
                 tableau[xCase][yCase] = d.getCases()[indexCase];
-                minX = xCase;
-                minY = yCase;
-                maxX = xCase;
-                maxY = yCase;
+                updateSizePlateau(xCase, yCase, sens);
                 dominos.add(d);
                 tuileAjoutee = true;
             }else{
@@ -37,26 +33,23 @@ public class Plateau {
             }
         }else{
             if(tuileAjoutee){
-              /*  if((erreur = placementValide(d, xCase, yCase, indexCase, sens)) != null){
+                if((erreur = placementValide(d, xCase, yCase, indexCase, sens)) != null){
                     throw new DominoException(erreur);
-                }else{*/
+                }else{
                     int indexAutreCase = Math.abs(indexCase - 1);
-/*                    int[] translation = calculTranslation(d, xCase, yCase, indexCase, sens);
-                    if(translation[0] != 0 && translation[1] != 0){
+                    int[] translation = calculTranslation(d, xCase, yCase, indexCase, sens);
+                    if(translation[0] != 0 || translation[1] != 0){
                         xCase += translation[0];
                         yCase += translation[1];
                         translationPlateau(translation);
-                    }*/
+                    }
 
                     Case[] tmpCases = d.getCases();
                     tableau[xCase][yCase] = tmpCases[indexCase];
                     tableau[xCase + sens.getOffsetX()][yCase + sens.getOffsetY()] = tmpCases[indexAutreCase];
-                    if(xCase < minX) minX = xCase;
-                    if(xCase > maxX) maxX = xCase;
-                    if(yCase < minY) minY = yCase;
-                    if(yCase > maxY) maxY = yCase;
+                    updateSizePlateau(xCase, yCase, sens);
                     dominos.add(d);
-                //}
+                }
             }else{
                 throw new TuileException("La tuile du chateau n'a pas encore été placée !");
             }
@@ -64,6 +57,8 @@ public class Plateau {
     }
 
     private String placementValide(IDomino d, int xCase, int yCase, int indexCase, Orientation sens){
+        int xCase2 = xCase + sens.getOffsetX(), yCase2 = yCase + sens.getOffsetY();
+
         if(xCase < -1 || xCase > NB_COL_LIG + 1 || yCase < -1 || yCase > NB_COL_LIG + 1 ||
                 (xCase==-1 && yCase==-1) ||
                 (xCase==-1 && yCase==NB_COL_LIG)||
@@ -76,32 +71,59 @@ public class Plateau {
             return "Impossible de placer le domino car la longueur ou largeur dépasserait la " +
                     "limite autorisée de " + NB_COL_LIG;
         }
-        if(tableau[xCase][yCase] != null || tableau[xCase+sens.getOffsetX()][yCase+sens.getOffsetY()] != null){
+        if((xCase >= 0 && xCase < NB_COL_LIG && yCase >= 0 && yCase < NB_COL_LIG &&
+                tableau[xCase][yCase] != null) ||
+                (xCase2 >= 0 && xCase2 < NB_COL_LIG && yCase2 >= 0 && yCase2 < NB_COL_LIG &&
+                        tableau[xCase2][yCase2] != null)){
             return "Au moins une des deux cases où placer le domino est déjà remplie";
         }
 
         boolean[] isValid = {false, false};
-        int xCase2 = xCase + sens.getOffsetX(), yCase2 = yCase + sens.getOffsetY();
-        int indexAutreCase = (indexCase - 1) % d.getNbCases();
+        int indexAutreCase = Math.abs(indexCase - 1);
         for(int i = 0; i < d.getNbCases(); i++){
-            for(Orientation o : Orientation.values()){
-                if(indexCase == i){
-                    if(!o.equals(sens) &&
-                            (tableau[xCase+o.getOffsetX()][yCase+o.getOffsetY()].getTerrain()
-                                    .equals(d.getCases()[indexCase].getTerrain()) ||
-                                    tableau[xCase+o.getOffsetX()][yCase+o.getOffsetY()].getTerrain()
-                                            .equals(Terrain.CHATEAU))){
+            int tmpX, tmpY;
+            Orientation aEviter;
+            if(indexCase == i){
+                tmpX = xCase;
+                tmpY = yCase;
+                aEviter = sens;
+            }else{
+                tmpX = xCase2;
+                tmpY = yCase2;
+                aEviter = sens.getOppose();
+            }
+            List<Orientation> orientations = orientationsValides(tmpX, tmpY);
+            for(Orientation o : orientations){
+                if(!o.equals(aEviter) &&
+                        tmpX+o.getOffsetX() >= 0 && tmpX+o.getOffsetX() < NB_COL_LIG &&
+                        tmpY+o.getOffsetY() >= 0 && tmpY+o.getOffsetY() < NB_COL_LIG &&
+                        tableau[tmpX+o.getOffsetX()][tmpY+o.getOffsetY()] != null &&
+                        (tableau[tmpX+o.getOffsetX()][tmpY+o.getOffsetY()].getTerrain()
+                                .equals(d.getCases()[i].getTerrain()) ||
+                                tableau[tmpX+o.getOffsetX()][tmpY+o.getOffsetY()].getTerrain()
+                                        .equals(Terrain.CHATEAU))){
+                    isValid[i] = true;
+                }
+                /*if(indexCase == i &&
+                        xCase+o.getOffsetX() >= 0 && xCase+o.getOffsetX() < NB_COL_LIG &&
+                        yCase+o.getOffsetY() >= 0 && yCase+o.getOffsetY() < NB_COL_LIG &&
+                        tableau[xCase+o.getOffsetX()][yCase+o.getOffsetY()] != null &&
+                        !o.equals(sens) &&
+                        (tableau[xCase+o.getOffsetX()][yCase+o.getOffsetY()].getTerrain()
+                                .equals(d.getCases()[indexCase].getTerrain()) ||
+                                tableau[xCase+o.getOffsetX()][yCase+o.getOffsetY()].getTerrain()
+                                        .equals(Terrain.CHATEAU))){
                         isValid[indexCase] = true;
-                    }
-                } else {
-                    if(!o.equals(sens.getOppose())&&
+                } else if(!o.equals(sens.getOppose())&&
+                        xCase2+o.getOffsetX() >= 0 && xCase2+o.getOffsetX() < NB_COL_LIG &&
+                        yCase2+o.getOffsetY() >= 0 && yCase2+o.getOffsetY() < NB_COL_LIG &&
+                        tableau[xCase2+o.getOffsetX()][yCase2+o.getOffsetY()] != null &&
                             (tableau[xCase2+o.getOffsetX()][yCase2+o.getOffsetY()].getTerrain()
                                     .equals(d.getCases()[indexAutreCase].getTerrain())||
-                            tableau[xCase+o.getOffsetX()][yCase+o.getOffsetY()].getTerrain()
+                            tableau[xCase2+o.getOffsetX()][yCase2+o.getOffsetY()].getTerrain()
                                     .equals(Terrain.CHATEAU))){
                         isValid[indexAutreCase] = true;
-                    }
-                }
+                }*/
                 if(isValid[i]){
                     break;
                 }
@@ -117,35 +139,38 @@ public class Plateau {
 
     private int[] calculTranslation(IDomino d, int xCase, int yCase, int indexCase, Orientation sens){
         int[] deplacement = {0, 0};
-        if(xCase <= 0) {
-            if(sens.equals(Orientation.OUEST)){
-                deplacement[0] = 1 - xCase;
-            }else {
-                deplacement[0] = 1;
-            }
-        }
-        if(xCase >= NB_COL_LIG - 1){
-            if(sens.equals(Orientation.EST)){
-                deplacement[0] = -1 + (NB_COL_LIG - xCase - 1);
-            }else {
-                deplacement[0] = -1;
-            }
-        }
         if(yCase <= 0) {
-            if(sens.equals(Orientation.NORD)){
+            if(sens.equals(Orientation.OUEST)){
                 deplacement[1] = 1 - yCase;
-            }else {
-                deplacement[1] = 1;
+            }else if(sens.equals(Orientation.EST))
+            {
+                deplacement[1] += - yCase;
             }
         }
         if(yCase >= NB_COL_LIG - 1){
-            if(sens.equals(Orientation.SUD)){
-                deplacement[1] = -1 + (NB_COL_LIG - xCase - 1);
-            }else {
-                deplacement[1] = -1;
+            if(sens.equals(Orientation.EST)){
+                deplacement[1] = -1 + (NB_COL_LIG - yCase - 1);
+            }else if(sens.equals(Orientation.OUEST))
+            {
+                deplacement[1] += NB_COL_LIG - yCase - 1;
             }
         }
-
+        if(xCase <= 0) {
+            if(sens.equals(Orientation.NORD)){
+                deplacement[0] = 1 - xCase;
+            }else if(sens.equals(Orientation.SUD))
+            {
+                deplacement[0] += - xCase;
+            }
+        }
+        if(xCase >= NB_COL_LIG - 1){
+            if(sens.equals(Orientation.SUD)){
+                deplacement[0] = -1 + (NB_COL_LIG - xCase - 1);
+            }else if(sens.equals(Orientation.NORD))
+            {
+                deplacement[0] += NB_COL_LIG - xCase - 1;
+            }
+        }
         return deplacement;
     }
 
@@ -153,13 +178,38 @@ public class Plateau {
         Case[][] newPlateau = new Case[NB_COL_LIG][NB_COL_LIG];
         for(int i = 0; i < NB_COL_LIG; i++){
             for(int j = 0; j < NB_COL_LIG; j++){
-                if(i+deplacement[0] > 0 && i + deplacement[0] < NB_COL_LIG &&
-                        j+deplacement[1] > 0 && j+deplacement[1] < NB_COL_LIG){
+                if(i+deplacement[0] >= 0 && i + deplacement[0] < NB_COL_LIG &&
+                        j+deplacement[1] >= 0 && j+deplacement[1] < NB_COL_LIG){
                     newPlateau[i+deplacement[0]][j+deplacement[1]] = tableau[i][j];
                 }
             }
         }
         tableau = newPlateau;
+        minX += deplacement[0];
+        maxX += deplacement[0];
+        minY += deplacement[1];
+        maxY += deplacement[1];
+    }
+
+    private void updateSizePlateau(int xCase, int yCase, Orientation sens){
+        if(!tuileAjoutee){
+            minX = xCase;
+            maxX = xCase;
+            minY = yCase;
+            maxY = yCase;
+        }else{
+            if(xCase + sens.getOffsetX() >= 0 && xCase + sens.getOffsetX() < NB_COL_LIG){
+                if(xCase < minX) minX = xCase + sens.getOffsetX();
+                if(xCase > maxX) maxX = xCase + sens.getOffsetX();
+            }
+            if(yCase + sens.getOffsetY() >= 0 && yCase + sens.getOffsetY() < NB_COL_LIG){
+                if(yCase < minY) minY = yCase + sens.getOffsetY();
+                if(yCase > maxY) maxY = yCase + sens.getOffsetY();
+            }
+        }
+        System.out.println("x : ["+minX+ ","+maxX+"]");
+        System.out.println("y : ["+minY+ ","+maxY+"]");
+        System.out.println();
     }
 
     public int calculPoint()
@@ -214,30 +264,90 @@ public class Plateau {
         }
     }
 
-    public String affichePlateau(){
+    public String affichePlateau(boolean modeAjout){
+        int[] borneX = {minX, maxX + 1};
+        int[] borneY = {minY, maxY + 1};
         List<String[]> cases = new ArrayList<String[]>();
         StringBuilder sb = new StringBuilder();
         String separateurCase = Case.getSeparateurPlateau();
-        for(int i = 0; i < NB_COL_LIG; i++){
-            for(int j = 0; j < NB_COL_LIG; j++){
-                if(tableau[i][j] == null){
-                    cases.add(("    " + separateurCase + "    ").split(separateurCase));
+        String tabReplacer = "    ";
+
+        if(modeAjout){
+            if (maxX - minX + 1 < NB_COL_LIG) {
+                borneX[0]--;
+                borneX[1]++;
+            }
+            if (maxY - minY + 1 < NB_COL_LIG){
+                borneY[0]--;
+                borneY[1]++;
+            }
+            sb.append("   ");
+            for(int j = borneY[0]; j < borneY[1]; j++){
+                sb.append(" " + String.format("%2d", j) + " " + tabReplacer);
+            }
+            sb.append("\n");
+        }
+        for(int i = borneX[0]; i < borneX[1]; i++){
+            for(int j = borneY[0]; j < borneY[1]; j++){
+                if(i < 0 || i >= NB_COL_LIG || j < 0 || j >= NB_COL_LIG || tableau[i][j] == null){
+                    if((i < 0 || i >= NB_COL_LIG) && (j < 0 || j >= NB_COL_LIG)){
+                        cases.add(("XXXX" + separateurCase + "XXXX").split(separateurCase));
+                    }else{
+                        cases.add(("    " + separateurCase + "    ").split(separateurCase));
+                    }
                 }else{
                     cases.add(tableau[i][j].affichagePlateau().split(separateurCase));
                 }
             }
-            for(int j = 0; j < 2*NB_COL_LIG; j++){
-                String casePlateau = cases.get(j % NB_COL_LIG)[j/NB_COL_LIG];
+            if(modeAjout) sb.append(String.format("%2d", i)+ " ");
+            for(int j = 0; j < 2*(borneY[1] - borneY[0]); j++){
+                String casePlateau = cases.get(j % (borneY[1] - borneY[0]))[j/(borneY[1] - borneY[0])];
                 sb.append(casePlateau);
-                if(j % NB_COL_LIG != NB_COL_LIG - 1){
-                    sb.append("\t");
+                if(j % (borneY[1] - borneY[0]) != (borneY[1] - borneY[0]) - 1){
+                    sb.append(tabReplacer);
                 }else{
                     sb.append("\n");
+                    if(modeAjout) sb.append("   ");
                 }
             }
             sb.append("\n");
             cases.clear();
         }
         return sb.toString();
+    }
+
+    public void possibilite(IDomino domino)
+    {
+        List<Case> casesPossible = new ArrayList<Case>();
+        for(int numeroCase = 0; numeroCase < domino.getNbCases(); numeroCase++)
+        {
+            for(int i = 0; i < NB_COL_LIG; i++)
+            {
+                for(int j = 0; j < NB_COL_LIG; j++)
+                {
+                    for(Orientation o : Orientation.values())
+                    {
+                        if(this.placementValide(domino,i,j,numeroCase,o) == null)
+                        {
+                            System.out.println(" x : " + i + " / y : " + j + " // numero case : " + numeroCase + " / domino : " + domino.toString());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private List<Orientation> orientationsValides(int xCase, int yCase)
+    {
+        List<Orientation> listeOrientationsValides= new ArrayList<Orientation>();
+        for(Orientation o : Orientation.values())
+        {
+            if(!(xCase + o.getOffsetX() < 0 || xCase + o.getOffsetX() >= NB_COL_LIG ||
+                    yCase + o.getOffsetY() < 0 || yCase + o.getOffsetY() >= NB_COL_LIG))
+            {
+                listeOrientationsValides.add(o);
+            }
+        }
+        return listeOrientationsValides;
     }
 }

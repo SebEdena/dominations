@@ -1,7 +1,5 @@
 package plateau;
 
-import com.sun.org.apache.xpath.internal.operations.Or;
-
 public enum Orientation {
 
     NORD(-1, 0, "N"), EST(0, 1, "E"), SUD(1, 0, "S"), OUEST(0, -1, "O");

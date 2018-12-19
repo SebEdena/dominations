@@ -21,12 +21,14 @@ public class MainLaurent {
                 p.addDomino(new Tuile(), Integer.parseInt(strs[1]),
                         Integer.parseInt(strs[2]), 0, null);
             }else{
+                //p.possibilite(getDomino(Integer.parseInt(strs[0])));
                 p.addDomino(getDomino(Integer.parseInt(strs[0])),
                         Integer.parseInt(strs[1]), Integer.parseInt(strs[2]),
                         Integer.parseInt(strs[3]), Orientation.getOrientation(strs[4]));
             }
+            System.out.println(p.affichePlateau(true));
         }
-        System.out.println(p.affichePlateau());
+        System.out.println(p.affichePlateau(true));
         System.out.println(p.calculPoint());
     }
 
