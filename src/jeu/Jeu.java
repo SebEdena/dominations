@@ -57,7 +57,7 @@ public class Jeu {
         Map<Joueur, Plateau> listeJoueurs = new HashMap<>();
         listeRois = new int[nbJoueurs];
         for (int i = 0; i < nb; i++) {
-            System.out.println("Veuillez renseigner votre pseudo : ");
+            System.out.println("Joueur "+ (i+1) +" veuillez renseigner votre pseudo : ");
             String nom = scan.next();
             listeJoueurs.put(new Joueur(nom, Roi.getRoiInt(i), SCORE_DEFAUT), new Plateau(PETIT_PLATEAU));
             listeRois[i] = i;
