@@ -118,4 +118,36 @@ public class Jeu {
         dominosRestants.remove(indexDomino);
         return domino;
     }
+
+    /*
+     * Tour 1
+     * pioche de la tuile de départ
+     *      -> créer tuile de départ
+     * puis re pioche des 1ere tuiles
+     * Afficher pioche (les dominos face numérotée et rangés par ordre croissant)
+     * Si peux pas poser domino -> le défausser
+     *
+     *
+     *
+     *
+     * Tour 1 ex:
+     * tour 1a pour pioche pour tuile de départ
+     * tour 1b pour pioche 1er domino
+     *
+     * Tour 2 ex:
+     * tour pour pioche 2e domino
+     *
+     * Tour 3 ex:
+     * tour pour pioche 3e domino
+     *
+     * Tour 4
+     * ...
+     *
+     * pioche(tuile);
+     * do {
+     * pioche(dominos);
+     * foreach -> joueurs
+     * j.jouer();
+     * } while (plusDeDomino);
+     */
 }

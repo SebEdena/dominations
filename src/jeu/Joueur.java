@@ -40,11 +40,4 @@ public class Joueur {
     public String toString(){
         return "Roi "+this.couleurRoi;
     }
-    /*
-    -- Créer joueur
-    -- setRoi Roi
-    -- Menu cb de joueur
-    -- attribution des rois
-    --
-     */
 }
