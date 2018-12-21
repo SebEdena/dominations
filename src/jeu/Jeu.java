@@ -52,7 +52,7 @@ public class Jeu {
         } while(nbJoueurs < NB_JOUEURS_MIN || nbJoueurs > NB_JOUEURS_MAX);
         paramJeu = NbJoueur.getParamsJeu(nbJoueurs);
         joueurs = allocateRoi(paramJeu.getNbJoueurs());
-        dominosDebut = chargementDominos("./test_pioche.csv");
+        dominosDebut = chargementDominos("./dominos.csv");
     }
 
     private Map<Joueur, Plateau> allocateRoi(int nb){
@@ -90,7 +90,7 @@ public class Jeu {
         int nbDominos = NbJoueur.getParamsJeu(paramJeu.getNbJoueurs()).getNbDominosRetires();
         Random rand = new Random();
         for (int i = 0; i < nbDominos; i++) {
-            int index = rand.nextInt(dominosRestants.size()-1)+1;
+            int index = rand.nextInt(dominosRestants.size());
             dominosRestants.remove(index);
         }
     }
