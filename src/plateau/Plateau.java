@@ -242,6 +242,69 @@ public class Plateau {
         return sommePoints;
     }
 
+    public int calculGrosDomaine()
+    {
+        int grosDomaine = 0;
+        List<Case> pileCasesVisitees = new ArrayList<Case>();
+        for(int i = 0; i < NB_COL_LIG; i++)
+        {
+            for(int j = 0 ; j < NB_COL_LIG; j++)
+            {
+                if(this.tableau[i][j] != null && !pileCasesVisitees.contains(this.tableau[i][j]) &&
+                        !this.tableau[i][j].getTerrain().equals(Terrain.CHATEAU))
+                {
+                    Case caseTemoin = tableau[i][j];
+                    List<Case> casesSimilaires = new ArrayList<Case>();
+                    rechercheCaseSimilaire(i,j, pileCasesVisitees, caseTemoin, casesSimilaires);
+
+                    int couronne = 0;
+                    int compteurCase = 0;
+                    for(Case c : casesSimilaires)
+                    {
+                        compteurCase++;
+                        couronne = couronne + c.getNbCouronne();
+                    }
+                    if(grosDomaine < compteurCase)
+                    {
+                        grosDomaine = compteurCase;
+                    }
+                    //System.out.println(sommePoints);
+                }
+            }
+        }
+        return grosDomaine;
+    }
+
+    public int calculCouronne()
+    {
+        int sommeCouronne = 0;
+        List<Case> pileCasesVisitees = new ArrayList<Case>();
+        for(int i = 0; i < NB_COL_LIG; i++)
+        {
+            for(int j = 0 ; j < NB_COL_LIG; j++)
+            {
+                if(this.tableau[i][j] != null && !pileCasesVisitees.contains(this.tableau[i][j]) &&
+                        !this.tableau[i][j].getTerrain().equals(Terrain.CHATEAU))
+                {
+                    Case caseTemoin = tableau[i][j];
+                    List<Case> casesSimilaires = new ArrayList<Case>();
+                    rechercheCaseSimilaire(i,j, pileCasesVisitees, caseTemoin, casesSimilaires);
+
+                    int couronne = 0;
+                    int compteurCase = 0;
+                    for(Case c : casesSimilaires)
+                    {
+                        compteurCase++;
+                        couronne = couronne + c.getNbCouronne();
+                    }
+                    sommeCouronne += couronne;
+                    //System.out.println(sommePoints);
+                }
+            }
+        }
+        return sommeCouronne;
+    }
+
     private void rechercheCaseSimilaire(int x, int y, List<Case> pileCasesVisitees, Case caseTemoin, List<Case> casesAdjacentes)
     {
         casesAdjacentes.add(caseTemoin);
