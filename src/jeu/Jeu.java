@@ -51,14 +51,14 @@ public class Jeu {
             }
         } while(nbJoueurs < NB_JOUEURS_MIN || nbJoueurs > NB_JOUEURS_MAX);
         paramJeu = NbJoueur.getParamsJeu(nbJoueurs);
-        joueurs = allocateRoi(paramJeu.getNbJoueurs());
+        joueurs = allocateRoi();
         dominosDebut = chargementDominos("./dominos.csv");
     }
 
-    private Map<Joueur, Plateau> allocateRoi(int nb){
+    private Map<Joueur, Plateau> allocateRoi(){
         Map<Joueur, Plateau> listeJoueurs = new HashMap<>();
         listeRois = new int[paramJeu.getNbJoueurs()];
-        for (int i = 0; i < nb; i++) {
+        for (int i = 0; i < paramJeu.getNbJoueurs(); i++) {
             System.out.println("Joueur "+ (i+1) +" veuillez renseigner votre pseudo : ");
             String nom = scan.next();
             listeJoueurs.put(new Joueur(nom, Roi.getRoiInt(i), SCORE_DEFAUT), new Plateau(PETIT_PLATEAU));
@@ -102,7 +102,7 @@ public class Jeu {
     public void pioche(){
         if(!dominosRestants.isEmpty()){
             Collections.shuffle(dominosRestants);
-            for (int i = 0; i < paramJeu.getNbJoueurs(); i++) {
+            for (int i = 0; i < paramJeu.getNbRoiParJoueur()*paramJeu.getNbJoueurs(); i++) {
                 IDomino d = piocher();
                 tirage.add(d);
             }
