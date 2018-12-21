@@ -278,28 +278,11 @@ public class Plateau {
     public int calculCouronne()
     {
         int sommeCouronne = 0;
-        List<Case> pileCasesVisitees = new ArrayList<Case>();
-        for(int i = 0; i < NB_COL_LIG; i++)
+        for(IDomino d : this.dominos)
         {
-            for(int j = 0 ; j < NB_COL_LIG; j++)
+            for(Case c : d.getCases())
             {
-                if(this.tableau[i][j] != null && !pileCasesVisitees.contains(this.tableau[i][j]) &&
-                        !this.tableau[i][j].getTerrain().equals(Terrain.CHATEAU))
-                {
-                    Case caseTemoin = tableau[i][j];
-                    List<Case> casesSimilaires = new ArrayList<Case>();
-                    rechercheCaseSimilaire(i,j, pileCasesVisitees, caseTemoin, casesSimilaires);
-
-                    int couronne = 0;
-                    int compteurCase = 0;
-                    for(Case c : casesSimilaires)
-                    {
-                        compteurCase++;
-                        couronne = couronne + c.getNbCouronne();
-                    }
-                    sommeCouronne += couronne;
-                    //System.out.println(sommePoints);
-                }
+               sommeCouronne += c.getNbCouronne();
             }
         }
         return sommeCouronne;
