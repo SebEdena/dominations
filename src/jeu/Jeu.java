@@ -22,7 +22,7 @@ public class Jeu {
     private List<IDomino> tirage = new ArrayList<>();
     private int[] listeRois;
     private boolean plusDeDominos;
-    private int nbJoueurs = 0;
+    private NbJoueur paramJeu;
 
     private Jeu(){
         try {
@@ -41,6 +41,7 @@ public class Jeu {
     }
 
     private void intitialisationJeu() throws IOException {
+        int nbJoueurs = 0;
         do {
             try{
                 System.out.println("Nombre de joueurs ? (2 à 4)");
@@ -49,13 +50,14 @@ public class Jeu {
                 System.out.println("Erreur de saisie");
             }
         } while(nbJoueurs < NB_JOUEURS_MIN || nbJoueurs > NB_JOUEURS_MAX);
-        joueurs = allocateRoi(nbJoueurs);
+        paramJeu = NbJoueur.getParamsJeu(nbJoueurs);
+        joueurs = allocateRoi(paramJeu.getNbJoueurs());
         dominosDebut = chargementDominos("./test_pioche.csv");
     }
 
     private Map<Joueur, Plateau> allocateRoi(int nb){
         Map<Joueur, Plateau> listeJoueurs = new HashMap<>();
-        listeRois = new int[nbJoueurs];
+        listeRois = new int[paramJeu.getNbJoueurs()];
         for (int i = 0; i < nb; i++) {
             System.out.println("Joueur "+ (i+1) +" veuillez renseigner votre pseudo : ");
             String nom = scan.next();
@@ -80,6 +82,19 @@ public class Jeu {
         return dominosCharges;
     }
 
+    public void débutPartie(){
+        retirerDominos();
+    }
+
+    private void retirerDominos(){
+        int nbDominos = NbJoueur.getParamsJeu(paramJeu.getNbJoueurs()).getNbDominosRetires();
+        Random rand = new Random();
+        for (int i = 0; i < nbDominos; i++) {
+            int index = rand.nextInt(dominosRestants.size()-1)+1;
+            dominosRestants.remove(index);
+        }
+    }
+
     private void mélangerRois(){
         Collections.shuffle(Arrays.asList(listeRois));
     }
@@ -87,7 +102,7 @@ public class Jeu {
     public void pioche(){
         if(!dominosRestants.isEmpty()){
             Collections.shuffle(dominosRestants);
-            for (int i = 0; i < nbJoueurs; i++) {
+            for (int i = 0; i < paramJeu.getNbJoueurs(); i++) {
                 IDomino d = piocher();
                 tirage.add(d);
             }
