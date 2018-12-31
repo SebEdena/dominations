@@ -2,10 +2,16 @@ package jeu;
 
 public enum Roi
 {
-    Rose,
-    Jaune,
-    Vert,
-    Bleu;
+    Rose("#f06292"),
+    Jaune("#fbc02d"),
+    Vert("#8bc34a"),
+    Bleu("#0288d1");
+
+    private String hexColor;
+
+    Roi(String hexColor){
+        this.hexColor = hexColor;
+    }
 
     public static Roi getRoiInt(int enumCouleur)
     {
@@ -39,5 +45,9 @@ public enum Roi
             default :
                 return null;
         }
+    }
+
+    public String getColor(){
+        return hexColor;
     }
 }

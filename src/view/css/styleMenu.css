@@ -1,0 +1,7 @@
+.button{
+    -fx-cursor: HAND;
+}
+
+.error-tooltip{
+    -fx-font-size: 14px;
+}
