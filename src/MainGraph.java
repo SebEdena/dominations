@@ -8,7 +8,7 @@ public class MainGraph extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("/view/accueil.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/view/partie.fxml"));
         primaryStage.setTitle("Hello World");
         Scene s = new Scene(root, 1600, 900);
         primaryStage.setScene(s);
