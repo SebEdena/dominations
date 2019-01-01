@@ -49,4 +49,14 @@ public enum Orientation {
             default: return null;
         }
     }
+
+    public Orientation getRotationHoraire(){
+        switch (this){
+            case NORD: return EST;
+            case EST: return SUD;
+            case SUD: return OUEST;
+            case OUEST: return NORD;
+            default: return null;
+        }
+    }
 }

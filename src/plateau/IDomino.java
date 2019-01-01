@@ -8,4 +8,6 @@ public interface IDomino
     public int getIdentifiant();
 
     public int getNbCases();
+
+    public int getCaseIndex(Case c, boolean oppose);
 }

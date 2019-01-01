@@ -25,4 +25,9 @@ public class Tuile implements IDomino
     public int getNbCases() {
         return 1;
     }
+
+    @Override
+    public int getCaseIndex(Case c, boolean oppose) {
+        return caseTuile.equals(c)?0:-1;
+    }
 }
