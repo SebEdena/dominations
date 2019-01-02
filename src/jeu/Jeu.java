@@ -119,6 +119,14 @@ public class Jeu {
         return domino;
     }
 
+    public void tourDeJeu(){
+
+    }
+
+    public void afficherPioche(){
+
+    }
+
     /*
      * Tour 1
      * pioche de la tuile de départ
