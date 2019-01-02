@@ -2,15 +2,13 @@ package plateau;
 
 public class PlacementDomino {
 
-    IDomino domino;
+    private IDomino domino;
 
-    Integer caseId;
+    private Integer caseId;
 
-    Integer row, column;
+    private Integer row, column;
 
-    Orientation sens;
-
-    boolean onPlateau;
+    private Orientation sens;
 
     public PlacementDomino(IDomino domino, int caseId, int row, int column, Orientation sens) {
         this.domino = domino;
@@ -18,7 +16,6 @@ public class PlacementDomino {
         this.row = row;
         this.column = column;
         this.sens = sens;
-        this.onPlateau = false;
     }
 
     public PlacementDomino(IDomino domino, Orientation sens) {
@@ -38,6 +35,10 @@ public class PlacementDomino {
         return caseId;
     }
 
+    public void setCaseId(Integer caseId) {
+        this.caseId = caseId;
+    }
+
     public int getRow() {
         return row;
     }
@@ -54,12 +55,39 @@ public class PlacementDomino {
         this.sens = sens;
     }
 
-    public boolean isOnPlateau(){
-        return caseId != null && row != null && column != null;
+    public Integer getRowCase2Offset(){
+        if(caseId == null){
+            return 0;
+        }
+        return ((caseId==0)?1:-1)*sens.getOffsetX();
     }
 
-    public void positionOnPlateau(int caseId, int row, int col){
-        this.caseId = caseId;
+    public Integer getColCase2Offset(){
+        if(caseId == null){
+            return 0;
+        }
+        return ((caseId==0)?1:-1)*sens.getOffsetY();
+    }
+
+    public Integer getRowCase2(){
+        if(row == null || caseId == null){
+            return null;
+        }
+        return row+getRowCase2Offset();
+    }
+
+    public Integer getColCase2(){
+        if(column == null || caseId == null){
+            return null;
+        }
+        return column+getColCase2Offset();
+    }
+
+    public boolean isOnPlateau(){
+        return row != null && column != null;
+    }
+
+    public void positionOnPlateau(int row, int col){
         this.row = row;
         this.column = col;
     }

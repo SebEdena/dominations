@@ -5,7 +5,7 @@ import java.lang.String;
 public enum Terrain
 {
     CHAMPS("Champs","CHAM", "#fbc02d"),
-    CHATEAU("Chateau","CHAT", "#ff7043"),
+    CHATEAU("Chateau","CHAT", "#000000"),
     FORET("Foret","FORE", "#2e7d32"),
     MER("Mer","MER-","#2196f3"),
     PRAIRIE("Prairie", "PRAI", "#8bc34a"),

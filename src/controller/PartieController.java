@@ -2,14 +2,21 @@ package controller;
 
 import com.jfoenix.controls.JFXButton;
 import controller.util.IndicatorFader;
+import exceptions.DominoException;
+import exceptions.TuileException;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import jeu.Joueur;
 import plateau.*;
 import util.CSVParser;
 
@@ -62,14 +69,13 @@ public class PartieController {
     private JFXButton partieValidateButton;
 
 
-
     private final double caseDimension = 50;
 
     private Map<String, Background> correspondanceStyle;
 
     private IndicatorFader status;
 
-    private GridPane plateau;
+    private GridPane plateauDisplay;
 
     private int colRowSize;
 
@@ -77,12 +83,12 @@ public class PartieController {
 
     private PlacementDomino placement = null;
 
-    private final DataFormat caseDominoFormat = new DataFormat("plateau.Case");
+    private Plateau p = null;
 
-    private Background onDragOverBackground = new Background(new BackgroundFill(Color.GRAY, null, null));
+    private final DataFormat caseDominoFormat = new DataFormat("plateauDisplay.Case");
 
     @FXML
-    void initialize() {
+    void initialize() throws DominoException, TuileException, IOException {
         assert partieIndicator != null : "fx:id=\"partieIndicator\" was not injected: check your FXML file 'partie.fxml'.";
         assert partieTitleIndicator != null : "fx:id=\"partieTitleIndicator\" was not injected: check your FXML file 'partie.fxml'.";
         assert partieTextIndicator != null : "fx:id=\"partieTextIndicator\" was not injected: check your FXML file 'partie.fxml'.";
@@ -95,6 +101,7 @@ public class PartieController {
 
         status = new IndicatorFader(partieIndicator, partieTitleIndicator, partieTextIndicator, 3000, 500);
 
+        initCorrespondanceStyle();
         initPlateau(7);
 
         toggle.setOnAction(event -> {
@@ -108,18 +115,18 @@ public class PartieController {
             e.printStackTrace();
         }
 
-        for(String[] strs : dominos) {
+        for (String[] strs : dominos) {
             Case case1 = new Case(Integer.parseInt(strs[0]), Terrain.getTerrain(strs[1]));
             Case case2 = new Case(Integer.parseInt(strs[2]), Terrain.getTerrain(strs[3]));
-            IDomino domino = new Domino(case1,case2,Integer.parseInt(strs[4]));
+            IDomino domino = new Domino(case1, case2, Integer.parseInt(strs[4]));
             deckDominos.add(domino);
         }
 
-        fillDomino(deckDominos.get(15));
+        fillDomino(deckDominos.get(35));
         partieDomino.setOnMouseClicked(event -> {
-            if(event.getButton().equals(MouseButton.SECONDARY)){
+            if (event.getButton().equals(MouseButton.SECONDARY)) {
                 partieDomino.setRotate(Math.floor(partieDomino.getRotate() + 90));
-                for(Node child: partieDomino.getChildren()){
+                for (Node child : partieDomino.getChildren()) {
                     child.setRotate(Math.floor(child.getRotate() - 90));
                 }
                 placement.setSens(placement.getSens().getRotationHoraire());
@@ -130,59 +137,83 @@ public class PartieController {
             resetDomino();
         });
 
-        initCorrespondanceStyle();
         initDominoSourceDrag();
         initDominoTargetDrag();
+
+
+        List<String[]> exPlateau = CSVParser.parse("./test_plateau.csv", ",", true);
+        this.fillDeck("./dominos.csv");
+
+        p = new Plateau(5);
+
+        for(String[] strs : exPlateau){
+            if(Integer.parseInt(strs[0]) <= 0 ){
+                p.addDomino(new Tuile(), Integer.parseInt(strs[1]),
+                        Integer.parseInt(strs[2]), 0, null);
+            }else{
+                //p.possibilite(getDomino(Integer.parseInt(strs[0])));
+                p.addDomino(getDomino(Integer.parseInt(strs[0])),
+                        Integer.parseInt(strs[1]), Integer.parseInt(strs[2]),
+                        Integer.parseInt(strs[3]), Orientation.getOrientation(strs[4]));
+            }
+            System.out.println(p.affichePlateau(true));
+        }
+        System.out.println(p.affichePlateau(true));
+        System.out.println(p.calculPoint());
+
+        fillPlateau(p, null);
     }
 
-    private void fillDomino(IDomino d){
-        if(d instanceof Domino){
+    private void fillDomino(IDomino d) {
+        if (d instanceof Domino) {
             placement = new PlacementDomino(d, Orientation.EST);
             Case[] cases = d.getCases();
-            for (int i = 0; i < cases.length; i++){
+            for (int i = 0; i < cases.length; i++) {
                 Label caseDomino = (Label) partieDomino.getChildren().get(i);
-                caseDomino.setStyle(caseDomino.getStyle()+"-fx-background-color:"+cases[i].getTerrain().getColor()+";" +
+                caseDomino.setStyle(caseDomino.getStyle() + "-fx-background-color:" + cases[i].getTerrain().getColor() + ";" +
                         "-fx-text-fill:white;");
-                caseDomino.setText(""+cases[i].getNbCouronne());
+                caseDomino.setText("" + cases[i].getNbCouronne());
                 setFixedDimensions(caseDomino, caseDimension, caseDimension);
             }
             partieDomino.setRotate(0);
-            setFixedDimensions(partieDomino, caseDimension*2, caseDimension);
+            setFixedDimensions(partieDomino, caseDimension * 2, caseDimension);
         }
     }
 
-    private void initPlateau(int nbColLig){
+    private void initPlateau(int nbColLig) {
         this.colRowSize = nbColLig;
-        plateau = new GridPane();
-        setFixedDimensions(plateau, caseDimension*nbColLig, caseDimension*nbColLig);
+        plateauDisplay = new GridPane();
+        setFixedDimensions(plateauDisplay, caseDimension * nbColLig, caseDimension * nbColLig);
 
-        for(int i=0;i<nbColLig;i++){
-            for(int j=0;j<nbColLig;j++){
+        for (int i = 0; i < nbColLig; i++) {
+            for (int j = 0; j < nbColLig; j++) {
                 Label label = new Label();
                 setFixedDimensions(label, caseDimension, caseDimension);
                 label.setAlignment(Pos.CENTER);
                 label.setStyle("-fx-font-size:18px;-fx-font-weight:bold;-fx-text-fill:white;-fx-border-color:black;");
-                label.setBackground(Background.EMPTY);
-                plateau.add(label, i, j);
+                label.setBackground(correspondanceStyle.get("empty"));
+                plateauDisplay.add(label, i, j);
             }
         }
-        partiePlateauContainer.getChildren().add(plateau);
+        partiePlateauContainer.getChildren().add(plateauDisplay);
     }
 
-    private void initDominoSourceDrag(){
-        for(Node caseDom : partieDomino.getChildren()){
+    private void initDominoSourceDrag() {
+        for (Node caseDom : partieDomino.getChildren()) {
             caseDom.setOnDragDetected(event -> {
-                if(placement.getDomino() != null){
+                if (placement.getDomino() != null) {
                     Dragboard db = caseDom.startDragAndDrop(TransferMode.MOVE);
                     ClipboardContent content = new ClipboardContent();
-                    content.put(caseDominoFormat, placement.getDomino().getCases()[getCaseDominoIndex(caseDom)]);
+                    int pickedCase = getCaseDominoIndex(caseDom);
+                    content.put(caseDominoFormat, placement.getDomino().getCases()[pickedCase]);
+                    placement.setCaseId(pickedCase);
                     db.setContent(content);
                 }
                 event.consume();
             });
 
             caseDom.setOnDragDone(event -> {
-                if(placement.isOnPlateau() || event.isDropCompleted()){
+                if (placement.isOnPlateau() || event.isDropCompleted()) {
                     partieDomino.setVisible(false);
                 }
                 event.consume();
@@ -190,31 +221,48 @@ public class PartieController {
         }
     }
 
-    private void initDominoTargetDrag(){
-        for(Node child : plateau.getChildren()){
+    private void initDominoTargetDrag() {
+        for (Node child : plateauDisplay.getChildren()) {
             child.setOnDragOver(event -> {
+                System.out.println("____OVER___");
+                Label lCase2 = getCaseLabel(getRow(child), getCol(child), placement.getSens());
                 if (event.getGestureSource() != child &&
                         event.getDragboard().hasContent(caseDominoFormat) &&
-                        ((Label) child).getText().equals("")) {
-                    event.acceptTransferModes(TransferMode.MOVE);
+                        isFree((Label) child) &&
+                        (lCase2 == null || isFree(lCase2))) {
+                    if(p.placementValide(placement.getDomino(), getRow(child) - 1, getCol(child) - 1, placement.getCaseId(), placement.getSens()) == null){
+                        event.acceptTransferModes(TransferMode.MOVE);
+                    }
                 }
                 event.consume();
             });
 
             child.setOnDragEntered(event -> {
+                System.out.println("____ENTER___");
+                Label lCase2 = getCaseLabel(getRow(child), getCol(child), placement.getSens());
                 if (event.getGestureSource() != child &&
                         event.getDragboard().hasContent(caseDominoFormat) &&
-                        ((Label) child).getText().equals("")) {
-                    ((Control)child).setBackground(onDragOverBackground);
+                        isFree((Label) child) &&
+                        (isFree(lCase2))) {
+                    if(p.placementValide(placement.getDomino(), getRow(child) - 1, getCol(child) - 1, placement.getCaseId(), placement.getSens()) == null){
+                        ((Control) child).setBackground(correspondanceStyle.get("hover"));
+                        lCase2.setBackground(correspondanceStyle.get("hover"));
+                    }
                 }
                 event.consume();
             });
 
             child.setOnDragExited(event -> {
+                Label lCase2 = getCaseLabel(getRow(child), getCol(child), placement.getSens());
+                System.out.println("____EXIT___");
                 if (event.getGestureSource() != child &&
                         event.getDragboard().hasContent(caseDominoFormat) &&
-                        ((Label) child).getText().equals("")) {
-                    ((Control)child).setBackground(Background.EMPTY);
+                        isFree((Label) child) &&
+                        (lCase2 == null || isFree(lCase2))) {
+                    if(p.placementValide(placement.getDomino(), getRow(child) - 1, getCol(child) - 1, placement.getCaseId(), placement.getSens()) == null){
+                        ((Control) child).setBackground(correspondanceStyle.get("empty"));
+                        lCase2.setBackground(correspondanceStyle.get("empty"));
+                    }
                 }
                 event.consume();
             });
@@ -223,19 +271,17 @@ public class PartieController {
                 Dragboard db = event.getDragboard();
                 boolean success = false;
                 if (db.hasContent(caseDominoFormat) &&
-                        ((Label) child).getText().equals("")) {
+                        isFree((Label) child)) {
                     success = true;
                     Case c = (Case) event.getDragboard().getContent(caseDominoFormat);
                     int caseIndex = placement.getDomino().getCaseIndex(c, false);
                     int row = getRow(child);
                     int col = getCol(child);
 
-                    fillLabelWithCase((Label)child, (Case) event.getDragboard().getContent(caseDominoFormat));
-                    fillLabelWithCase(getCaseLabel(
-                            row+((caseIndex==0)?1:-1)*placement.getSens().getOffsetX(),
-                            col+((caseIndex==0)?1:-1)*placement.getSens().getOffsetY()),
-                            placement.getDomino().getCases()[Math.abs(caseIndex - 1)]);
-                    placement.positionOnPlateau(caseIndex, row, col);
+                    fillLabelWithCase((Label) child, (Case) event.getDragboard().getContent(caseDominoFormat), false);
+                    fillLabelWithCase(getCaseLabel(row, col, placement.getSens()),
+                            placement.getDomino().getCases()[Math.abs(caseIndex - 1)], false);
+                    placement.positionOnPlateau(row, col);
                 }
                 event.setDropCompleted(success);
                 event.consume();
@@ -243,22 +289,21 @@ public class PartieController {
         }
     }
 
-    private void initCorrespondanceStyle(){
+    private void initCorrespondanceStyle() {
         correspondanceStyle = new HashMap<>();
         correspondanceStyle.put("empty", Background.EMPTY);
-        correspondanceStyle.put("hoverValid", new Background(new BackgroundFill(Color.GRAY, null, null)));
-        correspondanceStyle.put("hoverInvalid", new Background(new BackgroundFill(Color.RED, null, null)));
-
-        for(int i = 0; i < Terrain.values().length; i++){
+        correspondanceStyle.put("hover", new Background(new BackgroundFill(Color.GRAY, null, null)));
+        correspondanceStyle.put("locked", new Background(new BackgroundFill(Color.web("d50000"), null, null)));
+        for (int i = 0; i < Terrain.values().length; i++) {
             Terrain t = Terrain.values()[i];
             correspondanceStyle.put(t.getLibelle(), new Background(new BackgroundFill(Color.web(t.getColor()), null, null)));
         }
     }
 
-    private int getCaseDominoIndex(Node caseDom){
+    private int getCaseDominoIndex(Node caseDom) {
         int i = 0;
-        for (Node caseDisplay : partieDomino.getChildren()){
-            if(caseDisplay.equals(caseDom)) {
+        for (Node caseDisplay : partieDomino.getChildren()) {
+            if (caseDisplay.equals(caseDom)) {
                 return i;
             }
             i++;
@@ -266,55 +311,124 @@ public class PartieController {
         return -1;
     }
 
-    private void displayTab(){
-        for(Node n : plateau.getChildren()){
+    private void displayTab() {
+        for (Node n : plateauDisplay.getChildren()) {
             List<BackgroundFill> fills = ((Label) n).getBackground().getFills();
-            System.out.println(fills.size() == 0?"EMPTY":fills.get(0).getFill());
+            System.out.println(fills.size() == 0 ? "EMPTY" : fills.get(0).getFill());
         }
         System.out.println();
     }
 
-    private Label getCaseLabel(int row, int col){
-        return (Label) plateau.getChildren().get(col*colRowSize + row);
-    }
-
-    private void fillLabelWithCase(Label l, Case c){
-        if(c == null){
-            l.setBackground(correspondanceStyle.get("empty"));
-            l.setText("");
-        }else{
-            l.setBackground(correspondanceStyle.get(c.getTerrain().getLibelle()));
-            l.setText(""+c.getNbCouronne());
+    private Label getCaseLabel(int row, int col, Orientation sens) {
+        try {
+            if (sens != null) {
+                if ((row == 0 && placement.getRowCase2Offset() < 0) ||
+                        (row == (colRowSize - 1) && placement.getRowCase2Offset() > 0)) {
+                    return null;
+                } else {
+                    return (Label) plateauDisplay.getChildren().get((col + placement.getColCase2Offset()) * colRowSize +
+                            (row + placement.getRowCase2Offset()));
+                }
+            } else {
+                return (Label) plateauDisplay.getChildren().get(col * colRowSize + row);
+            }
+        } catch (IndexOutOfBoundsException e) {
+            return null;
         }
     }
 
-    private int getRow(Node n){
-        return GridPane.getRowIndex(n);
+    private void fillLabelWithCase(Label l, Case c, boolean lockedOnCaseNull) {
+        l.setGraphic(null);
+        if (c == null) {
+            l.setBackground(correspondanceStyle.get(lockedOnCaseNull?"locked":"empty"));
+            l.setText("");
+        } else {
+            if(c.getTerrain().equals(Terrain.CHATEAU)){
+                l.setGraphic(new ImageView("./view/img/crown.png"));
+            }else{
+                l.setText("" + c.getNbCouronne());
+            }
+            l.setBackground(correspondanceStyle.get(c.getTerrain().getLibelle()));
+        }
     }
 
-    private int getCol(Node n){
-        return GridPane.getColumnIndex(n);
+    private int getRow(Node node) {
+        return GridPane.getRowIndex(node);
     }
 
-    private void setFixedDimensions(Region r, double width, double height){
+    private int getCol(Node node) {
+        return GridPane.getColumnIndex(node);
+    }
+
+    private void setFixedDimensions(Region r, double width, double height) {
         r.setPrefSize(width, height);
         r.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         r.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
     }
 
-    private void resetDomino(){
-        if(placement != null && placement.isOnPlateau()){
-            int row2 = placement.getRow()+((placement.getCaseId()==0)?1:-1)*placement.getSens().getOffsetX();
-            int col2 = placement.getColumn()+((placement.getCaseId()==0)?1:-1)*placement.getSens().getOffsetY();
-            fillLabelWithCase(getCaseLabel(placement.getRow(), placement.getColumn()), null);
-            fillLabelWithCase(getCaseLabel(row2, col2), null);
+    private boolean isFree(Label label) {
+        return p.getCaseAt(getRow(label) - 1, getCol(label) - 1) == null;
+    }
+
+    private void resetDomino() {
+        if (placement != null && placement.isOnPlateau()) {
+            int row2 = placement.getRowCase2();
+            int col2 = placement.getColCase2();
+            fillLabelWithCase(getCaseLabel(placement.getRow(), placement.getColumn(), null), null, false);
+            fillLabelWithCase(getCaseLabel(row2, col2, null), null, false);
             partieDomino.setRotate(0);
             placement.removeFromPlateau();
             placement.setSens(Orientation.EST);
             partieDomino.setVisible(true);
-            for(Node n : partieDomino.getChildren()){
+            for (Node n : partieDomino.getChildren()) {
                 n.setRotate(0);
             }
+        }
+    }
+
+    private void fillPlateau(Plateau p, Joueur joueur) {
+        if (p.tuilePresente()) {
+            int[] xBounds = p.getXBounds();
+            int[] yBounds = p.getYBounds();
+            int pSize = p.getSize();
+            for (int i = -1; i <= pSize; i++) {
+                for (int j = -1; j <= pSize; j++) {
+                    Label lab = getCaseLabel(i + 1, j + 1, null);
+                    if (i == -1 || i == pSize || j == -1 || j == pSize) {
+                        fillLabelWithCase(lab, null, true);
+                    } else {
+                        Case c = p.getCaseAt(i, j);
+                        if ((i >= (xBounds[0]) && i <= (xBounds[1])) && (j >= (yBounds[0]) && j <= (yBounds[1]))) {
+                            fillLabelWithCase(lab, c, false);
+                        }else{
+                            fillLabelWithCase(lab, null, false);
+                        }
+                    }
+                }
+
+            }
+        } else {
+
+        }
+    }
+
+    public IDomino getDomino(int id){
+        for(IDomino d : deckDominos){
+            if(d.getIdentifiant() == id){
+                return d;
+            }
+        }
+        return null;
+    }
+
+    public void fillDeck(String path) throws IOException {
+        List<String[]> dominos = CSVParser.parse(path, ",", true);
+
+        for(String[] strs : dominos) {
+            Case case1 = new Case(Integer.parseInt(strs[0]), Terrain.getTerrain(strs[1]));
+            Case case2 = new Case(Integer.parseInt(strs[2]), Terrain.getTerrain(strs[3]));
+            IDomino domino = new Domino(case1,case2,Integer.parseInt(strs[4]));
+            deckDominos.add(domino);
         }
     }
 }

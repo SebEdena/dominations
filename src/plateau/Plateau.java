@@ -4,6 +4,7 @@ import exceptions.DominoException;
 import exceptions.TuileException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Plateau {
@@ -18,6 +19,32 @@ public class Plateau {
         this.NB_COL_LIG = NB_COL_LIG;
         this.tableau = new Case[NB_COL_LIG][NB_COL_LIG];
         this.dominos = new ArrayList<IDomino>();
+    }
+
+    public int[] getXBounds(){
+        if(tuileAjoutee){
+            return new int[]{minX, maxX};
+        }
+        return null;
+    }
+
+    public int[] getYBounds(){
+        if(tuileAjoutee){
+            return new int[]{minY, maxY};
+        }
+        return null;
+    }
+
+    public int getSize(){
+        return NB_COL_LIG;
+    }
+
+    public boolean tuilePresente(){
+        return tuileAjoutee;
+    }
+
+    public Case getCaseAt(int row, int col) {
+        return tableau[row][col];
     }
 
     public void addDomino(IDomino d, int xCase, int yCase, int indexCase, Orientation sens) throws TuileException, DominoException {
@@ -56,7 +83,7 @@ public class Plateau {
         }
     }
 
-    private String placementValide(IDomino d, int xCase, int yCase, int indexCase, Orientation sens){
+    public String placementValide(IDomino d, int xCase, int yCase, int indexCase, Orientation sens){
         int xCase2 = xCase + sens.getOffsetX(), yCase2 = yCase + sens.getOffsetY();
 
         if(xCase < -1 || xCase > NB_COL_LIG + 1 || yCase < -1 || yCase > NB_COL_LIG + 1 ||
@@ -104,26 +131,6 @@ public class Plateau {
                                         .equals(Terrain.CHATEAU))){
                     isValid[i] = true;
                 }
-                /*if(indexCase == i &&
-                        xCase+o.getOffsetX() >= 0 && xCase+o.getOffsetX() < NB_COL_LIG &&
-                        yCase+o.getOffsetY() >= 0 && yCase+o.getOffsetY() < NB_COL_LIG &&
-                        tableau[xCase+o.getOffsetX()][yCase+o.getOffsetY()] != null &&
-                        !o.equals(sens) &&
-                        (tableau[xCase+o.getOffsetX()][yCase+o.getOffsetY()].getTerrain()
-                                .equals(d.getCases()[indexCase].getTerrain()) ||
-                                tableau[xCase+o.getOffsetX()][yCase+o.getOffsetY()].getTerrain()
-                                        .equals(Terrain.CHATEAU))){
-                        isValid[indexCase] = true;
-                } else if(!o.equals(sens.getOppose())&&
-                        xCase2+o.getOffsetX() >= 0 && xCase2+o.getOffsetX() < NB_COL_LIG &&
-                        yCase2+o.getOffsetY() >= 0 && yCase2+o.getOffsetY() < NB_COL_LIG &&
-                        tableau[xCase2+o.getOffsetX()][yCase2+o.getOffsetY()] != null &&
-                            (tableau[xCase2+o.getOffsetX()][yCase2+o.getOffsetY()].getTerrain()
-                                    .equals(d.getCases()[indexAutreCase].getTerrain())||
-                            tableau[xCase2+o.getOffsetX()][yCase2+o.getOffsetY()].getTerrain()
-                                    .equals(Terrain.CHATEAU))){
-                        isValid[indexAutreCase] = true;
-                }*/
                 if(isValid[i]){
                     break;
                 }
