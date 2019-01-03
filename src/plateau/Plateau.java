@@ -102,6 +102,7 @@ public class Plateau {
                 tableau[xCase][yCase] != null) ||
                 (xCase2 >= 0 && xCase2 < NB_COL_LIG && yCase2 >= 0 && yCase2 < NB_COL_LIG &&
                         tableau[xCase2][yCase2] != null)){
+            System.out.println(xCase + " " + yCase + " " + xCase2 + " " + yCase2);
             return "Au moins une des deux cases où placer le domino est déjà remplie";
         }
 

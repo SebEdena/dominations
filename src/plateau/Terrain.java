@@ -9,8 +9,8 @@ public enum Terrain
     FORET("Foret","FORE", "#2e7d32"),
     MER("Mer","MER-","#2196f3"),
     PRAIRIE("Prairie", "PRAI", "#8bc34a"),
-    MONTAGNE("Montagne", "MONT", "#795548"),
-    MINE("Mine","MINE", "#757575");
+    MONTAGNE("Montagne", "MONT", "#6D4C41"),
+    MINE("Mine","MINE", "#607D8B");
 
     private String libelle;
     private String diminutif;

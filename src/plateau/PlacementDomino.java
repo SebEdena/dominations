@@ -59,14 +59,14 @@ public class PlacementDomino {
         if(caseId == null){
             return 0;
         }
-        return ((caseId==0)?1:-1)*sens.getOffsetX();
+        return sens.getOffsetX();
     }
 
     public Integer getColCase2Offset(){
         if(caseId == null){
             return 0;
         }
-        return ((caseId==0)?1:-1)*sens.getOffsetY();
+        return sens.getOffsetY();
     }
 
     public Integer getRowCase2(){

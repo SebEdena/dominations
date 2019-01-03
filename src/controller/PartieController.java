@@ -125,11 +125,10 @@ public class PartieController {
         fillDomino(deckDominos.get(35));
         partieDomino.setOnMouseClicked(event -> {
             if (event.getButton().equals(MouseButton.SECONDARY)) {
-                partieDomino.setRotate(Math.floor(partieDomino.getRotate() + 90));
+                partieDomino.setRotate(Math.floor(((int)partieDomino.getRotate() + 90) % 360));
                 for (Node child : partieDomino.getChildren()) {
-                    child.setRotate(Math.floor(child.getRotate() - 90));
+                    child.setRotate(-(int)partieDomino.getRotate());
                 }
-                placement.setSens(placement.getSens().getRotationHoraire());
             }
         });
 
@@ -207,6 +206,7 @@ public class PartieController {
                     int pickedCase = getCaseDominoIndex(caseDom);
                     content.put(caseDominoFormat, placement.getDomino().getCases()[pickedCase]);
                     placement.setCaseId(pickedCase);
+                    updateOrientationDomino(placement, pickedCase);
                     db.setContent(content);
                 }
                 event.consume();
@@ -230,6 +230,7 @@ public class PartieController {
                         event.getDragboard().hasContent(caseDominoFormat) &&
                         isFree((Label) child) &&
                         (lCase2 == null || isFree(lCase2))) {
+                    System.out.println(p.placementValide(placement.getDomino(), getRow(child) - 1, getCol(child) - 1, placement.getCaseId(), placement.getSens()) == null);
                     if(p.placementValide(placement.getDomino(), getRow(child) - 1, getCol(child) - 1, placement.getCaseId(), placement.getSens()) == null){
                         event.acceptTransferModes(TransferMode.MOVE);
                     }
@@ -244,6 +245,9 @@ public class PartieController {
                         event.getDragboard().hasContent(caseDominoFormat) &&
                         isFree((Label) child) &&
                         (isFree(lCase2))) {
+                    System.out.println(getRow(child));
+                    System.out.println(getCol(child));
+                    System.out.println(p.placementValide(placement.getDomino(), getRow(child) - 1, getCol(child) - 1, placement.getCaseId(), placement.getSens()));
                     if(p.placementValide(placement.getDomino(), getRow(child) - 1, getCol(child) - 1, placement.getCaseId(), placement.getSens()) == null){
                         ((Control) child).setBackground(correspondanceStyle.get("hover"));
                         lCase2.setBackground(correspondanceStyle.get("hover"));
@@ -260,8 +264,12 @@ public class PartieController {
                         isFree((Label) child) &&
                         (lCase2 == null || isFree(lCase2))) {
                     if(p.placementValide(placement.getDomino(), getRow(child) - 1, getCol(child) - 1, placement.getCaseId(), placement.getSens()) == null){
-                        ((Control) child).setBackground(correspondanceStyle.get("empty"));
-                        lCase2.setBackground(correspondanceStyle.get("empty"));
+                        if(!placement.isOnPlateau()){
+
+                            ((Control) child).setBackground(correspondanceStyle.get("empty"));
+                            lCase2.setBackground(correspondanceStyle.get("empty"));
+                        }
+                        System.out.println("DragEXT");
                     }
                 }
                 event.consume();
@@ -282,7 +290,7 @@ public class PartieController {
                     fillLabelWithCase(getCaseLabel(row, col, placement.getSens()),
                             placement.getDomino().getCases()[Math.abs(caseIndex - 1)], false);
                     placement.positionOnPlateau(row, col);
-                }
+                    }
                 event.setDropCompleted(success);
                 event.consume();
             });
@@ -292,8 +300,8 @@ public class PartieController {
     private void initCorrespondanceStyle() {
         correspondanceStyle = new HashMap<>();
         correspondanceStyle.put("empty", Background.EMPTY);
-        correspondanceStyle.put("hover", new Background(new BackgroundFill(Color.GRAY, null, null)));
-        correspondanceStyle.put("locked", new Background(new BackgroundFill(Color.web("d50000"), null, null)));
+        correspondanceStyle.put("hover", new Background(new BackgroundFill(Color.web("#afafaf"), null, null)));
+        correspondanceStyle.put("locked", new Background(new BackgroundFill(Color.web("#d50000"), null, null)));
         for (int i = 0; i < Terrain.values().length; i++) {
             Terrain t = Terrain.values()[i];
             correspondanceStyle.put(t.getLibelle(), new Background(new BackgroundFill(Color.web(t.getColor()), null, null)));
@@ -319,6 +327,22 @@ public class PartieController {
         System.out.println();
     }
 
+    private void updateOrientationDomino(PlacementDomino placement, int caseId){
+        Orientation o = null;
+        switch((int)partieDomino.getRotate()){
+            case 0: o = Orientation.EST; break;
+            case 90: o = Orientation.SUD; break;
+            case 180: o = Orientation.OUEST; break;
+            case 270: o = Orientation.NORD; break;
+        }
+        if(o != null){
+            if(caseId == 1){
+                o = o.getOppose();
+            }
+            placement.setSens(o);
+        }
+    }
+
     private Label getCaseLabel(int row, int col, Orientation sens) {
         try {
             if (sens != null) {
@@ -338,6 +362,8 @@ public class PartieController {
     }
 
     private void fillLabelWithCase(Label l, Case c, boolean lockedOnCaseNull) {
+        System.out.println("FILL");
+        if(l == null) return;
         l.setGraphic(null);
         if (c == null) {
             l.setBackground(correspondanceStyle.get(lockedOnCaseNull?"locked":"empty"));
@@ -348,6 +374,7 @@ public class PartieController {
             }else{
                 l.setText("" + c.getNbCouronne());
             }
+            System.out.println(correspondanceStyle.get(c.getTerrain().getLibelle()).getFills().get(0).getFill());
             l.setBackground(correspondanceStyle.get(c.getTerrain().getLibelle()));
         }
     }
@@ -376,14 +403,14 @@ public class PartieController {
             int col2 = placement.getColCase2();
             fillLabelWithCase(getCaseLabel(placement.getRow(), placement.getColumn(), null), null, false);
             fillLabelWithCase(getCaseLabel(row2, col2, null), null, false);
-            partieDomino.setRotate(0);
             placement.removeFromPlateau();
-            placement.setSens(Orientation.EST);
-            partieDomino.setVisible(true);
-            for (Node n : partieDomino.getChildren()) {
-                n.setRotate(0);
-            }
         }
+        partieDomino.setRotate(0);
+        for (Node n : partieDomino.getChildren()) {
+            n.setRotate(0);
+        }
+        placement.setSens(Orientation.EST);
+        partieDomino.setVisible(true);
     }
 
     private void fillPlateau(Plateau p, Joueur joueur) {
