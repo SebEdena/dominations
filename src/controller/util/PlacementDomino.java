@@ -14,6 +14,8 @@ public class PlacementDomino {
 
     private Orientation sens;
 
+    private int[] translation;
+
     public PlacementDomino(IDomino domino, Orientation sens) {
         this.domino = domino;
         this.sens = sens;
@@ -79,6 +81,19 @@ public class PlacementDomino {
         return domino.getCases()[oppose?Math.abs(caseId - 1):caseId];
     }
 
+    public int[] getTranslation() {
+        return translation;
+    }
+
+    public void setTranslation(int[] translation){
+        this.translation = translation;
+    }
+
+    public boolean needsTranslation(){
+        if(translation == null) return false;
+        return translation[0] != 0 || translation[1] != 0;
+    }
+
     public boolean isOnPlateau(){
         return row != null && column != null;
     }
@@ -92,5 +107,6 @@ public class PlacementDomino {
         this.caseId = null;
         this.row = null;
         this.column = null;
+        this.translation = null;
     }
 }

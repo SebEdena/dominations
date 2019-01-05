@@ -53,7 +53,6 @@ public class Plateau {
     }
 
     public boolean inBounds(int row, int col){
-        //System.out.println(minX + " " + maxX + " " + minY + " " + maxY);
         return row >= minX && row <= maxX && col >= minY && col <= maxY;
     }
 
@@ -95,8 +94,6 @@ public class Plateau {
 
     public String placementValide(IDomino d, int xCase, int yCase, int indexCase, Orientation sens){
         int xCase2 = xCase + sens.getOffsetX(), yCase2 = yCase + sens.getOffsetY();
-        System.out.println(xCase + " " + yCase);
-        System.out.println(minX + " " + maxX);
 
         if(xCase < -1 || xCase > NB_COL_LIG + 1 || yCase < -1 || yCase > NB_COL_LIG + 1 ||
                 (xCase==-1 && yCase==-1) ||
@@ -159,7 +156,7 @@ public class Plateau {
         }
     }
 
-    private int[] calculTranslation(IDomino d, int xCase, int yCase, int indexCase, Orientation sens){
+    public int[] calculTranslation(IDomino d, int xCase, int yCase, int indexCase, Orientation sens){
         int[] deplacement = {0, 0};
         if(yCase <= 0) {
             if(sens.equals(Orientation.OUEST)){

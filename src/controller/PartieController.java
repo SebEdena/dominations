@@ -239,7 +239,6 @@ public class PartieController {
             child.setOnDragOver(event -> {
                 if (event.getGestureSource() != child &&
                         event.getDragboard().hasContent(caseDominoFormat)) {
-                    System.out.println("OVER");
                     if(p.placementValide(placement.getDomino(), getRow(child) - 1, getCol(child) - 1, placement.getCaseId(), placement.getSens()) == null){
                         event.acceptTransferModes(TransferMode.MOVE);
                     }
@@ -251,7 +250,6 @@ public class PartieController {
                 Label lCase2 = getCaseLabel(getRow(child), getCol(child), placement.getSens());
                 if (event.getGestureSource() != child &&
                         event.getDragboard().hasContent(caseDominoFormat)) {
-                    System.out.println("ENTER");
                     if(p.placementValide(placement.getDomino(), getRow(child) - 1, getCol(child) - 1, placement.getCaseId(), placement.getSens()) == null){
                         Case c = (Case) event.getDragboard().getContent(caseDominoFormat);
                         fillLabelWithCase((Label) child, c, false);
@@ -275,23 +273,72 @@ public class PartieController {
             });
 
             child.setOnDragDropped(event -> {
-                Dragboard db = event.getDragboard();
-                boolean success = false;
-                if (db.hasContent(caseDominoFormat) &&
-                        p.placementValide(placement.getDomino(), getRow(child) - 1, getCol(child) - 1,
-                                placement.getCaseId(), placement.getSens()) == null) {
-                    success = true;
-                    Case c = (Case) event.getDragboard().getContent(caseDominoFormat);
-                    int row = getRow(child);
-                    int col = getCol(child);
+                try{
 
-                    fillLabelWithCase((Label) child, c, false);
-                    fillLabelWithCase(getCaseLabel(row, col, placement.getSens()), placement.getCase(true), false);
-                    placement.positionOnPlateau(row, col);
+                    Dragboard db = event.getDragboard();
+                    boolean success = false;
+                    if (db.hasContent(caseDominoFormat) &&
+                            p.placementValide(placement.getDomino(), getRow(child) - 1, getCol(child) - 1,
+                                    placement.getCaseId(), placement.getSens()) == null) {
+                        success = true;
+                        Case c = (Case) event.getDragboard().getContent(caseDominoFormat);
+                        int row = getRow(child);
+                        int col = getCol(child);
+                        fillLabelWithCase(getCaseLabel(row, col, null), null, false);
+
+                        int[] translation = p.calculTranslation(placement.getDomino(), row - 1, col - 1, placement.getCaseId(), placement.getSens());
+                        placement.setTranslation(translation);
+                        placement.positionOnPlateau(row, col);
+                        if(placement.needsTranslation()){
+                            translatePlateau();
+                            row += translation[0];
+                            col += translation[1];
+                        }
+                        placement.positionOnPlateau(row, col);
+                        recomputeLockedCases();
+                        fillLabelWithCase(getCaseLabel(row, col, null), c, false);
+                        fillLabelWithCase(getCaseLabel(row, col, placement.getSens()), placement.getCase(true), false);
+                    }
+                    event.setDropCompleted(success);
+                    event.consume();
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
-                event.setDropCompleted(success);
-                event.consume();
             });
+        }
+    }
+
+    private void recomputeLockedCases() {
+
+        int[] translation = placement.getTranslation();
+        int[] xBounds = p.getXBounds();
+        int[] yBounds = p.getYBounds();
+
+        xBounds[0] = xBounds[0] - ((translation[0] != 0)?translation[0] + Integer.signum(translation[0]):1);
+        xBounds[1] = xBounds[1] + ((translation[0] != 0)?translation[0] + Integer.signum(translation[0]):1);
+        yBounds[0] = yBounds[0] - ((translation[1] != 0)?translation[1]  +Integer.signum(translation[1]):1);
+        yBounds[1] = yBounds[1] + ((translation[1] != 0)?translation[1]  + Integer.signum(translation[1]):1);
+
+        if(translation[0] < 0 && xBounds[0] < 0) xBounds[0] = 0;
+        if(translation[0] > 0 && xBounds[1] >= colRowSize) xBounds[1] = colRowSize - 1;
+        if(translation[1] < 0 && yBounds[0] < 0) yBounds[0] = 0;
+        if(translation[1] > 0 && yBounds[1] >= colRowSize) yBounds[1] = colRowSize - 1;
+
+        for(int i = 0; i < colRowSize; i++){
+            for(int j = 0; j < colRowSize; j++){
+                if(p.getCaseAt(i - 1 - translation[0], j - 1 - translation[1]) == null) {
+                    if(((xBounds[1] - xBounds[0] + 1 == p.getSize()) && (i == xBounds[0] - 1 || i == xBounds[1] + 1)) ||
+                            ((yBounds[1] - yBounds[0] + 1 == p.getSize()) && (j == yBounds[0] - 1 || j == yBounds[1] + 1))){
+                        getCaseLabel(i, j, null).setBackground(correspondanceStyle.get("locked"));
+                    }else{
+                        if(i < xBounds[0] - 1 || i > xBounds[1] + 1 || j < yBounds[0] - 1 || j > yBounds[1] + 1){
+                            getCaseLabel(i, j, null).setBackground(correspondanceStyle.get("locked"));
+                        }else if(p.getCaseAt(i - 1 + translation[0], j - 1 + translation[1]) == null){
+                            getCaseLabel(i, j, null).setBackground(correspondanceStyle.get("empty"));
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -430,6 +477,55 @@ public class PartieController {
             }
         } else {
 
+        }
+    }
+
+    private void translatePlateau() {
+        if(placement.needsTranslation()){
+            Label lCase2 = (Label)partieDomino.getChildren().get(Math.abs(placement.getCaseId() - 1));
+            int[] translation = placement.getTranslation();
+            int xStart, xEnd, xInc, yStart, yEnd, yInc;
+            boolean xRotation = translation[0] != 0;
+            boolean lastRow = false, lastCol = false;
+
+            if(translation[0] < 0 || !xRotation){
+                xStart = 0;
+                xEnd = colRowSize - 1 + translation[0];
+                xInc = 1;
+            }else{
+                xStart = colRowSize - 1;
+                xEnd = translation[0];
+                xInc = -1;
+            }
+            if(translation[1] < 0 || xRotation){
+                yStart = 0;
+                yEnd = colRowSize - 1 + translation[1];
+                yInc = 1;
+            }else{
+                yStart = colRowSize - 1;
+                yEnd = translation[1];
+                yInc = -1;
+            }
+
+            for(int i = xStart ; !lastRow; i += xInc){
+                if(i == xEnd) lastRow = true;
+
+                for(int j = yStart ; !lastCol; j += yInc){
+                    if(j == yEnd) lastCol = true;
+                    Label target = getCaseLabel(i, j, null);
+                    if ((xRotation && i != xEnd) || (!xRotation && j != yEnd)){
+                        System.out.println(i + " " + j + " : trans");
+                        Label source = getCaseLabel(i - translation[0], j - translation[1], null);
+                        target.setGraphic(source.getGraphic());
+                        target.setText(source.getText());
+                        target.setBackground(source.getBackground());
+                    }else{
+                        target.setText("");
+                        target.setGraphic(null);
+                    }
+                }
+                lastCol = false;
+            }
         }
     }
 
