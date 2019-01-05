@@ -56,7 +56,7 @@ public class Plateau {
         }
     }
 
-    private String placementValide(IDomino d, int xCase, int yCase, int indexCase, Orientation sens){
+    public String placementValide(IDomino d, int xCase, int yCase, int indexCase, Orientation sens){
         int xCase2 = xCase + sens.getOffsetX(), yCase2 = yCase + sens.getOffsetY();
 
         if(xCase < -1 || xCase > NB_COL_LIG + 1 || yCase < -1 || yCase > NB_COL_LIG + 1 ||

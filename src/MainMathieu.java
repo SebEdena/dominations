@@ -6,6 +6,8 @@ public class MainMathieu {
         Jeu jeu  = Jeu.getInstance();
         jeu.débutPartie();
         jeu.pioche();
+        jeu.afficherPioche();
+        jeu.tourDeJeu();
 
     }
 

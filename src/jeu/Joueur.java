@@ -1,10 +1,16 @@
 package jeu;
 
+import plateau.IDomino;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Joueur {
 
     private String nomJoueur;
     private Roi couleurRoi;
     private int score;
+    private List<IDomino> pioche;
 
     public Joueur(String nom, Roi couleur, int score){
         nomJoueur = nom;
@@ -36,8 +42,20 @@ public class Joueur {
         this.score = score;
     }
 
+    public void addDomino(IDomino domino){
+        pioche.add(domino);
+    }
+
+    public List<IDomino> getPioche(){
+        return pioche;
+    }
+
+    public void resetTirage(){
+        pioche = new ArrayList<>();
+    }
+
     @Override
     public String toString(){
-        return "Roi "+this.couleurRoi;
+        return "Roi "+this.couleurRoi+" "+this.nomJoueur;
     }
 }

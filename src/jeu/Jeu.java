@@ -4,6 +4,7 @@ import plateau.*;
 import util.CSVParser;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class Jeu {
@@ -16,7 +17,7 @@ public class Jeu {
     private static Jeu instance;
 
     private Scanner scan = new Scanner(System.in);
-    private Map<Joueur, Plateau> joueurs;
+    private Map<Integer,Map> joueurs;
     private List<IDomino> dominosDebut;
     private List<IDomino> dominosRestants;
     private List<IDomino> tirage = new ArrayList<>();
@@ -55,13 +56,15 @@ public class Jeu {
         dominosDebut = chargementDominos("./dominos.csv");
     }
 
-    private Map<Joueur, Plateau> allocateRoi(){
-        Map<Joueur, Plateau> listeJoueurs = new HashMap<>();
+    private Map<Integer,Map> allocateRoi(){
+        Map<Integer,Map> listeJoueurs = new HashMap<>();
         listeRois = new int[paramJeu.getNbJoueurs()];
         for (int i = 0; i < paramJeu.getNbJoueurs(); i++) {
+            Map<Joueur, Plateau> joueurs = new HashMap<>();
             System.out.println("Joueur "+ (i+1) +" veuillez renseigner votre pseudo : ");
             String nom = scan.next();
-            listeJoueurs.put(new Joueur(nom, Roi.getRoiInt(i), SCORE_DEFAUT), new Plateau(PETIT_PLATEAU));
+            joueurs.put(new Joueur(nom, Roi.getRoiInt(i), SCORE_DEFAUT), new Plateau(PETIT_PLATEAU));
+            listeJoueurs.put(i,joueurs);
             listeRois[i] = i;
             System.out.println(nom + " vous êtes le roi " + Roi.getRoiInt(i));
         }
@@ -95,8 +98,17 @@ public class Jeu {
         }
     }
 
-    private void mélangerRois(){
-        Collections.shuffle(Arrays.asList(listeRois));
+    private void melangerRois(){
+        List<Integer> rois = new ArrayList<>();
+        for (int i = 0; i < listeRois.length; i++) {
+            rois.add(listeRois[i]);
+        }
+        Collections.shuffle(rois);
+        int i = 0;
+        for (Integer roi : rois) {
+            listeRois[i] = roi;
+            i++;
+        }
     }
 
     public void pioche(){
@@ -120,11 +132,42 @@ public class Jeu {
     }
 
     public void tourDeJeu(){
-
+        melangerRois();
+        System.out.println("Entrez le numéro pour choisir le domino");
+        for (int i = 0; i < listeRois.length; i++) {
+            Joueur jo = (Joueur) joueurs.get(listeRois[i]).keySet().iterator().next();
+            Plateau p = (Plateau) joueurs.get(listeRois[i]).get(jo);
+            jo.resetTirage();
+            for (int j = 0; j < paramJeu.getNbRoiParJoueur(); j++) {
+                System.out.println("Tour : "+Roi.getRoiInt(listeRois[i]));
+                System.out.println("Entrez le num du domino : (entre 1 et 4)");
+                int domino = scan.nextInt();
+                jo.addDomino(tirage.get(domino-1));
+            }
+            System.out.println(jo.getPioche());
+            //Poser Domino ou défausser
+            joueurs.get(listeRois[i]).remove(jo);
+            joueurs.get(listeRois[i]).put(jo,p);
+            System.out.println("Fin tour de : "+joueurs.get(listeRois[i]).keySet().toArray()[0]);
+        }
     }
 
     public void afficherPioche(){
-
+        if(!plusDeDominos){
+            tirage.sort(new Comparator<IDomino>() {
+                @Override
+                public int compare(IDomino o1, IDomino o2) {
+                    return o1.getIdentifiant()-o2.getIdentifiant();
+                }
+            });
+            for (IDomino domino : tirage) {
+                System.out.println("[ "+domino.getIdentifiant()+" ]");
+            }
+            // Mettre une pause
+            for (IDomino domino : tirage) {
+                System.out.println("[ "+domino.getCases()[0]+","+domino.getCases()[1]+" ]");
+            }
+        }
     }
 
     /*
@@ -132,14 +175,14 @@ public class Jeu {
      * pioche de la tuile de départ
      *      -> créer tuile de départ
      * puis re pioche des 1ere tuiles
-     * Afficher pioche (les dominos face numérotée et rangés par ordre croissant)
+     * Afficher pioche (les dominos face numérotée et rangés par ordre croissant) OK
      * Si peux pas poser domino -> le défausser
      *
      *
      *
      *
      * Tour 1 ex:
-     * tour 1a pour pioche pour tuile de départ
+     * tour 1a pour pioche pour tuile de départ ON ZAPPE
      * tour 1b pour pioche 1er domino
      *
      * Tour 2 ex:
