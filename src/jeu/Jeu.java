@@ -1,5 +1,7 @@
 package jeu;
 
+import exceptions.DominoException;
+import exceptions.TuileException;
 import plateau.*;
 import util.CSVParser;
 
@@ -20,7 +22,7 @@ public class Jeu {
     private Map<Integer,Map> joueurs;
     private List<IDomino> dominosDebut;
     private List<IDomino> dominosRestants;
-    private List<IDomino> tirage = new ArrayList<>();
+    private List<IDomino> tirage;
     private int[] listeRois;
     private boolean plusDeDominos;
     private NbJoueur paramJeu;
@@ -63,7 +65,13 @@ public class Jeu {
             Map<Joueur, Plateau> joueurs = new HashMap<>();
             System.out.println("Joueur "+ (i+1) +" veuillez renseigner votre pseudo : ");
             String nom = scan.next();
-            joueurs.put(new Joueur(nom, Roi.getRoiInt(i), SCORE_DEFAUT), new Plateau(PETIT_PLATEAU));
+            Plateau p =  new Plateau(PETIT_PLATEAU);
+            try {
+                p.addDomino(new Tuile(),2,2,0,null);
+            } catch (TuileException | DominoException e) {
+                System.out.println(e.getMessage());
+            }
+            joueurs.put(new Joueur(nom, Roi.getRoiInt(i), SCORE_DEFAUT),p);
             listeJoueurs.put(i,joueurs);
             listeRois[i] = i;
             System.out.println(nom + " vous êtes le roi " + Roi.getRoiInt(i));
@@ -114,6 +122,7 @@ public class Jeu {
     public void pioche(){
         if(!dominosRestants.isEmpty()){
             Collections.shuffle(dominosRestants);
+            tirage = new ArrayList<IDomino>();
             for (int i = 0; i < paramJeu.getNbRoiParJoueur()*paramJeu.getNbJoueurs(); i++) {
                 IDomino d = piocher();
                 tirage.add(d);
@@ -132,20 +141,55 @@ public class Jeu {
     }
 
     public void tourDeJeu(){
-        melangerRois();
+        while(!plusDeDominos){
+            pioche();
+            afficherPioche();
+            melangerRois();
+            tirageJoueur();
+            placementJoueur();
+        }
+        System.out.println("Fin du jeu !");
+    }
+
+    private void tirageJoueur(){
         System.out.println("Entrez le numéro pour choisir le domino");
         for (int i = 0; i < listeRois.length; i++) {
             Joueur jo = (Joueur) joueurs.get(listeRois[i]).keySet().iterator().next();
             Plateau p = (Plateau) joueurs.get(listeRois[i]).get(jo);
             jo.resetTirage();
             for (int j = 0; j < paramJeu.getNbRoiParJoueur(); j++) {
-                System.out.println("Tour : "+Roi.getRoiInt(listeRois[i]));
+                System.out.println("Tour : " + Roi.getRoiInt(listeRois[i]));
                 System.out.println("Entrez le num du domino : (entre 1 et 4)");
                 int domino = scan.nextInt();
-                jo.addDomino(tirage.get(domino-1));
+                jo.addDomino(tirage.get(domino - 1));
             }
+            joueurs.get(listeRois[i]).remove(jo);
+            joueurs.get(listeRois[i]).put(jo, p);
+        }
+    }
+
+    private void placementJoueur(){
+        for (int i = 0; i < listeRois.length; i++) {
+            System.out.println("Placement : " + Roi.getRoiInt(listeRois[i]));
+            Joueur jo = (Joueur) joueurs.get(listeRois[i]).keySet().iterator().next();
+            Plateau p = (Plateau) joueurs.get(listeRois[i]).get(jo);
             System.out.println(jo.getPioche());
-            //Poser Domino ou défausser
+            System.out.println(p.affichePlateau(true));
+            for (int j = 0; j < paramJeu.getNbRoiParJoueur(); j++) {
+                System.out.println("Domino : "+jo.getPioche().get(j));
+                System.out.print("x :");
+                int x = scan.nextInt();
+                System.out.print("y :");
+                int y = scan.nextInt();
+                System.out.print("Orientation : ");
+                Orientation sens = Orientation.getOrientation(scan.next());
+                try {
+                    p.addDomino(jo.getPioche().get(j),x,y,0, sens);
+                } catch (TuileException | DominoException e) {
+                    System.out.println(e.getMessage());
+                }
+                System.out.println(p.affichePlateau(true));
+            }
             joueurs.get(listeRois[i]).remove(jo);
             joueurs.get(listeRois[i]).put(jo,p);
             System.out.println("Fin tour de : "+joueurs.get(listeRois[i]).keySet().toArray()[0]);
