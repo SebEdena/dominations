@@ -30,8 +30,8 @@ public class MainLaurent {
         }
         System.out.println(p.affichePlateau(true));
         System.out.println(p.calculPoint());
-        System.out.println(p.calculGrosDomaine());
-        System.out.println(p.calculCouronne());
+        //System.out.println(p.calculGrosDomaine());
+        //System.out.println(p.calculCouronne());
     }
 
     public static IDomino getDomino(int id){

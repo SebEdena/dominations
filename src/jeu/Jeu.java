@@ -67,7 +67,7 @@ public class Jeu {
             String nom = scan.next();
             Plateau p =  new Plateau(PETIT_PLATEAU);
             try {
-                p.addDomino(new Tuile(),2,2,0,null);
+                p.addDomino(new Tuile(),0,0,0,null);
             } catch (TuileException | DominoException e) {
                 System.out.println(e.getMessage());
             }
@@ -93,10 +93,6 @@ public class Jeu {
         return dominosCharges;
     }
 
-    public void débutPartie(){
-        retirerDominos();
-    }
-
     private void retirerDominos(){
         int nbDominos = NbJoueur.getParamsJeu(paramJeu.getNbJoueurs()).getNbDominosRetires();
         Random rand = new Random();
@@ -120,15 +116,15 @@ public class Jeu {
     }
 
     public void pioche(){
-        if(!dominosRestants.isEmpty()){
-            Collections.shuffle(dominosRestants);
-            tirage = new ArrayList<IDomino>();
-            for (int i = 0; i < paramJeu.getNbRoiParJoueur()*paramJeu.getNbJoueurs(); i++) {
-                IDomino d = piocher();
-                tirage.add(d);
-            }
-        } else plusDeDominos = true;
-
+        Collections.shuffle(dominosRestants);
+        tirage = new ArrayList<IDomino>();
+        for (int i = 0; i < paramJeu.getNbRoiParJoueur()*paramJeu.getNbJoueurs(); i++) {
+            IDomino d = piocher();
+            tirage.add(d);
+        }
+        if(dominosRestants.size() == paramJeu.getNbRoiParJoueur()*paramJeu.getNbJoueurs()){
+            plusDeDominos = true;
+        }
     }
 
     private IDomino piocher(){
@@ -141,6 +137,7 @@ public class Jeu {
     }
 
     public void tourDeJeu(){
+        retirerDominos();
         while(!plusDeDominos){
             pioche();
             afficherPioche();
