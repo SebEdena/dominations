@@ -1,3 +1,8 @@
+/**
+ * Enumération permettant de décrire  les orientations possibles du jeu
+ * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
+ * @version 1.0
+ */
 package plateau;
 
 public enum Orientation {

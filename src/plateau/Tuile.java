@@ -1,3 +1,8 @@
+/**
+ * Classe permettant de décrire le château
+ * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
+ * @version 1.0
+ */
 package plateau;
 
 public class Tuile implements IDomino
