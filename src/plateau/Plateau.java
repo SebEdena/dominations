@@ -164,7 +164,7 @@ public class Plateau {
         }
         if((!inBounds(xCase, yCase) || !inBounds(xCase2, yCase2)) &&
                 (((maxX - minX + 1) + sens.getOffsetX() + ((xCase >= minX && xCase <= maxX)?0:1)) > NB_COL_LIG ||
-                        ((maxY - minY + 1) + sens.getOffsetY() + ((yCase >= minY && xCase <= maxY)?0:1)) > NB_COL_LIG)) {
+                        ((maxY - minY + 1) + sens.getOffsetY() + ((yCase >= minY && yCase <= maxY)?0:1)) > NB_COL_LIG)) {
             return "Impossible de placer le domino car la longueur ou largeur dépasserait la " +
                     "limite autorisée de " + NB_COL_LIG;
         }
