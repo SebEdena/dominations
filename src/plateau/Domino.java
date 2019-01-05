@@ -1,5 +1,9 @@
+/**
+ * Classe permettant de décrire un domino
+ * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
+ * @version 1.0
+ */
 package plateau;
-
 
 import java.util.Map;
 

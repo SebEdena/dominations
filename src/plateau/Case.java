@@ -1,3 +1,8 @@
+/**
+ * Classe permettant de décrire une case
+ * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
+ * @version 1.0
+ */
 package plateau;
 
 import java.io.Serializable;

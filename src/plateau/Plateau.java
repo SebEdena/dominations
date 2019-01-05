@@ -447,11 +447,19 @@ public class Plateau {
                     {
                         if(this.placementValide(domino,i,j,numeroCase,o) == null)
                         {
-                            System.out.println(" x : " + i + " / y : " + j + " // numero case : " + numeroCase + " / domino : " + domino.toString());
+                            if(!casesPossible.contains(this.tableau[i][j]))
+                            {
+                                casesPossible.add(this.tableau[i][j]);
+                            }
                         }
                     }
                 }
             }
+        }
+        System.out.println("possibilités de placement : ");
+        for(Case c : casesPossible)
+        {
+            System.out.println("bonjour");
         }
     }
 
