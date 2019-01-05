@@ -2,6 +2,7 @@ package controller;
 
 import com.jfoenix.controls.JFXButton;
 import controller.util.IndicatorFader;
+import controller.util.PlacementDomino;
 import exceptions.DominoException;
 import exceptions.TuileException;
 import javafx.fxml.FXML;
@@ -13,9 +14,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
 import jeu.Joueur;
 import plateau.*;
 import util.CSVParser;
@@ -224,13 +222,11 @@ public class PartieController {
     private void initDominoTargetDrag() {
         for (Node child : plateauDisplay.getChildren()) {
             child.setOnDragOver(event -> {
-                System.out.println("____OVER___");
                 Label lCase2 = getCaseLabel(getRow(child), getCol(child), placement.getSens());
                 if (event.getGestureSource() != child &&
                         event.getDragboard().hasContent(caseDominoFormat) &&
                         isFree((Label) child) &&
                         (lCase2 == null || isFree(lCase2))) {
-                    System.out.println(p.placementValide(placement.getDomino(), getRow(child) - 1, getCol(child) - 1, placement.getCaseId(), placement.getSens()) == null);
                     if(p.placementValide(placement.getDomino(), getRow(child) - 1, getCol(child) - 1, placement.getCaseId(), placement.getSens()) == null){
                         event.acceptTransferModes(TransferMode.MOVE);
                     }
@@ -239,15 +235,11 @@ public class PartieController {
             });
 
             child.setOnDragEntered(event -> {
-                System.out.println("____ENTER___");
                 Label lCase2 = getCaseLabel(getRow(child), getCol(child), placement.getSens());
                 if (event.getGestureSource() != child &&
                         event.getDragboard().hasContent(caseDominoFormat) &&
                         isFree((Label) child) &&
                         (isFree(lCase2))) {
-                    System.out.println(getRow(child));
-                    System.out.println(getCol(child));
-                    System.out.println(p.placementValide(placement.getDomino(), getRow(child) - 1, getCol(child) - 1, placement.getCaseId(), placement.getSens()));
                     if(p.placementValide(placement.getDomino(), getRow(child) - 1, getCol(child) - 1, placement.getCaseId(), placement.getSens()) == null){
                         ((Control) child).setBackground(correspondanceStyle.get("hover"));
                         lCase2.setBackground(correspondanceStyle.get("hover"));
@@ -258,18 +250,14 @@ public class PartieController {
 
             child.setOnDragExited(event -> {
                 Label lCase2 = getCaseLabel(getRow(child), getCol(child), placement.getSens());
-                System.out.println("____EXIT___");
                 if (event.getGestureSource() != child &&
                         event.getDragboard().hasContent(caseDominoFormat) &&
                         isFree((Label) child) &&
                         (lCase2 == null || isFree(lCase2))) {
-                    if(p.placementValide(placement.getDomino(), getRow(child) - 1, getCol(child) - 1, placement.getCaseId(), placement.getSens()) == null){
-                        if(!placement.isOnPlateau()){
-
-                            ((Control) child).setBackground(correspondanceStyle.get("empty"));
-                            lCase2.setBackground(correspondanceStyle.get("empty"));
-                        }
-                        System.out.println("DragEXT");
+                    if(p.placementValide(placement.getDomino(), getRow(child) - 1, getCol(child) - 1, placement.getCaseId(), placement.getSens()) == null &&
+                        !placement.isOnPlateau()){
+                            fillLabelWithCase((Label) child, null, !p.inBounds(getRow(child) - 1, getCol(child) - 1));
+                            fillLabelWithCase(lCase2, null, !p.inBounds(getRow(lCase2) - 1, getCol(lCase2) - 1));
                     }
                 }
                 event.consume();
@@ -282,15 +270,15 @@ public class PartieController {
                         isFree((Label) child)) {
                     success = true;
                     Case c = (Case) event.getDragboard().getContent(caseDominoFormat);
-                    int caseIndex = placement.getDomino().getCaseIndex(c, false);
+                    int autreCaseIndex = placement.getDomino().getCaseIndex(c, true);
                     int row = getRow(child);
                     int col = getCol(child);
 
                     fillLabelWithCase((Label) child, (Case) event.getDragboard().getContent(caseDominoFormat), false);
                     fillLabelWithCase(getCaseLabel(row, col, placement.getSens()),
-                            placement.getDomino().getCases()[Math.abs(caseIndex - 1)], false);
+                            placement.getDomino().getCases()[autreCaseIndex], false);
                     placement.positionOnPlateau(row, col);
-                    }
+                }
                 event.setDropCompleted(success);
                 event.consume();
             });
@@ -362,7 +350,6 @@ public class PartieController {
     }
 
     private void fillLabelWithCase(Label l, Case c, boolean lockedOnCaseNull) {
-        System.out.println("FILL");
         if(l == null) return;
         l.setGraphic(null);
         if (c == null) {
@@ -374,7 +361,6 @@ public class PartieController {
             }else{
                 l.setText("" + c.getNbCouronne());
             }
-            System.out.println(correspondanceStyle.get(c.getTerrain().getLibelle()).getFills().get(0).getFill());
             l.setBackground(correspondanceStyle.get(c.getTerrain().getLibelle()));
         }
     }
@@ -421,16 +407,16 @@ public class PartieController {
             for (int i = -1; i <= pSize; i++) {
                 for (int j = -1; j <= pSize; j++) {
                     Label lab = getCaseLabel(i + 1, j + 1, null);
-                    if (i == -1 || i == pSize || j == -1 || j == pSize) {
-                        fillLabelWithCase(lab, null, true);
-                    } else {
+                    //if (i == -1 || i == pSize || j == -1 || j == pSize) {
+                        fillLabelWithCase(lab, p.getCaseAt(i, j), !p.inBounds(i, j));
+                    /*} else {
                         Case c = p.getCaseAt(i, j);
                         if ((i >= (xBounds[0]) && i <= (xBounds[1])) && (j >= (yBounds[0]) && j <= (yBounds[1]))) {
                             fillLabelWithCase(lab, c, false);
                         }else{
                             fillLabelWithCase(lab, null, false);
                         }
-                    }
+                    }*/
                 }
 
             }

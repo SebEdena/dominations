@@ -3,6 +3,7 @@ package plateau;
 import exceptions.DominoException;
 import exceptions.TuileException;
 
+import javax.sound.midi.Soundbank;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,7 +45,16 @@ public class Plateau {
     }
 
     public Case getCaseAt(int row, int col) {
-        return tableau[row][col];
+        try{
+            return tableau[row][col];
+        }catch (ArrayIndexOutOfBoundsException e){
+            return null;
+        }
+    }
+
+    public boolean inBounds(int row, int col){
+        //System.out.println(minX + " " + maxX + " " + minY + " " + maxY);
+        return row >= minX && row <= maxX && col >= minY && col <= maxY;
     }
 
     public void addDomino(IDomino d, int xCase, int yCase, int indexCase, Orientation sens) throws TuileException, DominoException {
@@ -85,6 +95,8 @@ public class Plateau {
 
     public String placementValide(IDomino d, int xCase, int yCase, int indexCase, Orientation sens){
         int xCase2 = xCase + sens.getOffsetX(), yCase2 = yCase + sens.getOffsetY();
+        System.out.println(xCase + " " + yCase);
+        System.out.println(minX + " " + maxX);
 
         if(xCase < -1 || xCase > NB_COL_LIG + 1 || yCase < -1 || yCase > NB_COL_LIG + 1 ||
                 (xCase==-1 && yCase==-1) ||
@@ -94,7 +106,9 @@ public class Plateau {
             return "Placement invalide du domino pour " +
                     "[x:" + xCase +", y:" + yCase + ", sens:" + sens.getText()+"]";
         }
-        if(((maxX - minX) + sens.getOffsetX()) > NB_COL_LIG || ((maxY - minY) + sens.getOffsetY()) > NB_COL_LIG) {
+        if((!inBounds(xCase, yCase) || !inBounds(xCase2, yCase2)) &&
+                (((maxX - minX + 1) + sens.getOffsetX() + ((xCase >= minX && xCase <= maxX)?0:1)) > NB_COL_LIG ||
+                        ((maxY - minY + 1) + sens.getOffsetY() + ((yCase >= minY && xCase <= maxY)?0:1)) > NB_COL_LIG)) {
             return "Impossible de placer le domino car la longueur ou largeur dépasserait la " +
                     "limite autorisée de " + NB_COL_LIG;
         }
