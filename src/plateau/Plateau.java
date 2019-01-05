@@ -1,3 +1,8 @@
+/**
+ * Classe permettant de décrire un plateau de jeu
+ * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
+ * @version 1.0
+ */
 package plateau;
 
 import exceptions.DominoException;
@@ -16,12 +21,20 @@ public class Plateau {
     private List<IDomino> dominos;
     private boolean tuileAjoutee = false;
 
+    /**
+     * Constructeur d'un plateau avec une taille donnée en paramètre
+     * @param NB_COL_LIG
+     */
     public Plateau(int NB_COL_LIG){
         this.NB_COL_LIG = NB_COL_LIG;
         this.tableau = new Case[NB_COL_LIG][NB_COL_LIG];
         this.dominos = new ArrayList<IDomino>();
     }
 
+    /**
+     * Fonction permettant de récupérer les index minimal et maximal en x du plateau
+     * @return retourne un tableau de deux entiers [index minimal en x, index maximal en x]
+     */
     public int[] getXBounds(){
         if(tuileAjoutee){
             return new int[]{minX, maxX};
@@ -29,6 +42,10 @@ public class Plateau {
         return null;
     }
 
+    /**
+     * Fonction permettant de récupérer les index minimal et maximal en y du plateau
+     * @return retourne un tableau de deux entiers [index minimal en y, index maximal en y]
+     */
     public int[] getYBounds(){
         if(tuileAjoutee){
             return new int[]{minY, maxY};
@@ -36,14 +53,28 @@ public class Plateau {
         return null;
     }
 
+    /**
+     * Fonction permettant de récupérer la taille du tableau en ligne et en colonne (car même valeur)
+     * @return retourne la taille du tableau
+     */
     public int getSize(){
         return NB_COL_LIG;
     }
 
+    /**
+     * Fonction permettant de dire si la tuille du château est placée sur le plateau
+     * @return retourne un booléen permettant de dire si la tuille du château est placée sur le plateau
+     */
     public boolean tuilePresente(){
         return tuileAjoutee;
     }
 
+    /**
+     * Fonction permettant de récupérer une case du plateau en fonction de la ligne et sa colonne
+     * @param row numéro de ligne demandé
+     * @param col numéro de colonne demandé
+     * @return renvoie la case présente à la ligne row et à la colonne col
+     */
     public Case getCaseAt(int row, int col) {
         try{
             return tableau[row][col];
@@ -52,15 +83,31 @@ public class Plateau {
         }
     }
 
+    /**
+     * Fonction permettant de dire si aux coordonnées(row,col) on se trouve dans les limites des dominos placés sur le plateau
+     * @param row numéro de ligne demandé
+     * @param col numéro de colonne demandé
+     * @return renvoie vrai si les coordonnées sont dans les limites, faux sinon
+     */
     public boolean inBounds(int row, int col){
         //System.out.println(minX + " " + maxX + " " + minY + " " + maxY);
         return row >= minX && row <= maxX && col >= minY && col <= maxY;
     }
 
+    /**
+     * Fonction permettant d'ajouter un domino sur le plateau
+     * @param d représente le domino
+     * @param xCase numéro de ligne souhaitée
+     * @param yCase numéro de colonne souhaitée
+     * @param indexCase numéro de la case soit 0, soit 1(Un domino est représenté par deux cases)
+     * @param sens Orientation donnée pour le domino
+     * @throws TuileException Exeption utilisée pour la tuile château
+     * @throws DominoException Exception utilisée pour les dominos
+     */
     public void addDomino(IDomino d, int xCase, int yCase, int indexCase, Orientation sens) throws TuileException, DominoException {
         String erreur;
-        if(d instanceof Tuile){
-            if(!tuileAjoutee){
+        if(d instanceof Tuile){ //si le domino est la tuile de château
+            if(!tuileAjoutee){ //si la tuile du château n'a pas été placée
                 tableau[xCase][yCase] = d.getCases()[indexCase];
                 updateSizePlateau(xCase, yCase, sens);
                 dominos.add(d);
@@ -68,7 +115,7 @@ public class Plateau {
             }else{
                 throw new TuileException("La tuile du chateau est déjà placée");
             }
-        }else{
+        }else{  //sinon il s'agit d'un domino
             if(tuileAjoutee){
                 if((erreur = placementValide(d, xCase, yCase, indexCase, sens)) != null){
                     throw new DominoException(erreur);
@@ -93,6 +140,15 @@ public class Plateau {
         }
     }
 
+    /**
+     * Fonction permettant de dire si le positionnement du domino est valide ou non
+     * @param d représente le domino
+     * @param xCase numéro de ligne souhaitée
+     * @param yCase numéro de colonne souhaitée
+     * @param indexCase numéro de la case soit 0, soit 1(Un domino est représenté par deux cases)
+     * @param sens Orientation donnée pour le domino
+     * @return une chaine de caractère si le placement n'est pas valide
+     */
     public String placementValide(IDomino d, int xCase, int yCase, int indexCase, Orientation sens){
         int xCase2 = xCase + sens.getOffsetX(), yCase2 = yCase + sens.getOffsetY();
         System.out.println(xCase + " " + yCase);
@@ -159,6 +215,15 @@ public class Plateau {
         }
     }
 
+    /**
+     * Fonction permettant de calculer le nombre de décalage à faire pour que les dominos soient dans le tableau
+     * @param d représente le domino
+     * @param xCase numéro de ligne souhaitée
+     * @param yCase numéro de colonne souhaitée
+     * @param indexCase numéro de la case soit 0, soit 1(Un domino est représenté par deux cases)
+     * @param sens Orientation donnée pour le domino
+     * @return un tableau d'entiers contenant [nombre de cases à décaler x, nombre de cases à décaler y]
+     */
     private int[] calculTranslation(IDomino d, int xCase, int yCase, int indexCase, Orientation sens){
         int[] deplacement = {0, 0};
         if(yCase <= 0) {
@@ -196,6 +261,10 @@ public class Plateau {
         return deplacement;
     }
 
+    /**
+     * Fonction permettant de faire la translation du plateau en fonction du calcul de translation
+     * @param deplacement tableau d'entiers [nombre de cases à décaler x, nombre de cases à décaler y]
+     */
     private void translationPlateau(int[] deplacement) {
         Case[][] newPlateau = new Case[NB_COL_LIG][NB_COL_LIG];
         for(int i = 0; i < NB_COL_LIG; i++){
@@ -213,6 +282,12 @@ public class Plateau {
         maxY += deplacement[1];
     }
 
+    /**
+     * Fonction permettant de mettre à jour les limites des dominos placées
+     * @param xCase numéro de ligne de la case placée
+     * @param yCase numéro de colonne de la case placée
+     * @param sens Orientation donnée pour le domino
+     */
     private void updateSizePlateau(int xCase, int yCase, Orientation sens){
         if(!tuileAjoutee){
             minX = xCase;
@@ -234,6 +309,10 @@ public class Plateau {
         System.out.println();
     }
 
+    /**
+     * Fonction permettant de calculer le score total du plateau
+     * @return retour le score du plateau
+     */
     public int calculPoint()
     {
         int sommePoints = 0;
@@ -243,7 +322,7 @@ public class Plateau {
             for(int j = 0 ; j < NB_COL_LIG; j++)
             {
                 if(this.tableau[i][j] != null && !pileCasesVisitees.contains(this.tableau[i][j]) &&
-                        !this.tableau[i][j].getTerrain().equals(Terrain.CHATEAU))
+                        !this.tableau[i][j].getTerrain().equals(Terrain.CHATEAU)) //si la case (i;j) n'est pas vide et qu'il n'a jamais été parcouru et qu'il n'est pas une tuile
                 {
                     Case caseTemoin = tableau[i][j];
                     List<Case> casesSimilaires = new ArrayList<Case>();
@@ -264,13 +343,21 @@ public class Plateau {
         return sommePoints;
     }
 
+    /**
+     * Fonciton récursive permettant de rechercher des cases similaires au case témoin à la position (x;y) donné
+     * @param x numéro de ligne de la case témoin
+     * @param y numéro de colonne de la case témoin
+     * @param pileCasesVisitees liste des cases visitées
+     * @param caseTemoin la case qu'on souhaite voir
+     * @param casesAdjacentes liste des cases se trouvant aux côtés de la case témoin (s'incrémente avant d'être utilisé pour calculer le score d'une zone)
+     */
     private void rechercheCaseSimilaire(int x, int y, List<Case> pileCasesVisitees, Case caseTemoin, List<Case> casesAdjacentes)
     {
         casesAdjacentes.add(caseTemoin);
         pileCasesVisitees.add(caseTemoin);
         List<Case> casesTrouvées = new ArrayList<Case>();
 
-        for(Orientation o : Orientation.values())
+        for(Orientation o : Orientation.values()) // à chaque orientation on vérifie s'il y a une case de même domaine et non comptabilisée
         {
             if(x + o.getOffsetX() >= 0 && x + o.getOffsetX() < NB_COL_LIG &&
                     y + o.getOffsetY() >= 0 && y + o.getOffsetY() < NB_COL_LIG &&
@@ -286,6 +373,11 @@ public class Plateau {
         }
     }
 
+    /**
+     * Fonction permettant d'afficher en mode console le plateau
+     * @param modeAjout
+     * @return
+     */
     public String affichePlateau(boolean modeAjout){
         int[] borneX = {minX, maxX + 1};
         int[] borneY = {minY, maxY + 1};
@@ -338,6 +430,10 @@ public class Plateau {
         return sb.toString();
     }
 
+    /**
+     * affiche des possibilités de positionnement d'un domino sur le plateau
+     * @param domino domino concerné
+     */
     public void possibilite(IDomino domino)
     {
         List<Case> casesPossible = new ArrayList<Case>();
@@ -359,6 +455,12 @@ public class Plateau {
         }
     }
 
+    /**
+     * Fonction permettant de donner les orientations possibles en fonction d'une coordonnée
+     * @param xCase numéro de ligne souhaitée
+     * @param yCase numéro de colonne souhaitée
+     * @return retourne une liste d'orientation possible
+     */
     private List<Orientation> orientationsValides(int xCase, int yCase)
     {
         List<Orientation> listeOrientationsValides= new ArrayList<Orientation>();
