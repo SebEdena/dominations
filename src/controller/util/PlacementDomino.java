@@ -1,5 +1,6 @@
 package controller.util;
 
+import plateau.Case;
 import plateau.IDomino;
 import plateau.Orientation;
 
@@ -13,14 +14,6 @@ public class PlacementDomino {
 
     private Orientation sens;
 
-    public PlacementDomino(IDomino domino, int caseId, int row, int column, Orientation sens) {
-        this.domino = domino;
-        this.caseId = caseId;
-        this.row = row;
-        this.column = column;
-        this.sens = sens;
-    }
-
     public PlacementDomino(IDomino domino, Orientation sens) {
         this.domino = domino;
         this.sens = sens;
@@ -28,10 +21,6 @@ public class PlacementDomino {
 
     public IDomino getDomino() {
         return domino;
-    }
-
-    public void setDomino(IDomino domino) {
-        this.domino = domino;
     }
 
     public int getCaseId() {
@@ -84,6 +73,10 @@ public class PlacementDomino {
             return null;
         }
         return column+getColCase2Offset();
+    }
+
+    public Case getCase(boolean oppose){
+        return domino.getCases()[oppose?Math.abs(caseId - 1):caseId];
     }
 
     public boolean isOnPlateau(){

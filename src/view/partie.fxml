@@ -72,6 +72,7 @@
             <VBox fx:id="leftContent" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.rowSpan="3">
                <children>
                   <JFXButton fx:id="toggle" style="-fx-background-color: lime;" text="Toggle Indicator" />
+                  <JFXButton fx:id="trynextbutton" style="-fx-background-color: #123456;" text="next domino" textFill="WHITE" />
                </children>
             </VBox>
             <VBox fx:id="rightContent" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.rowSpan="3" />
