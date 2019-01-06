@@ -218,11 +218,49 @@ public class Jeu {
     }
 
     private void afficheScore(){
+        List<Joueur> j = new ArrayList<>();
+        List<Joueur> exaequo = new ArrayList<>();
         for (int i = 0; i < listeRois.length; i++) {
             Joueur jo = (Joueur) joueurs.get(listeRois[i]).keySet().iterator().next();
             Plateau p = (Plateau) joueurs.get(listeRois[i]).get(jo);
+            jo.setScore(p.calculPoint());
+            jo.setScoreDomaine(p.calculGrosDomaine());
+            jo.setScoreCouronne(p.calculCouronne());
+            j.add(jo);
             System.out.println(jo+" score : "+ p.calculPoint());
         }
+        boolean egal = false;
+        j.sort(new Comparator<Joueur>() {
+            @Override
+            public int compare(Joueur j1, Joueur j2) {
+                if(j1.getScore() == j2.getScore())
+                    if(j1.getScoreDomaine() == j2.getScoreDomaine())
+                        if(j1.getScoreCouronne() == j2.getScoreCouronne()){
+                            j1.setEgalite(true);
+                            j2.setEgalite(true);
+                            return 0;
+                        }
+                        else return j2.getScoreCouronne() - j1.getScoreCouronne();
+                    else return j2.getScoreDomaine() - j1.getScoreDomaine();
+                else return j2.getScore() - j1.getScore();
+            }
+        });
+        if(j.get(0).getEgalite()){
+            exaequo.add(j.get(0));
+            for (int i = 1; i < j.size(); i++) {
+                if(j.get(i).getEgalite() && j.get(i).getScoreCouronne() == j.get(0).getScoreCouronne())
+                    exaequo.add(j.get(i));
+            }
+            StringBuilder sb = new StringBuilder("Vainqueurs : ");
+            for (int i = 0; i < exaequo.size(); i++) {
+                if(i<exaequo.size()-1)
+                    sb.append(exaequo.get(1)+", ");
+                else sb.append(exaequo.get(i));
+            }
+            System.out.println(sb.toString());
+        }
+        else System.out.println("Vainqueur : "+j.get(0));
+
     }
 
     /*
