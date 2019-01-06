@@ -168,9 +168,11 @@ public class Plateau {
 //        System.out.println("Bound y --"+((maxY - minY + 1) + sens.getOffsetY()));
         System.out.println("x : ["+minX+ ","+maxX+"]");
         System.out.println("y : ["+minY+ ","+maxY+"]");
-        if((!inBounds(xCase, yCase) || !inBounds(xCase2, yCase2)) &&
-                (((maxX - minX + 1) + Math.abs(sens.getOffsetX()) + ((xCase >= minX && xCase <= maxX)?0:1)) > NB_COL_LIG ||
-                        ((maxY - minY + 1) + Math.abs(sens.getOffsetY()) + ((yCase >= minY && yCase <= maxY)?0:1)) > NB_COL_LIG)) {
+        int minimalX = Math.min(minX,Math.min(xCase,xCase2));
+        int maximalX = Math.max(maxX,Math.max(xCase,xCase2));
+        int minimalY = Math.min(minY,Math.min(yCase,yCase2));
+        int maximalY = Math.max(maxY,Math.max(yCase,yCase2));
+        if(maximalX - minimalX + 1 > NB_COL_LIG || maximalY - minimalY + 1 > NB_COL_LIG) {
             return "Impossible de placer le domino car la longueur ou largeur dépasserait la " +
                     "limite autorisée de " + NB_COL_LIG;
         }
@@ -232,7 +234,7 @@ public class Plateau {
      */
     private int[] calculTranslation(IDomino d, int xCase, int yCase, int indexCase, Orientation sens){
         int[] deplacement = {0, 0};
-        if(yCase <= 0) {
+        if(yCase < 0) {
             if(sens.equals(Orientation.OUEST)){
                 deplacement[1] = 1 - yCase;
             }else if(sens.equals(Orientation.EST))
@@ -242,7 +244,7 @@ public class Plateau {
                 deplacement[1] = 1;
             }
         }
-        if(yCase >= NB_COL_LIG - 1){
+        if(yCase > NB_COL_LIG - 1){
             if(sens.equals(Orientation.EST)){
                 deplacement[1] = -1 + (NB_COL_LIG - yCase - 1);
             }else if(sens.equals(Orientation.OUEST))
@@ -252,7 +254,7 @@ public class Plateau {
                 deplacement[1] = -1;
             }
         }
-        if(xCase <= 0) {
+        if(xCase < 0) {
             if(sens.equals(Orientation.NORD)){
                 deplacement[0] = 1 - xCase;
             }else if(sens.equals(Orientation.SUD))
@@ -262,7 +264,7 @@ public class Plateau {
                 deplacement[0] = 1;
             }
         }
-        if(xCase >= NB_COL_LIG - 1){
+        if(xCase > NB_COL_LIG - 1){
             if(sens.equals(Orientation.SUD)){
                 deplacement[0] = -1 + (NB_COL_LIG - xCase - 1);
             }else if(sens.equals(Orientation.NORD))
