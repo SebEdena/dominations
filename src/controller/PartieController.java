@@ -309,20 +309,9 @@ public class PartieController {
     }
 
     private void recomputeLockedCases() {
-
         int[] translation = placement.getTranslation();
-        int[] xBounds = p.getXBounds();
-        int[] yBounds = p.getYBounds();
-
-        xBounds[0] = xBounds[0] - ((translation[0] != 0)?translation[0] + Integer.signum(translation[0]):1);
-        xBounds[1] = xBounds[1] + ((translation[0] != 0)?translation[0] + Integer.signum(translation[0]):1);
-        yBounds[0] = yBounds[0] - ((translation[1] != 0)?translation[1]  +Integer.signum(translation[1]):1);
-        yBounds[1] = yBounds[1] + ((translation[1] != 0)?translation[1]  + Integer.signum(translation[1]):1);
-
-        if(translation[0] < 0 && xBounds[0] < 0) xBounds[0] = 0;
-        if(translation[0] > 0 && xBounds[1] >= colRowSize) xBounds[1] = colRowSize - 1;
-        if(translation[1] < 0 && yBounds[0] < 0) yBounds[0] = 0;
-        if(translation[1] > 0 && yBounds[1] >= colRowSize) yBounds[1] = colRowSize - 1;
+        int[] xBounds = placement.getNewXBounds(p.getXBounds());
+        int[] yBounds = placement.getNewYBounds(p.getYBounds());
 
         for(int i = 0; i < colRowSize; i++){
             for(int j = 0; j < colRowSize; j++){

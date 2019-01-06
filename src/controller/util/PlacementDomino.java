@@ -109,4 +109,16 @@ public class PlacementDomino {
         this.column = null;
         this.translation = null;
     }
+
+    public int[] getNewXBounds(int[] xBounds){
+        xBounds[0] = Math.min(xBounds[0] + 1 + translation[0], Math.min(getRow(), getRowCase2()));
+        xBounds[1] = Math.max(xBounds[1] + 1 + translation[0], Math.max(getRow(), getRowCase2()));
+        return xBounds;
+    }
+
+    public int[] getNewYBounds(int[] yBounds){
+        yBounds[0] = Math.min(yBounds[0] + 1 + translation[1], Math.min(getColumn(), getColCase2()));
+        yBounds[1] = Math.max(yBounds[1] + 1 + translation[1], Math.max(getColumn(), getColCase2()));
+        return yBounds;
+    }
 }
