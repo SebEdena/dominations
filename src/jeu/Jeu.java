@@ -67,7 +67,7 @@ public class Jeu {
             String nom = scan.next();
             Plateau p =  new Plateau(PETIT_PLATEAU);
             try {
-                p.addDomino(new Tuile(),0,0,0,null);
+                p.addDomino(new Tuile(),2,2,0,null);
             } catch (TuileException | DominoException e) {
                 System.out.println(e.getMessage());
             }

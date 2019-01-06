@@ -11,7 +11,7 @@ public class MainLaurent {
     public static List<IDomino> deckDominos = new ArrayList<IDomino>();
 
     public static void main(String[] args) throws Exception {
-        List<String[]> exPlateau = CSVParser.parse("./test_plateau.csv", ",", true);
+        List<String[]> exPlateau = CSVParser.parse("./erreur.csv", ",", true);
         fillDeck("./dominos.csv");
 
         Plateau p = new Plateau(NB_COL);
@@ -28,8 +28,8 @@ public class MainLaurent {
             }
             System.out.println(p.affichePlateau(true));
         }
-        System.out.println(p.affichePlateau(true));
-        System.out.println(p.calculPoint());
+//        System.out.println(p.affichePlateau(true));
+//        System.out.println(p.calculPoint());
         //System.out.println(p.calculGrosDomaine());
         //System.out.println(p.calculCouronne());
     }

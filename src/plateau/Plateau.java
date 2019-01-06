@@ -151,8 +151,8 @@ public class Plateau {
      */
     public String placementValide(IDomino d, int xCase, int yCase, int indexCase, Orientation sens){
         int xCase2 = xCase + sens.getOffsetX(), yCase2 = yCase + sens.getOffsetY();
-        System.out.println(xCase + " " + yCase);
-        System.out.println(minX + " " + maxX);
+//        System.out.println(xCase + " " + yCase);
+//        System.out.println(minX + " " + maxX);
 
         if(xCase < -1 || xCase > NB_COL_LIG + 1 || yCase < -1 || yCase > NB_COL_LIG + 1 ||
                 (xCase==-1 && yCase==-1) ||
@@ -166,6 +166,8 @@ public class Plateau {
 //        System.out.println("Bound y -"+((maxY - minY + 1) + Math.abs(sens.getOffsetY())));
 //        System.out.println("Bound x --"+((maxX - minX + 1) + sens.getOffsetX()));
 //        System.out.println("Bound y --"+((maxY - minY + 1) + sens.getOffsetY()));
+        System.out.println("x : ["+minX+ ","+maxX+"]");
+        System.out.println("y : ["+minY+ ","+maxY+"]");
         if((!inBounds(xCase, yCase) || !inBounds(xCase2, yCase2)) &&
                 (((maxX - minX + 1) + Math.abs(sens.getOffsetX()) + ((xCase >= minX && xCase <= maxX)?0:1)) > NB_COL_LIG ||
                         ((maxY - minY + 1) + Math.abs(sens.getOffsetY()) + ((yCase >= minY && yCase <= maxY)?0:1)) > NB_COL_LIG)) {
@@ -308,13 +310,25 @@ public class Plateau {
             maxY = yCase;
         }else{
             if(xCase + sens.getOffsetX() >= 0 && xCase + sens.getOffsetX() < NB_COL_LIG){
-                if(xCase < minX) minX = xCase + sens.getOffsetX();
+                if(xCase <= minX) minX = xCase + sens.getOffsetX();
                 if(xCase > maxX) maxX = xCase + sens.getOffsetX();
             }
             if(yCase + sens.getOffsetY() >= 0 && yCase + sens.getOffsetY() < NB_COL_LIG){
-                if(yCase < minY) minY = yCase + sens.getOffsetY();
+                if(yCase <= minY) minY = yCase + sens.getOffsetY();
                 if(yCase > maxY) maxY = yCase + sens.getOffsetY();
             }
+        }
+        if(minX > maxX)
+        {
+            int tmp = maxX;
+            maxX = minX;
+            minX = tmp;
+        }
+        if(minY > maxY)
+        {
+            int tmp = maxY;
+            maxY = minY;
+            minY = tmp;
         }
         System.out.println("x : ["+minX+ ","+maxX+"]");
         System.out.println("y : ["+minY+ ","+maxY+"]");
