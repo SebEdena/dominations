@@ -3,6 +3,7 @@ package jeu;
 import plateau.IDomino;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class Joueur {
@@ -44,6 +45,12 @@ public class Joueur {
 
     public void addDomino(IDomino domino){
         pioche.add(domino);
+        pioche.sort(new Comparator<IDomino>() {
+            @Override
+            public int compare(IDomino o1, IDomino o2) {
+                return o1.getIdentifiant()-o2.getIdentifiant();
+            }
+        });
     }
 
     public List<IDomino> getPioche(){

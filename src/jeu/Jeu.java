@@ -116,15 +116,14 @@ public class Jeu {
     }
 
     public void pioche(){
-        Collections.shuffle(dominosRestants);
-        tirage = new ArrayList<IDomino>();
-        for (int i = 0; i < paramJeu.getNbRoiParJoueur()*paramJeu.getNbJoueurs(); i++) {
-            IDomino d = piocher();
-            tirage.add(d);
-        }
-        if(dominosRestants.size() == paramJeu.getNbRoiParJoueur()*paramJeu.getNbJoueurs()){
-            plusDeDominos = true;
-        }
+        if(!dominosRestants.isEmpty()){
+            Collections.shuffle(dominosRestants);
+            tirage = new ArrayList<IDomino>();
+            for (int i = 0; i < paramJeu.getNbRoiParJoueur()*paramJeu.getNbJoueurs(); i++) {
+                IDomino d = piocher();
+                tirage.add(d);
+            }
+        } else plusDeDominos = true;
     }
 
     private IDomino piocher(){
@@ -138,13 +137,16 @@ public class Jeu {
 
     public void tourDeJeu(){
         retirerDominos();
-        while(!plusDeDominos){
+        do {
             pioche();
             afficherPioche();
-            melangerRois();
-            tirageJoueur();
-            placementJoueur();
-        }
+            if(!plusDeDominos){
+                melangerRois();
+                tirageJoueur();
+                placementJoueur();
+            }
+        } while(!plusDeDominos);
+        afficheScore();
         System.out.println("Fin du jeu !");
     }
 
@@ -166,30 +168,34 @@ public class Jeu {
     }
 
     private void placementJoueur(){
-        for (int i = 0; i < listeRois.length; i++) {
-            System.out.println("Placement : " + Roi.getRoiInt(listeRois[i]));
-            Joueur jo = (Joueur) joueurs.get(listeRois[i]).keySet().iterator().next();
-            Plateau p = (Plateau) joueurs.get(listeRois[i]).get(jo);
-            System.out.println(jo.getPioche());
-            System.out.println(p.affichePlateau(true));
-            for (int j = 0; j < paramJeu.getNbRoiParJoueur(); j++) {
-                System.out.println("Domino : "+jo.getPioche().get(j));
-                System.out.print("x :");
-                int x = scan.nextInt();
-                System.out.print("y :");
-                int y = scan.nextInt();
-                System.out.print("Orientation : ");
-                Orientation sens = Orientation.getOrientation(scan.next());
-                try {
-                    p.addDomino(jo.getPioche().get(j),x,y,0, sens);
-                } catch (TuileException | DominoException e) {
-                    System.out.println(e.getMessage());
+        for (IDomino domino : tirage) {
+            for (int i = 0; i < listeRois.length; i++) {
+                Joueur jo = (Joueur) joueurs.get(listeRois[i]).keySet().iterator().next();
+                Plateau p = (Plateau) joueurs.get(listeRois[i]).get(jo);
+                for (int j = 0; j < paramJeu.getNbRoiParJoueur(); j++) {
+                    if(jo.getPioche().get(j).getIdentifiant() == domino.getIdentifiant()){
+                        System.out.println("Placement : " + Roi.getRoiInt(listeRois[i]));
+                        System.out.println(jo.getPioche());
+                        System.out.println(p.affichePlateau(true));
+                        System.out.println("Domino : "+jo.getPioche().get(j));
+                        System.out.print("x : ");
+                        int x = scan.nextInt();
+                        System.out.print("y : ");
+                        int y = scan.nextInt();
+                        System.out.print("Orientation : ");
+                        Orientation sens = Orientation.getOrientation(scan.next());
+                        try {
+                            p.addDomino(jo.getPioche().get(j),x,y,0, sens);
+                        } catch (TuileException | DominoException e) {
+                            System.out.println(e.getMessage());
+                        }
+                        System.out.println(p.affichePlateau(true));
+                        joueurs.get(listeRois[i]).remove(jo);
+                        joueurs.get(listeRois[i]).put(jo,p);
+                        System.out.println("Fin tour de : "+joueurs.get(listeRois[i]).keySet().toArray()[0]);
+                    }
                 }
-                System.out.println(p.affichePlateau(true));
             }
-            joueurs.get(listeRois[i]).remove(jo);
-            joueurs.get(listeRois[i]).put(jo,p);
-            System.out.println("Fin tour de : "+joueurs.get(listeRois[i]).keySet().toArray()[0]);
         }
     }
 
@@ -208,6 +214,14 @@ public class Jeu {
             for (IDomino domino : tirage) {
                 System.out.println("[ "+domino.getCases()[0]+","+domino.getCases()[1]+" ]");
             }
+        }
+    }
+
+    private void afficheScore(){
+        for (int i = 0; i < listeRois.length; i++) {
+            Joueur jo = (Joueur) joueurs.get(listeRois[i]).keySet().iterator().next();
+            Plateau p = (Plateau) joueurs.get(listeRois[i]).get(jo);
+            System.out.println(jo+" score : "+ p.calculPoint());
         }
     }
 
