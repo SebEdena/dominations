@@ -162,13 +162,13 @@ public class Plateau {
             return "Placement invalide du domino pour " +
                     "[x:" + xCase +", y:" + yCase + ", sens:" + sens.getText()+"]";
         }
-        System.out.println("Bound x -"+ ((maxX - minX + 1) + Math.abs(sens.getOffsetX())));
-        System.out.println("Bound y -"+((maxY - minY + 1) + Math.abs(sens.getOffsetY())));
-        System.out.println("Bound x --"+((maxX - minX + 1) + sens.getOffsetX()));
-        System.out.println("Bound y --"+((maxY - minY + 1) + sens.getOffsetY()));
+//        System.out.println("Bound x -"+ ((maxX - minX + 1) + Math.abs(sens.getOffsetX())));
+//        System.out.println("Bound y -"+((maxY - minY + 1) + Math.abs(sens.getOffsetY())));
+//        System.out.println("Bound x --"+((maxX - minX + 1) + sens.getOffsetX()));
+//        System.out.println("Bound y --"+((maxY - minY + 1) + sens.getOffsetY()));
         if((!inBounds(xCase, yCase) || !inBounds(xCase2, yCase2)) &&
-                (((maxX - minX + 1) + Math.abs(sens.getOffsetX())/* + ((xCase >= minX && xCase <= maxX)?0:1)*/) > NB_COL_LIG ||
-                        ((maxY - minY + 1) + Math.abs(sens.getOffsetY())/* + ((yCase >= minY && yCase <= maxY)?0:1)*/) > NB_COL_LIG)) {
+                (((maxX - minX + 1) + Math.abs(sens.getOffsetX()) + ((xCase >= minX && xCase <= maxX)?0:1)) > NB_COL_LIG ||
+                        ((maxY - minY + 1) + Math.abs(sens.getOffsetY()) + ((yCase >= minY && yCase <= maxY)?0:1)) > NB_COL_LIG)) {
             return "Impossible de placer le domino car la longueur ou largeur dépasserait la " +
                     "limite autorisée de " + NB_COL_LIG;
         }
@@ -355,6 +355,56 @@ public class Plateau {
         return sommePoints;
     }
 
+    /**
+     * Fonction permettant de calculer le plus gros domaine du plateau
+     * @return renvoie le nombre de case contenu dans le plus grand domaine
+     */
+    public int calculGrosDomaine()
+    {
+        int grosDomaine = 0;
+        List<Case> pileCasesVisitees = new ArrayList<Case>();
+        for(int i = 0; i < NB_COL_LIG; i++)
+        {
+            for(int j = 0 ; j < NB_COL_LIG; j++)
+            {
+                if(this.tableau[i][j] != null && !pileCasesVisitees.contains(this.tableau[i][j]) &&
+                        !this.tableau[i][j].getTerrain().equals(Terrain.CHATEAU))
+                {
+                    Case caseTemoin = tableau[i][j];
+                    List<Case> casesSimilaires = new ArrayList<Case>();
+                    rechercheCaseSimilaire(i,j, pileCasesVisitees, caseTemoin, casesSimilaires);
+
+                    int couronne = 0;
+                    int compteurCase = 0;
+                    for(Case c : casesSimilaires)
+                    {
+                        compteurCase++;
+                        couronne = couronne + c.getNbCouronne();
+                    }
+                    if(grosDomaine < compteurCase)
+                    {
+                        grosDomaine = compteurCase;
+                    }
+                    //System.out.println(sommePoints);
+                }
+            }
+        }
+        return grosDomaine;
+    }
+
+    /**
+     * Fonction permettant de calculer le nombre de couronnes présentes sur le plateau
+     * @return le nombre de couronne total du plateau
+     */
+    public int calculCouronne() {
+        int sommeCouronne = 0;
+        for (IDomino d : this.dominos) {
+            for (Case c : d.getCases()) {
+                sommeCouronne += c.getNbCouronne();
+            }
+        }
+        return sommeCouronne;
+    }
     /**
      * Fonciton récursive permettant de rechercher des cases similaires au case témoin à la position (x;y) donné
      * @param x numéro de ligne de la case témoin
