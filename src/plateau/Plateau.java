@@ -309,26 +309,12 @@ public class Plateau {
             minY = yCase;
             maxY = yCase;
         }else{
-            if(xCase + sens.getOffsetX() >= 0 && xCase + sens.getOffsetX() < NB_COL_LIG){
-                if(xCase <= minX) minX = xCase + sens.getOffsetX();
-                if(xCase > maxX) maxX = xCase + sens.getOffsetX();
-            }
-            if(yCase + sens.getOffsetY() >= 0 && yCase + sens.getOffsetY() < NB_COL_LIG){
-                if(yCase <= minY) minY = yCase + sens.getOffsetY();
-                if(yCase > maxY) maxY = yCase + sens.getOffsetY();
-            }
-        }
-        if(minX > maxX)
-        {
-            int tmp = maxX;
-            maxX = minX;
-            minX = tmp;
-        }
-        if(minY > maxY)
-        {
-            int tmp = maxY;
-            maxY = minY;
-            minY = tmp;
+            int xCase2 = xCase + sens.getOffsetX();
+            int yCase2 = yCase + sens.getOffsetY();
+            minX = Math.min(minX,Math.min(xCase,xCase2));
+            maxX = Math.max(maxX,Math.max(xCase,xCase2));
+            minY = Math.min(minY,Math.min(yCase,yCase2));
+            maxY = Math.max(maxY,Math.max(yCase,yCase2));
         }
         System.out.println("x : ["+minX+ ","+maxX+"]");
         System.out.println("y : ["+minY+ ","+maxY+"]");
