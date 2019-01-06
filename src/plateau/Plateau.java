@@ -150,6 +150,8 @@ public class Plateau {
      */
     public String placementValide(IDomino d, int xCase, int yCase, int indexCase, Orientation sens){
         int xCase2 = xCase + sens.getOffsetX(), yCase2 = yCase + sens.getOffsetY();
+//        System.out.println(xCase + " " + yCase);
+//        System.out.println(minX + " " + maxX);
 
         if(xCase < -1 || xCase > NB_COL_LIG + 1 || yCase < -1 || yCase > NB_COL_LIG + 1 ||
                 (xCase==-1 && yCase==-1) ||
@@ -159,9 +161,13 @@ public class Plateau {
             return "Placement invalide du domino pour " +
                     "[x:" + xCase +", y:" + yCase + ", sens:" + sens.getText()+"]";
         }
-        if((!inBounds(xCase, yCase) || !inBounds(xCase2, yCase2)) &&
-                (((maxX - minX + 1) + sens.getOffsetX() + ((xCase >= minX && xCase <= maxX)?0:1)) > NB_COL_LIG ||
-                        ((maxY - minY + 1) + sens.getOffsetY() + ((yCase >= minY && yCase <= maxY)?0:1)) > NB_COL_LIG)) {
+        /*System.out.println("x : ["+minX+ ","+maxX+"]");
+        System.out.println("y : ["+minY+ ","+maxY+"]");*/
+        int minimalX = Math.min(minX,Math.min(xCase,xCase2));
+        int maximalX = Math.max(maxX,Math.max(xCase,xCase2));
+        int minimalY = Math.min(minY,Math.min(yCase,yCase2));
+        int maximalY = Math.max(maxY,Math.max(yCase,yCase2));
+        if(maximalX - minimalX + 1 > NB_COL_LIG || maximalY - minimalY + 1 > NB_COL_LIG) {
             return "Impossible de placer le domino car la longueur ou largeur dépasserait la " +
                     "limite autorisée de " + NB_COL_LIG;
         }
@@ -223,36 +229,44 @@ public class Plateau {
      */
     public int[] calculTranslation(IDomino d, int xCase, int yCase, int indexCase, Orientation sens){
         int[] deplacement = {0, 0};
-        if(yCase <= 0) {
+        if(yCase < 0) {
             if(sens.equals(Orientation.OUEST)){
                 deplacement[1] = 1 - yCase;
             }else if(sens.equals(Orientation.EST))
             {
                 deplacement[1] += - yCase;
+            } else {
+                deplacement[1] = 1;
             }
         }
-        if(yCase >= NB_COL_LIG - 1){
+        if(yCase > NB_COL_LIG - 1){
             if(sens.equals(Orientation.EST)){
                 deplacement[1] = -1 + (NB_COL_LIG - yCase - 1);
             }else if(sens.equals(Orientation.OUEST))
             {
                 deplacement[1] += NB_COL_LIG - yCase - 1;
+            } else {
+                deplacement[1] = -1;
             }
         }
-        if(xCase <= 0) {
+        if(xCase < 0) {
             if(sens.equals(Orientation.NORD)){
                 deplacement[0] = 1 - xCase;
             }else if(sens.equals(Orientation.SUD))
             {
                 deplacement[0] += - xCase;
+            } else {
+                deplacement[0] = 1;
             }
         }
-        if(xCase >= NB_COL_LIG - 1){
+        if(xCase > NB_COL_LIG - 1){
             if(sens.equals(Orientation.SUD)){
                 deplacement[0] = -1 + (NB_COL_LIG - xCase - 1);
             }else if(sens.equals(Orientation.NORD))
             {
                 deplacement[0] += NB_COL_LIG - xCase - 1;
+            } else {
+                deplacement[0] = -1;
             }
         }
         return deplacement;
@@ -292,14 +306,12 @@ public class Plateau {
             minY = yCase;
             maxY = yCase;
         }else{
-            if(xCase + sens.getOffsetX() >= 0 && xCase + sens.getOffsetX() < NB_COL_LIG){
-                if(xCase < minX) minX = xCase + sens.getOffsetX();
-                if(xCase > maxX) maxX = xCase + sens.getOffsetX();
-            }
-            if(yCase + sens.getOffsetY() >= 0 && yCase + sens.getOffsetY() < NB_COL_LIG){
-                if(yCase < minY) minY = yCase + sens.getOffsetY();
-                if(yCase > maxY) maxY = yCase + sens.getOffsetY();
-            }
+            int xCase2 = xCase + sens.getOffsetX();
+            int yCase2 = yCase + sens.getOffsetY();
+            minX = Math.min(minX,Math.min(xCase,xCase2));
+            maxX = Math.max(maxX,Math.max(xCase,xCase2));
+            minY = Math.min(minY,Math.min(yCase,yCase2));
+            maxY = Math.max(maxY,Math.max(yCase,yCase2));
         }
         System.out.println("x : ["+minX+ ","+maxX+"]");
         System.out.println("y : ["+minY+ ","+maxY+"]");
@@ -338,6 +350,57 @@ public class Plateau {
             }
         }
         return sommePoints;
+    }
+
+    /**
+     * Fonction permettant de calculer le plus gros domaine du plateau
+     * @return renvoie le nombre de case contenu dans le plus grand domaine
+     */
+    public int calculGrosDomaine()
+    {
+        int grosDomaine = 0;
+        List<Case> pileCasesVisitees = new ArrayList<Case>();
+        for(int i = 0; i < NB_COL_LIG; i++)
+        {
+            for(int j = 0 ; j < NB_COL_LIG; j++)
+            {
+                if(this.tableau[i][j] != null && !pileCasesVisitees.contains(this.tableau[i][j]) &&
+                        !this.tableau[i][j].getTerrain().equals(Terrain.CHATEAU))
+                {
+                    Case caseTemoin = tableau[i][j];
+                    List<Case> casesSimilaires = new ArrayList<Case>();
+                    rechercheCaseSimilaire(i,j, pileCasesVisitees, caseTemoin, casesSimilaires);
+
+                    int couronne = 0;
+                    int compteurCase = 0;
+                    for(Case c : casesSimilaires)
+                    {
+                        compteurCase++;
+                        couronne = couronne + c.getNbCouronne();
+                    }
+                    if(grosDomaine < compteurCase)
+                    {
+                        grosDomaine = compteurCase;
+                    }
+                    //System.out.println(sommePoints);
+                }
+            }
+        }
+        return grosDomaine;
+    }
+
+    /**
+     * Fonction permettant de calculer le nombre de couronnes présentes sur le plateau
+     * @return le nombre de couronne total du plateau
+     */
+    public int calculCouronne() {
+        int sommeCouronne = 0;
+        for (IDomino d : this.dominos) {
+            for (Case c : d.getCases()) {
+                sommeCouronne += c.getNbCouronne();
+            }
+        }
+        return sommeCouronne;
     }
 
     /**
