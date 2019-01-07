@@ -4,12 +4,11 @@ import com.jfoenix.controls.JFXButton;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import com.jfoenix.controls.JFXDialog;
+import controller.util.ConfigStyle;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.layout.*;
 
 public class PiocheController {
 
@@ -29,12 +28,16 @@ public class PiocheController {
     private HBox piocheJetonsContainer;
 
     @FXML
+    private VBox piochePlateauContainer;
+
+    @FXML
     private JFXButton piocheRevertJetonButton;
 
     @FXML
     private JFXButton piocheValidateJetonButton;
 
-    private JFXDialog dialog;
+    private final int nbCaseDomino = 2;
+    private ConfigStyle configStyle;
 
     @FXML
     void initialize() {
@@ -44,24 +47,64 @@ public class PiocheController {
         assert piocheRevertJetonButton != null : "fx:id=\"piocheRevertJetonButton\" was not injected: check your FXML file 'pioche.fxml'.";
         assert piocheValidateJetonButton != null : "fx:id=\"piocheValidateJetonButton\" was not injected: check your FXML file 'pioche.fxml'.";
 
+        configStyle = ConfigStyle.getInstance();
 
     }
 
-    public void init(StackPane parentContainer){
-        dialog = new JFXDialog();
-        dialog.setContent(piocheRootNode);
-        dialog.setDialogContainer(parentContainer);
-        setFixedDimensions(dialog.getContent(), 1500, 800);
-        dialog.setOverlayClose(false);
+    public void initContent(int nbRois, int nbColLig){
+        double dominoInsideSpacing = configStyle.getPiocheDominoInsideSpacing();
+        double caseDimension = configStyle.getPetiteCaseDimension();
+        double jetonDimension = configStyle.getPiocheJetonDimension();
+        double accepteurJetonDimension = configStyle.getPiocheAccepteurJetonDimension();
+        for(int i = 0; i < nbRois; i++){
+            VBox domino = new VBox();
+            domino.setSpacing(dominoInsideSpacing);
+            domino.setAlignment(Pos.CENTER);
 
-        /*toggleDialog.setOnAction((action)->{
-            partieDialogParent.toFront();
-            dialog.show(partieDialogParent);
-        });
+            Label dominoInt = new Label();
+            dominoInt.setText("X");
+            dominoInt.setStyle(dominoInt.getStyle() + "-fx-text-fill:black;-fx-font-weight:bold;-fx-font-size:18px");
 
-        dialog.setOnDialogClosed((action) -> {
-            partieDialogParent.toBack();
-        });*/
+            GridPane dominoDisplay = new GridPane();
+            setFixedDimensions(dominoDisplay, caseDimension*2, caseDimension);
+            for(int j = 0; j < nbCaseDomino; j++){
+                Label dominoContent = new Label();
+                dominoContent.setText("X");
+                setFixedDimensions(dominoContent, caseDimension, caseDimension);
+                dominoContent.setStyle(dominoContent.getStyle() + "-fx-border-color:black;-fx-text-fill:white;-fx-font-weight:bold;-fx-font-size:18px");
+                dominoContent.setAlignment(Pos.CENTER);
+                dominoDisplay.add(dominoContent, j, 0);
+            }
+
+            VBox accepteurJeton = new VBox();
+            accepteurJeton.setAlignment(Pos.CENTER);
+            accepteurJeton.setStyle(accepteurJeton.getStyle() + "-fx-border-color:black");
+            setFixedDimensions(accepteurJeton, accepteurJetonDimension, accepteurJetonDimension);
+
+            domino.getChildren().addAll(dominoInt, dominoDisplay, accepteurJeton);
+
+            piocheDominosContainer.getChildren().add(domino);
+
+            Label jeton = new Label();
+            setFixedDimensions(jeton, jetonDimension, jetonDimension);
+            jeton.setStyle(jeton.getStyle() + "-fx-border-radius:100%;-fx-border-color:black;-fx-border-width:4px;-fx-text-fill:white;-fx-font-weight:bold;-fx-font-size:18px");
+            piocheJetonsContainer.getChildren().add(jeton);
+        }
+
+        GridPane plateau = new GridPane();
+        plateau.setStyle(plateau.getStyle() + "-fx-border-color:black;");
+        setFixedDimensions(plateau, caseDimension * nbColLig, caseDimension * nbColLig);
+        for (int i = 0; i < nbColLig; i++) {
+            for (int j = 0; j < nbColLig; j++) {
+                Label label = new Label();
+                setFixedDimensions(label, caseDimension, caseDimension);
+                label.setAlignment(Pos.CENTER);
+                label.setStyle("-fx-font-size:18px;-fx-font-weight:bold;-fx-text-fill:white;-fx-border-color:black;");
+                label.setBackground(configStyle.getBackground("empty"));
+                plateau.add(label, i, j);
+            }
+        }
+        piochePlateauContainer.getChildren().add(plateau);
     }
 
     private void setFixedDimensions(Region r, double width, double height) {

@@ -2,6 +2,7 @@ package controller;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
+import controller.util.ConfigStyle;
 import controller.util.IndicatorFader;
 import controller.util.PlacementDomino;
 import exceptions.DominoException;
@@ -75,15 +76,18 @@ public class PartieController {
     private JFXButton toggleDialog;
 
     @FXML
-    private StackPane piocheRoot;
+    private StackPane partiePiocheParent;
 
     @FXML
-    private PiocheController partiePiocheController;
+    private StackPane pioche;
+
+    @FXML
+    private PiocheController piocheController;
 
 
-    private final double caseDimension = 50;
+    private JFXDialog dialog;
 
-    private Map<String, Background> correspondanceStyle;
+    private ConfigStyle configStyle;
 
     private IndicatorFader status;
 
@@ -103,21 +107,21 @@ public class PartieController {
 
     @FXML
     void initialize() throws DominoException, TuileException, IOException {
-        assert partieIndicator != null : "fx:id=\"partieIndicator\" was not injected: check your FXML file 'partie.fxml'.";
+        assert partieIndicator != null : "fx:id=\"partieG2Indicator\" was not injected: check your FXML file 'partie.fxml'.";
         assert partieTitleIndicator != null : "fx:id=\"partieTitleIndicator\" was not injected: check your FXML file 'partie.fxml'.";
-        assert partieTextIndicator != null : "fx:id=\"partieTextIndicator\" was not injected: check your FXML file 'partie.fxml'.";
+        assert partieTextIndicator != null : "fx:id=\"partiematicoTextIndicator\" was not injected: check your FXML file 'partie.fxml'.";
         assert leftContent != null : "fx:id=\"leftContent\" was not injected: check your FXML file 'partie.fxml'.";
         assert toggle != null : "fx:id=\"toggle\" was not injected: check your FXML file 'partie.fxml'.";
         assert rightContent != null : "fx:id=\"rightContent\" was not injected: check your FXML file 'partie.fxml'.";
-        assert partieTourJoueurLabel != null : "fx:id=\"partieTourJoueurLabel\" was not injected: check your FXML file 'partie.fxml'.";
+        assert partieTourJoueurLabel != null : "fx:id=\"partieUYurJoueurLabel\" was not injected: check your FXML file 'partie.fxml'.";
         assert partieDomino != null : "fx:id=\"partieDomino\" was not injected: check your FXML file 'partie.fxml'.";
         assert partiePlateauContainer != null : "fx:id=\"partiePlateauContainer\" was not injected: check your FXML file 'partie.fxml'.";
 
         status = new IndicatorFader(partieIndicator, partieTitleIndicator, partieTextIndicator, 3000, 500);
-        System.out.println(partiePiocheController == null);
-        partiePiocheController.init(piocheRoot);
+        configStyle = ConfigStyle.getInstance();
 
-        initCorrespondanceStyle();
+        piocheController.initContent(4, 5);
+        initDialog();
         initPlateau(7);
         partieValidateButton.setDisable(true);
         partieDropDominoButton.setDisable(false);
@@ -128,6 +132,11 @@ public class PartieController {
         toggle.setOnAction(event -> {
             status.display("Hello", "What's your name ?");
         });
+
+        toggleDialog.setOnAction(event -> {
+            showPiocheDialog();
+        });
+
 
         try {
             dominosPlacement = CSVParser.parse("./test_plateau.csv", ",", true);
@@ -168,9 +177,20 @@ public class PartieController {
         nextStep();
     }
 
+    private void initDialog(){
+        dialog = new JFXDialog();
+        dialog.toBack();
+        dialog.setContent(pioche);
+        dialog.setDialogContainer(partiePiocheParent);
+        setFixedDimensions(dialog.getContent(), 1500, 800);
+        dialog.setOverlayClose(false);
+    }
+
     private void initPlateau(int nbColLig) {
+        double caseDimension = configStyle.getCaseDimension();
         this.colRowSize = nbColLig;
         plateauDisplay = new GridPane();
+        plateauDisplay.setStyle(plateauDisplay.getStyle() + "-fx-border-color:black;");
         setFixedDimensions(plateauDisplay, caseDimension * nbColLig, caseDimension * nbColLig);
 
         for (int i = 0; i < nbColLig; i++) {
@@ -179,7 +199,7 @@ public class PartieController {
                 setFixedDimensions(label, caseDimension, caseDimension);
                 label.setAlignment(Pos.CENTER);
                 label.setStyle("-fx-font-size:18px;-fx-font-weight:bold;-fx-text-fill:white;-fx-border-color:black;");
-                label.setBackground(correspondanceStyle.get("empty"));
+                label.setBackground(configStyle.getBackground("empty"));
                 plateauDisplay.add(label, i, j);
             }
         }
@@ -281,17 +301,6 @@ public class PartieController {
         }
     }
 
-    private void initCorrespondanceStyle() {
-        correspondanceStyle = new HashMap<>();
-        correspondanceStyle.put("empty", Background.EMPTY);
-        correspondanceStyle.put("hover", new Background(new BackgroundFill(Color.web("#afafaf"), null, null)));
-        correspondanceStyle.put("locked", new Background(new BackgroundFill(Color.web("#d50000"), null, null)));
-        for (int i = 0; i < Terrain.values().length; i++) {
-            Terrain t = Terrain.values()[i];
-            correspondanceStyle.put(t.getLibelle(), new Background(new BackgroundFill(Color.web(t.getColor()), null, null)));
-        }
-    }
-
     private int getCaseDominoIndex(Node caseDom) {
         int i = 0;
         for (Node caseDisplay : partieDomino.getChildren()) {
@@ -375,6 +384,7 @@ public class PartieController {
     }
 
     private void fillDomino(IDomino d) {
+        double caseDimension = configStyle.getCaseDimension();
         if (d instanceof Domino) {
             placement = new PlacementDomino(d, Orientation.EST);
             Case[] cases = d.getCases();
@@ -397,7 +407,7 @@ public class PartieController {
         if(l != null){
             l.setGraphic(null);
             if (c == null) {
-                l.setBackground(correspondanceStyle.get(lockedOnCaseNull?"locked":"empty"));
+                l.setBackground(configStyle.getBackground(lockedOnCaseNull?"locked":"empty"));
                 l.setText("");
             } else {
                 if(c.getTerrain().equals(Terrain.CHATEAU)){
@@ -405,7 +415,7 @@ public class PartieController {
                 }else{
                     l.setText("" + c.getNbCouronne());
                 }
-                l.setBackground(correspondanceStyle.get(c.getTerrain().getLibelle()));
+                l.setBackground(configStyle.getBackground(c.getTerrain().getLibelle()));
             }
         }
     }
@@ -467,12 +477,12 @@ public class PartieController {
                 if(p.getCaseAt(i - 1 - translation[0], j - 1 - translation[1]) == null) {
                     if(((xBounds[1] - xBounds[0] + 1 == p.getSize()) && (i == xBounds[0] - 1 || i == xBounds[1] + 1)) ||
                             ((yBounds[1] - yBounds[0] + 1 == p.getSize()) && (j == yBounds[0] - 1 || j == yBounds[1] + 1))){
-                        getCaseLabel(i, j, null).setBackground(correspondanceStyle.get("locked"));
+                        getCaseLabel(i, j, null).setBackground(configStyle.getBackground("locked"));
                     }else{
                         if(i < xBounds[0] - 1 || i > xBounds[1] + 1 || j < yBounds[0] - 1 || j > yBounds[1] + 1){
-                            getCaseLabel(i, j, null).setBackground(correspondanceStyle.get("locked"));
+                            getCaseLabel(i, j, null).setBackground(configStyle.getBackground("locked"));
                         }else if(p.getCaseAt(i - 1 + translation[0], j - 1 + translation[1]) == null){
-                            getCaseLabel(i, j, null).setBackground(correspondanceStyle.get("empty"));
+                            getCaseLabel(i, j, null).setBackground(configStyle.getBackground("empty"));
                         }
                     }
                 }
@@ -493,6 +503,16 @@ public class PartieController {
         partieDomino.setVisible(true);
         partieValidateButton.setDisable(true);
         partieDropDominoButton.setDisable(false);
+    }
+
+    public void showPiocheDialog(){
+        partiePiocheParent.toFront();
+        dialog.show();
+    }
+
+    public void closePiocheDialog(){
+        dialog.close();
+        partiePiocheParent.toBack();
     }
 
     private void displayTab() {
