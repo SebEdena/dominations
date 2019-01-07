@@ -2,6 +2,7 @@ package controller.util;
 
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import plateau.Terrain;
 
@@ -64,5 +65,11 @@ public class ConfigStyle {
 
     public Background getBackground(String style){
         return correspondanceStyle.get(style);
+    }
+
+    public void setFixedDimensions(Region r, double width, double height) {
+        r.setPrefSize(width, height);
+        r.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        r.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
     }
 }

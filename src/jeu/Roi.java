@@ -1,6 +1,8 @@
 package jeu;
 
-public enum Roi
+import java.io.Serializable;
+
+public enum Roi implements Serializable
 {
     Rose("#f06292"),
     Jaune("#fbc02d"),

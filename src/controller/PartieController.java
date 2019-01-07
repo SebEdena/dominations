@@ -103,7 +103,7 @@ public class PartieController {
 
     private Plateau p = null;
 
-    private final DataFormat caseDominoFormat = new DataFormat("plateauDisplay.Case");
+    private final DataFormat caseDominoFormat = new DataFormat("plateau.Case");
 
     @FXML
     void initialize() throws DominoException, TuileException, IOException {
@@ -182,7 +182,7 @@ public class PartieController {
         dialog.toBack();
         dialog.setContent(pioche);
         dialog.setDialogContainer(partiePiocheParent);
-        setFixedDimensions(dialog.getContent(), 1500, 800);
+        configStyle.setFixedDimensions(dialog.getContent(), 1500, 800);
         dialog.setOverlayClose(false);
     }
 
@@ -191,12 +191,12 @@ public class PartieController {
         this.colRowSize = nbColLig;
         plateauDisplay = new GridPane();
         plateauDisplay.setStyle(plateauDisplay.getStyle() + "-fx-border-color:black;");
-        setFixedDimensions(plateauDisplay, caseDimension * nbColLig, caseDimension * nbColLig);
+        configStyle.setFixedDimensions(plateauDisplay, caseDimension * nbColLig, caseDimension * nbColLig);
 
         for (int i = 0; i < nbColLig; i++) {
             for (int j = 0; j < nbColLig; j++) {
                 Label label = new Label();
-                setFixedDimensions(label, caseDimension, caseDimension);
+                configStyle.setFixedDimensions(label, caseDimension, caseDimension);
                 label.setAlignment(Pos.CENTER);
                 label.setStyle("-fx-font-size:18px;-fx-font-weight:bold;-fx-text-fill:white;-fx-border-color:black;");
                 label.setBackground(configStyle.getBackground("empty"));
@@ -335,12 +335,6 @@ public class PartieController {
         return GridPane.getColumnIndex(node);
     }
 
-    private void setFixedDimensions(Region r, double width, double height) {
-        r.setPrefSize(width, height);
-        r.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-        r.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-    }
-
     private boolean isLockedWhenNoDomino(Plateau p, int i, int j){
         int[] xBounds = p.getXBounds();
         int[] yBounds = p.getYBounds();
@@ -393,13 +387,13 @@ public class PartieController {
                 caseDomino.setStyle(caseDomino.getStyle() + "-fx-background-color:" + cases[i].getTerrain().getColor() + ";" +
                         "-fx-text-fill:white;");
                 caseDomino.setText("" + cases[i].getNbCouronne());
-                setFixedDimensions(caseDomino, caseDimension, caseDimension);
+                configStyle.setFixedDimensions(caseDomino, caseDimension, caseDimension);
             }
             partieDomino.setRotate(0);
             for (Node n : partieDomino.getChildren()) {
                 n.setRotate(0);
             }
-            setFixedDimensions(partieDomino, caseDimension * 2, caseDimension);
+            configStyle.setFixedDimensions(partieDomino, caseDimension * 2, caseDimension);
         }
     }
 
