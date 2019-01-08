@@ -28,7 +28,7 @@ public class Partie {
     }
 
     public boolean partieFinie(){
-        return dominosRestants.size() == 0;
+        return dominosRestants.size() == 0 && tirage == null; //vérifier que le tirage n'est pas vide aussi. c'est bien is null car à chaque fois on clear le tirage
     }
 
     public NbJoueur getParamJeu() {
@@ -122,5 +122,14 @@ public class Partie {
             else return j2.getScore() - j1.getScore();
         });
         return resultats;
+    }
+
+    public int getNbDominoPioche()
+    {
+        return tirage.size();
+    }
+
+    public List<IDomino> getTirage() {
+        return tirage;
     }
 }

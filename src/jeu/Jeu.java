@@ -60,7 +60,7 @@ public class Jeu {
 
     private List<Joueur> allocateRoi(NbJoueur nbJoueur, ModeJeu modeJeu) throws Exception {
         List<Joueur> joueurs = new ArrayList<>();
-        for (int i = 0; i < partie.getParamJeu().getNbJoueurs(); i++) {
+        for (int i = 0; i < nbJoueur.getNbJoueurs(); i++) {
             System.out.println("Joueur "+ (i+1) +" veuillez renseigner votre pseudo : ");
             String nom = scan.next();
             Joueur j = new Joueur(nom, Roi.getRoiInt(i), nbJoueur, modeJeu, SCORE_DEFAUT);
@@ -98,20 +98,21 @@ public class Jeu {
 
     private void tirageJoueur(List<Roi> rois){
         System.out.println("Entrez le numéro pour choisir le domino");
+        List<IDomino> cartesSurBoard = new ArrayList<IDomino>(partie.getTirage()); //en faisant le remove des domino du tirage tu casses ta fonction de getTourOrder. je t'ai fait un petit clonage pour éviter cela
         for (Roi roi : rois) {
             Joueur joueur = partie.getJoueur(roi);
             System.out.println("Tour : " + roi.toString());
-            System.out.println("Entrez le num du domino : (entre 1 et 4)");
+            System.out.println("Entrez le num du domino : (entre 1 et " + (cartesSurBoard.size()) + ")");
             int domino = scan.nextInt();
-            joueur.addDomino(partie.getDominoPioche(domino - 1));
+            joueur.addDomino(cartesSurBoard.remove(domino - 1));
         }
     }
 
     private void placementJoueur(){
         List<Pair<IDomino, Joueur>> assortiment = partie.getTourOrder();
         for (Pair<IDomino, Joueur> paire : assortiment) {
-            Joueur joueur = paire.getValue();
             IDomino domino = paire.getKey();
+            Joueur joueur = paire.getValue();
             System.out.println("Placement : " + joueur.getCouleurRoi().getLibelle());
             System.out.println(joueur.getPioche());
             System.out.println(joueur.getPlateau().affichePlateau(true));
@@ -127,7 +128,7 @@ public class Jeu {
             } catch (TuileException | DominoException e) {
                 System.out.println(e.getMessage());
             }
-            System.out.println(joueur.getPlateau().affichePlateau(false));
+            System.out.println(joueur.getPlateau().affichePlateau(true));
             System.out.println("Fin tour de : "+ joueur.getCouleurRoi().getLibelle());
         }
     }
@@ -161,7 +162,15 @@ public class Jeu {
             }
             System.out.println(sb.toString());
         }
-        else System.out.println("Vainqueur : "+scores.get(0));
+        else
+        {
+            StringBuilder sb = new StringBuilder("Participants : ");
+            for (Joueur j : scores)
+            {
+                sb.append("Joueur : " + j.getNomJoueur() + " / score : " + j.getScore() + "\n");
+            }
+            sb.append("Vainqueur : " + scores.get(0));
+        }
 
     }
 
