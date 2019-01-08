@@ -494,33 +494,30 @@ public class Plateau {
      * affiche des possibilités de positionnement d'un domino sur le plateau
      * @param domino domino concerné
      */
-    public void possibilite(IDomino domino)
+    public List<PlacementDomino> possibilite(IDomino domino)
     {
-        List<Case> casesPossible = new ArrayList<Case>();
+        List<PlacementDomino> casesPossible = new ArrayList<PlacementDomino>();
         for(int numeroCase = 0; numeroCase < domino.getNbCases(); numeroCase++)
         {
-            for(int i = 0; i < NB_COL_LIG; i++)
+            for(int i = -1; i <= NB_COL_LIG; i++)
             {
-                for(int j = 0; j < NB_COL_LIG; j++)
+                for(int j = -1; j <= NB_COL_LIG; j++)
                 {
                     for(Orientation o : Orientation.values())
                     {
                         if(this.placementValide(domino,i,j,numeroCase,o) == null)
                         {
-                            if(!casesPossible.contains(this.tableau[i][j]))
-                            {
-                                casesPossible.add(this.tableau[i][j]);
-                            }
+                            PlacementDomino p = new PlacementDomino(domino,o);
+                            p.setCaseId(numeroCase);
+                            p.setTranslation(calculTranslation(domino,i,j,numeroCase,o));
+                            p.positionOnPlateau(i,j);
+                            casesPossible.add(p);
                         }
                     }
                 }
             }
         }
-        System.out.println("possibilités de placement : ");
-        for(Case c : casesPossible)
-        {
-            System.out.println("bonjour");
-        }
+        return casesPossible;
     }
 
     /**
