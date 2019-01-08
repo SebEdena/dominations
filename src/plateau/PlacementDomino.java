@@ -1,8 +1,4 @@
-package controller.util;
-
-import plateau.Case;
-import plateau.IDomino;
-import plateau.Orientation;
+package plateau;
 
 public class PlacementDomino {
 
