@@ -1,6 +1,12 @@
 package jeu;
 
+import com.sun.org.apache.xpath.internal.operations.Mod;
+import exceptions.DominoException;
+import exceptions.TuileException;
+import javafx.application.Platform;
 import plateau.IDomino;
+import plateau.Plateau;
+import plateau.Tuile;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -10,16 +16,21 @@ public class Joueur {
 
     private String nomJoueur;
     private Roi couleurRoi;
+    private int nbRois;
     private int score;
     private List<IDomino> pioche;
     private int scoreCouronne;
     private int scoreDomaine;
     private boolean egalite;
+    private Plateau plateau;
 
-    public Joueur(String nom, Roi couleur, int score){
+    public Joueur(String nom, Roi couleur, NbJoueur nbJoueur, ModeJeu modeJeu, int score) throws DominoException, TuileException {
         nomJoueur = nom;
         this.score = score;
+        this.nbRois = nbJoueur.getNbRoiParJoueur();
         couleurRoi = couleur;
+        plateau = new Plateau(modeJeu.getTaillePlateau());
+        plateau.addDomino(new Tuile(),2,2,0,null);
     }
 
     public String getNomJoueur() {
@@ -36,6 +47,10 @@ public class Joueur {
 
     public void setCouleurRoi(Roi couleurRoi) {
         this.couleurRoi = couleurRoi;
+    }
+
+    public int getNbRois(){
+        return nbRois;
     }
 
     public int getScore() {
@@ -91,5 +106,19 @@ public class Joueur {
 
     public void setEgalite(boolean b) {
         this.egalite = b;
+    }
+
+    public Plateau getPlateau() {
+        return plateau;
+    }
+
+    public boolean piocheContainsDomino(IDomino d){
+        return pioche.contains(d);
+    }
+
+    public void calculScore() {
+        this.setScore(plateau.calculPoint());
+        this.setScoreDomaine(plateau.calculGrosDomaine());
+        this.setScoreCouronne(plateau.calculCouronne());
     }
 }

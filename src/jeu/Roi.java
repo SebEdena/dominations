@@ -4,14 +4,16 @@ import java.io.Serializable;
 
 public enum Roi implements Serializable
 {
-    Rose("#f06292"),
-    Jaune("#fbc02d"),
-    Vert("#8bc34a"),
-    Bleu("#0288d1");
+    Rose("Rose", "#f06292"),
+    Jaune("Jaune", "#fbc02d"),
+    Vert("Vert", "#8bc34a"),
+    Bleu("Bleu","#0288d1");
 
+    private String libelle;
     private String hexColor;
 
-    Roi(String hexColor){
+    Roi(String libelle, String hexColor){
+        this.libelle = libelle;
         this.hexColor = hexColor;
     }
 
@@ -49,7 +51,12 @@ public enum Roi implements Serializable
         }
     }
 
+    public String getLibelle() {
+        return libelle;
+    }
+
     public String getColor(){
         return hexColor;
     }
+
 }
