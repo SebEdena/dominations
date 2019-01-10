@@ -132,4 +132,20 @@ public class Partie {
     public List<IDomino> getTirage() {
         return tirage;
     }
+
+    public NbJoueur getNbJoueur() {
+        return nbJoueur;
+    }
+
+    public List<Joueur> getJoueurs(){
+        return joueurs;
+    }
+
+    public ModeJeu getModeJeu() {
+        return modeJeu;
+    }
+
+    public int getTotalRois(){
+        return nbJoueur.getNbJoueurs() * nbJoueur.getNbRoiParJoueur();
+    }
 }

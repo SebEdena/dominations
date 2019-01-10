@@ -1,9 +1,8 @@
 package controller.util;
 
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import jeu.Roi;
 import plateau.Terrain;
 
 import java.util.HashMap;
@@ -19,7 +18,8 @@ public class ConfigStyle {
     private final double piocheAccepteurJetonDimension = 40;
     private final double piocheDominoInsideSpacing = 30;
 
-    private Map<String, Background> correspondanceStyle;
+    private Map<String, Background> correspondanceStyleBackground;
+    private Map<String, Border> correspondanceStyleBorder;
 
     public static ConfigStyle getInstance(){
         if(instance == null){
@@ -29,17 +29,23 @@ public class ConfigStyle {
     }
 
     private ConfigStyle(){
-        initCorrespondanceStyle();
+        initCorrespondanceStyles();
     }
 
-    private void initCorrespondanceStyle() {
-        correspondanceStyle = new HashMap<>();
-        correspondanceStyle.put("empty", Background.EMPTY);
-        correspondanceStyle.put("hover", new Background(new BackgroundFill(Color.web("#afafaf"), null, null)));
-        correspondanceStyle.put("locked", new Background(new BackgroundFill(Color.web("#d50000"), null, null)));
+    private void initCorrespondanceStyles() {
+        correspondanceStyleBackground = new HashMap<>();
+        correspondanceStyleBorder = new HashMap<>();
+        correspondanceStyleBackground.put("empty", Background.EMPTY);
+        correspondanceStyleBackground.put("hover", new Background(new BackgroundFill(Color.web("#afafaf"), null, null)));
+        correspondanceStyleBackground.put("locked", new Background(new BackgroundFill(Color.web("#d50000"), null, null)));
         for (int i = 0; i < Terrain.values().length; i++) {
             Terrain t = Terrain.values()[i];
-            correspondanceStyle.put(t.getLibelle(), new Background(new BackgroundFill(Color.web(t.getColor()), null, null)));
+            correspondanceStyleBackground.put(t.getLibelle(), new Background(new BackgroundFill(Color.web(t.getColor()), null, null)));
+        }
+        for (int i = 0; i < Roi.values().length; i++) {
+            Roi roi = Roi.values()[i];
+            correspondanceStyleBackground.put(roi.getLibelle(), new Background(new BackgroundFill(Color.web(roi.getColor()), new CornerRadii(100, true), null)));
+            correspondanceStyleBorder.put(roi.getLibelle(), new Border(new BorderStroke(Color.web(roi.getColor()).interpolate(Color.BLACK, 0.2), BorderStrokeStyle.SOLID, new CornerRadii(100, true), new BorderWidths(4))));
         }
     }
 
@@ -64,7 +70,11 @@ public class ConfigStyle {
     }
 
     public Background getBackground(String style){
-        return correspondanceStyle.get(style);
+        return correspondanceStyleBackground.get(style);
+    }
+
+    public Border getBorder(String style){
+        return correspondanceStyleBorder.get(style);
     }
 
     public void setFixedDimensions(Region r, double width, double height) {

@@ -54,7 +54,7 @@ public class Jeu {
         } while(nbJoueurs < NB_JOUEURS_MIN || nbJoueurs > NB_JOUEURS_MAX);
         NbJoueur paramJeu = NbJoueur.getParamsJeu(nbJoueurs);
         List<Joueur> joueurs = allocateRoi(paramJeu, MODE_JEU_DEFAUT);
-        dominosDebut = chargementDominos("./dominos.csv");
+        dominosDebut = Jeu.chargementDominos("./dominos.csv");
         partie = new Partie(joueurs, dominosDebut, paramJeu, MODE_JEU_DEFAUT);
     }
 
@@ -70,7 +70,7 @@ public class Jeu {
         return joueurs;
     }
 
-    private List<IDomino> chargementDominos(String path) throws IOException {
+    public static List<IDomino> chargementDominos(String path) throws IOException {
         List<String[]> dominos = CSVParser.parse(path, ",", true);
         List<IDomino> dominosCharges = new ArrayList<>();
         for(String[] strs : dominos) {
