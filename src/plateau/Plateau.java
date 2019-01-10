@@ -240,9 +240,10 @@ public class Plateau {
         }else if(yCase == 0){
             if(sens.equals(Orientation.OUEST)){
                 deplacement[1] = 1 - yCase;
-            }else if(sens.equals(Orientation.EST)) {
-                deplacement[1] += - yCase;
             }
+//            else if(sens.equals(Orientation.EST)) {
+//                deplacement[1] += - yCase;
+//            }
         }
 
         if(yCase > NB_COL_LIG - 1){
@@ -257,9 +258,10 @@ public class Plateau {
         }else if(yCase == NB_COL_LIG - 1) {
             if (sens.equals(Orientation.EST)) {
                 deplacement[1] = -1 + (NB_COL_LIG - yCase - 1);
-            } else if (sens.equals(Orientation.OUEST)) {
-                deplacement[1] += NB_COL_LIG - yCase - 1;
             }
+//            else if (sens.equals(Orientation.OUEST)) {
+//                deplacement[1] += NB_COL_LIG - yCase - 1;
+//            }
         }
 
         if(xCase < 0) {
@@ -274,9 +276,10 @@ public class Plateau {
         }else if(xCase == 0){
             if(sens.equals(Orientation.NORD)){
                 deplacement[0] = 1 - xCase;
-            }else if(sens.equals(Orientation.SUD)) {
-                deplacement[0] += - xCase;
             }
+//            else if(sens.equals(Orientation.SUD)) {
+//                deplacement[0] += - xCase;
+//            }
         }
 
         if(xCase > NB_COL_LIG - 1){
@@ -291,9 +294,10 @@ public class Plateau {
         }else if(xCase == NB_COL_LIG - 1) {
             if(sens.equals(Orientation.SUD)){
                 deplacement[0] = -1 + (NB_COL_LIG - xCase - 1);
-            }else if(sens.equals(Orientation.NORD)) {
-                deplacement[0] += NB_COL_LIG - xCase - 1;
             }
+//            else if(sens.equals(Orientation.NORD)) {
+//                deplacement[0] += NB_COL_LIG - xCase - 1;
+//            }
         }
         return deplacement;
     }
