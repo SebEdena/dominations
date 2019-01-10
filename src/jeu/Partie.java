@@ -132,4 +132,8 @@ public class Partie {
     public List<IDomino> getTirage() {
         return tirage;
     }
+
+    public List<Joueur> getJoueurs(){
+        return joueurs;
+    }
 }

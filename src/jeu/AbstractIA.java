@@ -15,10 +15,13 @@ public abstract class AbstractIA extends Joueur
        super(nom, couleur, nbJoueur, modeJeu, score);
     }
 
+    @Override
     public abstract int pickInPioche(List<IDomino> cartesSurBoard, List<Joueur> joueursAdverses);
 
-    public abstract PlacementDomino pickPossibilite(IDomino domino);
+    @Override
+    public abstract PlacementDomino pickPossibilite(IDomino domino) throws Exception;
 
+    @Override
     public boolean isIA()
     {
         return true;

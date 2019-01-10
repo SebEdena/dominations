@@ -5,6 +5,7 @@ import exceptions.DominoException;
 import exceptions.TuileException;
 import javafx.application.Platform;
 import plateau.IDomino;
+import plateau.PlacementDomino;
 import plateau.Plateau;
 import plateau.Tuile;
 
@@ -121,5 +122,19 @@ public class Joueur {
         this.setScore(plateau.calculPoint());
         this.setScoreDomaine(plateau.calculGrosDomaine());
         this.setScoreCouronne(plateau.calculCouronne());
+    }
+
+    public boolean isIA(){
+        return false;
+    }
+
+    public int pickInPioche(List<IDomino> cartesSurBoard, List<Joueur> joueursAdverses) throws Exception
+    {
+        throw new Exception("impposible de faire cela avec un joueur");
+    }
+
+    public PlacementDomino pickPossibilite(IDomino domino) throws Exception
+    {
+        throw new Exception("impposible de faire cela avec un joueur");
     }
 }
