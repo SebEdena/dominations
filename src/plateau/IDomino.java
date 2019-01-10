@@ -1,3 +1,8 @@
+/**
+ * Interface permettant de décrire un type de domino soit domino soit tuile Château
+ * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
+ * @version 1.0
+ */
 package plateau;
 
 public interface IDomino
@@ -8,4 +13,6 @@ public interface IDomino
     public int getIdentifiant();
 
     public int getNbCases();
+
+    public int getCaseIndex(Case c, boolean oppose);
 }

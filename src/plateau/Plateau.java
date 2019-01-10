@@ -90,7 +90,6 @@ public class Plateau {
      * @return renvoie vrai si les coordonnées sont dans les limites, faux sinon
      */
     public boolean inBounds(int row, int col){
-        //System.out.println(minX + " " + maxX + " " + minY + " " + maxY);
         return row >= minX && row <= maxX && col >= minY && col <= maxY;
     }
 
@@ -162,12 +161,8 @@ public class Plateau {
             return "Placement invalide du domino pour " +
                     "[x:" + xCase +", y:" + yCase + ", sens:" + sens.getText()+"]";
         }
-//        System.out.println("Bound x -"+ ((maxX - minX + 1) + Math.abs(sens.getOffsetX())));
-//        System.out.println("Bound y -"+((maxY - minY + 1) + Math.abs(sens.getOffsetY())));
-//        System.out.println("Bound x --"+((maxX - minX + 1) + sens.getOffsetX()));
-//        System.out.println("Bound y --"+((maxY - minY + 1) + sens.getOffsetY()));
-        System.out.println("x : ["+minX+ ","+maxX+"]");
-        System.out.println("y : ["+minY+ ","+maxY+"]");
+        /*System.out.println("x : ["+minX+ ","+maxX+"]");
+        System.out.println("y : ["+minY+ ","+maxY+"]");*/
         int minimalX = Math.min(minX,Math.min(xCase,xCase2));
         int maximalX = Math.max(maxX,Math.max(xCase,xCase2));
         int minimalY = Math.min(minY,Math.min(yCase,yCase2));
@@ -232,18 +227,25 @@ public class Plateau {
      * @param sens Orientation donnée pour le domino
      * @return un tableau d'entiers contenant [nombre de cases à décaler x, nombre de cases à décaler y]
      */
-    private int[] calculTranslation(IDomino d, int xCase, int yCase, int indexCase, Orientation sens){
+    public int[] calculTranslation(IDomino d, int xCase, int yCase, int indexCase, Orientation sens){
         int[] deplacement = {0, 0};
         if(yCase < 0) {
             if(sens.equals(Orientation.OUEST)){
                 deplacement[1] = 1 - yCase;
-            }else if(sens.equals(Orientation.EST))
-            {
+            }else if(sens.equals(Orientation.EST)) {
                 deplacement[1] += - yCase;
             } else {
                 deplacement[1] = 1;
             }
+        }else if(yCase == 0){
+            if(sens.equals(Orientation.OUEST)){
+                deplacement[1] = 1 - yCase;
+            }
+//            else if(sens.equals(Orientation.EST)) {
+//                deplacement[1] += - yCase;
+//            }
         }
+
         if(yCase > NB_COL_LIG - 1){
             if(sens.equals(Orientation.EST)){
                 deplacement[1] = -1 + (NB_COL_LIG - yCase - 1);
@@ -253,7 +255,15 @@ public class Plateau {
             } else {
                 deplacement[1] = -1;
             }
+        }else if(yCase == NB_COL_LIG - 1) {
+            if (sens.equals(Orientation.EST)) {
+                deplacement[1] = -1 + (NB_COL_LIG - yCase - 1);
+            }
+//            else if (sens.equals(Orientation.OUEST)) {
+//                deplacement[1] += NB_COL_LIG - yCase - 1;
+//            }
         }
+
         if(xCase < 0) {
             if(sens.equals(Orientation.NORD)){
                 deplacement[0] = 1 - xCase;
@@ -263,7 +273,15 @@ public class Plateau {
             } else {
                 deplacement[0] = 1;
             }
+        }else if(xCase == 0){
+            if(sens.equals(Orientation.NORD)){
+                deplacement[0] = 1 - xCase;
+            }
+//            else if(sens.equals(Orientation.SUD)) {
+//                deplacement[0] += - xCase;
+//            }
         }
+
         if(xCase > NB_COL_LIG - 1){
             if(sens.equals(Orientation.SUD)){
                 deplacement[0] = -1 + (NB_COL_LIG - xCase - 1);
@@ -273,6 +291,13 @@ public class Plateau {
             } else {
                 deplacement[0] = -1;
             }
+        }else if(xCase == NB_COL_LIG - 1) {
+            if(sens.equals(Orientation.SUD)){
+                deplacement[0] = -1 + (NB_COL_LIG - xCase - 1);
+            }
+//            else if(sens.equals(Orientation.NORD)) {
+//                deplacement[0] += NB_COL_LIG - xCase - 1;
+//            }
         }
         return deplacement;
     }
@@ -407,6 +432,7 @@ public class Plateau {
         }
         return sommeCouronne;
     }
+
     /**
      * Fonciton récursive permettant de rechercher des cases similaires au case témoin à la position (x;y) donné
      * @param x numéro de ligne de la case témoin
@@ -498,33 +524,30 @@ public class Plateau {
      * affiche des possibilités de positionnement d'un domino sur le plateau
      * @param domino domino concerné
      */
-    public void possibilite(IDomino domino)
+    public List<PlacementDomino> possibilite(IDomino domino)
     {
-        List<Case> casesPossible = new ArrayList<Case>();
+        List<PlacementDomino> casesPossible = new ArrayList<PlacementDomino>();
         for(int numeroCase = 0; numeroCase < domino.getNbCases(); numeroCase++)
         {
-            for(int i = 0; i < NB_COL_LIG; i++)
+            for(int i = -1; i <= NB_COL_LIG; i++)
             {
-                for(int j = 0; j < NB_COL_LIG; j++)
+                for(int j = -1; j <= NB_COL_LIG; j++)
                 {
                     for(Orientation o : Orientation.values())
                     {
                         if(this.placementValide(domino,i,j,numeroCase,o) == null)
                         {
-                            if(!casesPossible.contains(this.tableau[i][j]))
-                            {
-                                casesPossible.add(this.tableau[i][j]);
-                            }
+                            PlacementDomino p = new PlacementDomino(domino,o);
+                            p.setCaseId(numeroCase);
+                            p.setTranslation(calculTranslation(domino,i,j,numeroCase,o));
+                            p.positionOnPlateau(i,j);
+                            casesPossible.add(p);
                         }
                     }
                 }
             }
         }
-        System.out.println("possibilités de placement : ");
-        for(Case c : casesPossible)
-        {
-            System.out.println("bonjour");
-        }
+        return casesPossible;
     }
 
     /**

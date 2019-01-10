@@ -1,3 +1,8 @@
+/**
+ * Enumération permettant de décrire  les orientations possibles du jeu
+ * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
+ * @version 1.0
+ */
 package plateau;
 
 public enum Orientation {
@@ -46,6 +51,16 @@ public enum Orientation {
             case EST: return OUEST;
             case SUD: return NORD;
             case OUEST: return EST;
+            default: return null;
+        }
+    }
+
+    public Orientation getRotationHoraire(){
+        switch (this){
+            case NORD: return EST;
+            case EST: return SUD;
+            case SUD: return OUEST;
+            case OUEST: return NORD;
             default: return null;
         }
     }

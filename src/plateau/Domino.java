@@ -1,6 +1,11 @@
+/**
+ * Classe permettant de décrire un domino
+ * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
+ * @version 1.0
+ */
 package plateau;
 
-
+import java.util.Map;
 
 public class Domino implements IDomino
 {
@@ -30,6 +35,16 @@ public class Domino implements IDomino
     @Override
     public int getNbCases() {
         return nbCasesDomino;
+    }
+
+    @Override
+    public int getCaseIndex(Case c, boolean oppose) {
+        for (int i = 0; i < cases.length; i++){
+            if(c.equals(cases[i])){
+                return oppose?Math.abs(i - 1):i;
+            }
+        }
+        return -1;
     }
 
     public String toString()

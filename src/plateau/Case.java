@@ -1,6 +1,13 @@
+/**
+ * Classe permettant de décrire une case
+ * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
+ * @version 1.0
+ */
 package plateau;
 
-public class Case {
+import java.io.Serializable;
+
+public class Case implements Serializable {
     private static final String separateurPlateau = ";";
     private int nbCouronne;
     private Terrain terrain;
@@ -36,8 +43,13 @@ public class Case {
         return terrain.getDiminutif() + separateurPlateau + "--C"+this.nbCouronne;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        Case c = (Case) obj;
+        return nbCouronne == c.getNbCouronne() && terrain.equals(c.getTerrain());
+    }
+
     public String toString() {
         return "{" + this.terrain.name() + ", Couronnes: " + this.nbCouronne + "}";
     }
-
 }
