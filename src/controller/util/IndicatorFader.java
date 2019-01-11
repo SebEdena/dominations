@@ -40,6 +40,10 @@ public class IndicatorFader {
         return toggleTime;
     }
 
+    public long getTotalTime() {
+        return 2*toggleTime + idleTime;
+    }
+
     public void display(String textString, String titleString, Color titleColor){
         new Thread(() -> {
             Platform.runLater(() -> {

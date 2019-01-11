@@ -331,16 +331,16 @@ public class PiocheController {
         }
         choix.set(indexDomino, choixEnCours);
         choixEnCours = null;
-        System.out.println(choix);
         if(piocheJetonsContainer.getChildren().size() == 0){
             synchronized (partieLocker){ partieLocker.notifyAll(); }
         }else{
             new Thread(()->{
                 try {
                     Thread.sleep(500);
+                    Label jeton = (Label) piocheJetonsContainer.getChildren().get(0);
                     Platform.runLater(()->{
-                        Label jeton = (Label) piocheJetonsContainer.getChildren().get(0);
                         Roi roi = Roi.getRoiInt(Integer.parseInt(jeton.getText()) - 1);
+                        fillPlateau(partie.getJoueurs().get(Integer.parseInt(jeton.getText()) - 1).getPlateau());
                         status.display("Glissez votre jeton sous le domino voulu", partie.getJoueur(roi).getNomJoueur(), Color.web(roi.getColor()));
                         jeton.setDisable(false);
                     });
@@ -360,8 +360,9 @@ public class PiocheController {
                 Thread.sleep(500);
                 Label jeton = (Label) piocheJetonsContainer.getChildren().get(0);
                 Roi roi = Roi.getRoiInt(Integer.parseInt(jeton.getText()) - 1);
+                Platform.runLater(() -> fillPlateau(partie.getJoueurs().get(Integer.parseInt(jeton.getText()) - 1).getPlateau()));
                 status.display("Glissez votre jeton sous le domino voulu", "Début de la pioche");
-                Thread.sleep(status.getIdleTime() + status.getToggleTime() + 100);
+                Thread.sleep(status.getTotalTime() + 100);
                 status.display("Glissez votre jeton sous le domino voulu", partie.getJoueur(roi).getNomJoueur(), Color.web(roi.getColor()));
                 Platform.runLater(()->{
                     jeton.setDisable(false);
