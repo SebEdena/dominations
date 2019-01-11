@@ -4,10 +4,7 @@ import com.sun.org.apache.xpath.internal.operations.Mod;
 import exceptions.DominoException;
 import exceptions.TuileException;
 import javafx.application.Platform;
-import plateau.IDomino;
-import plateau.PlacementDomino;
-import plateau.Plateau;
-import plateau.Tuile;
+import plateau.*;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -118,10 +115,36 @@ public class Joueur {
         return pioche.contains(d);
     }
 
-    public void calculScore() {
-        this.setScore(plateau.calculPoint());
+    public void calculScore(ModeJeu mode) {
+        this.setScore(plateau.calculPoint() + this.BonusPoint(mode));
         this.setScoreDomaine(plateau.calculGrosDomaine());
         this.setScoreCouronne(plateau.calculCouronne());
+    }
+
+    private int BonusPoint(ModeJeu mode)
+    {
+        switch(mode)
+        {
+            case STANDARD:
+                return 0;
+            case EMPIRE_DU_MILIEU:
+                return this.getPlateau().getCaseAt(2,2).getTerrain().equals(Terrain.CHATEAU)?10:0;
+            case HARMONIE:
+                Plateau plateau = this.getPlateau();
+                for(int i = 0; i < mode.getTaillePlateau(); i++)
+                {
+                    for(int j = 0; i < mode.getTaillePlateau(); j++)
+                    {
+                        if(plateau.getCaseAt(i,j) == null)
+                        {
+                            return 0;
+                        }
+                    }
+                }
+                return 5;
+            default:
+                return 0;
+        }
     }
 
     public boolean isIA(){

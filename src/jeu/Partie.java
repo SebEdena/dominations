@@ -106,7 +106,7 @@ public class Partie {
     public List<Joueur> calculScores(){
         List<Joueur> resultats = new ArrayList<>();
         for(Joueur j : joueurs){
-            j.calculScore();
+            j.calculScore(this.modeJeu);
             resultats.add(j);
         }
         resultats.sort((j1, j2) -> {
