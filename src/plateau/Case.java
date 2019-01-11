@@ -43,12 +43,6 @@ public class Case implements Serializable {
         return terrain.getDiminutif() + separateurPlateau + "--C"+this.nbCouronne;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        Case c = (Case) obj;
-        return nbCouronne == c.getNbCouronne() && terrain.equals(c.getTerrain());
-    }
-
     public String toString() {
         return "{" + this.terrain.name() + ", Couronnes: " + this.nbCouronne + "}";
     }
