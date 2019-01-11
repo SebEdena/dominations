@@ -16,7 +16,7 @@ public abstract class AbstractIA extends Joueur
     }
 
     @Override
-    public abstract int pickInPioche(List<IDomino> cartesSurBoard, List<Joueur> joueursAdverses);
+    public abstract int pickInPioche(List<IDomino> cartesSurBoard, List<Joueur> joueursAdverses) throws DominoException, TuileException;
 
     @Override
     public abstract PlacementDomino pickPossibilite(IDomino domino) throws Exception;
