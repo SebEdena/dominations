@@ -48,7 +48,7 @@ public class Jeu {
         {
             System.out.println(""+ (compteur) + " - " + ModeJeu.values()[compteur].toString());
         }
-        int modeJeu = 0;
+        int modeJeu = -1;
         do {
             try{
                 modeJeu = Integer.parseInt(scan.next());
@@ -70,6 +70,7 @@ public class Jeu {
                 System.out.println("Erreur de saisie");
             }
         } while(nbJoueurs < NB_JOUEURS_MIN || nbJoueurs > NB_JOUEURS_MAX);
+        scan.nextLine();
         NbJoueur paramJeu = NbJoueur.getParamsJeu(nbJoueurs);
         List<Joueur> joueurs = allocateRoi(paramJeu, ModeJeu.values()[modeJeu]);
         dominosDebut = chargementDominos("./dominos.csv");
@@ -80,11 +81,31 @@ public class Jeu {
         List<Joueur> joueurs = new ArrayList<>();
         for (int i = 0; i < nbJoueur.getNbJoueurs(); i++) {
             System.out.println("Joueur "+ (i+1) +" veuillez renseigner votre pseudo ou écrivez ia pour créer un bot");
-            String nom = scan.next();
+            String nom = scan.nextLine();
             if(nom.equals("ia"))
             {
-                System.out.println("IA Créé");
-                Joueur j = ModeIA.getIAClasse(ModeIA.SIMPLE,("IA " + Roi.getRoiInt(i).getLibelle() + ""), Roi.getRoiInt(i), nbJoueur, modeJeu, SCORE_DEFAUT);
+                System.out.println("Veuillez choisir un niveau IA :");
+                for(int compteur = 0; compteur < ModeIA.values().length; compteur++)
+                {
+                    System.out.println(""+ (compteur) + " - " + ModeIA.values()[compteur].getLibelle());
+                }
+                int modeIA = -1;
+                do {
+                    try{
+                        modeIA = Integer.parseInt(scan.next());
+                    } catch (NumberFormatException e){
+                        System.out.println("Erreur de saisie");
+                    }
+                    if(modeIA < 0 || modeIA > ModeIA.values().length - 1)
+                    {
+                        System.out.println("Veuillez saisir un bon numéro");
+                    }
+                } while(modeIA < 0 || modeIA > ModeIA.values().length - 1);
+                System.out.println("IA Créé avec comme niveau : " + ModeIA.values()[modeIA].getLibelle());
+                scan.nextLine(); // pour flush
+                System.out.println("veuillez saisir un nom pour ce bot : ");
+                String nomIA = scan.nextLine();
+                Joueur j = ModeIA.getIAClasse(ModeIA.values()[modeIA],nomIA, Roi.getRoiInt(i), nbJoueur, modeJeu, SCORE_DEFAUT);
                 joueurs.add(j);
                 System.out.println(j.getNomJoueur() + " / vous êtes le roi " + Roi.getRoiInt(i));
             }
@@ -145,11 +166,26 @@ public class Jeu {
             }
             else
             {
+                int numDomino = -1;
                 System.out.println("Tour : " + roi.toString());
-                System.out.println("Entrez le num du domino : (entre 1 et " + (cartesSurBoard.size()) + ")");
-                int domino = scan.nextInt();
-                System.out.println("Domino tiré : " + cartesSurBoard.get(domino - 1).getIdentifiant());
-                joueur.addDomino(cartesSurBoard.remove(domino - 1));
+                System.out.println("Entrez le num du domino : (entre 0 et " + (cartesSurBoard.size() - 1) + ")");
+                for (int compteur = 0; compteur < cartesSurBoard.size();compteur++)
+                {
+                    System.out.println(compteur + " - domino : " + cartesSurBoard.get(compteur).toString());
+                }
+                do {
+                    try{
+                        numDomino = Integer.parseInt(scan.next());
+                    } catch (NumberFormatException e){
+                        System.out.println("Erreur de saisie");
+                    }
+                    if(numDomino < 0 || numDomino > (cartesSurBoard.size() - 1))
+                    {
+                        System.out.println("Veuillez saisir un bon numéro");
+                    }
+                } while(numDomino < 0 || numDomino > (cartesSurBoard.size() - 1));
+                System.out.println("Domino tiré : " + cartesSurBoard.get(numDomino).getIdentifiant());
+                joueur.addDomino(cartesSurBoard.remove(numDomino));
             }
         }
     }
@@ -159,6 +195,7 @@ public class Jeu {
         for (Pair<IDomino, Joueur> paire : assortiment) {
             IDomino domino = paire.getKey();
             Joueur joueur = paire.getValue();
+            scan.nextLine();
             if(joueur.isIA())
             {
                 try
@@ -184,12 +221,43 @@ public class Jeu {
                 System.out.println(joueur.getPioche());
                 System.out.println(joueur.getPlateau().affichePlateau(true));
                 System.out.println("Domino : "+ domino);
-                System.out.print("x : ");
-                int x = scan.nextInt();
-                System.out.print("y : ");
-                int y = scan.nextInt();
-                System.out.print("Orientation : ");
-                Orientation sens = Orientation.getOrientation(scan.next());
+                boolean numValide = false;
+                int x = 0, y = 0;
+                while(!numValide)
+                {
+                    try{
+                        System.out.print("x : ");
+                        x = Integer.parseInt(scan.nextLine());
+                        numValide = true;
+                    } catch (Exception e){
+                        System.out.println("Erreur de saisie");
+                        scan.nextLine();
+                    }
+                }
+                numValide = false;
+                while(!numValide)
+                {
+                    try{
+                        System.out.print("y : ");
+                        y = Integer.parseInt(scan.nextLine());
+                        numValide = true;
+                    } catch (Exception e){
+                        System.out.println("Erreur de saisie");
+                        scan.nextLine();
+                    }
+                }
+                Orientation sens = null;
+                while(sens == null)
+                {
+                    try{
+                        System.out.print("Orientation : ");
+                        sens = sens.getOrientationByText(scan.nextLine());
+                    }
+                    catch(Exception e)
+                    {
+                        System.out.println("Erreur de saisie");
+                    }
+                }
                 try {
                     joueur.getPlateau().addDomino(domino,x,y,0, sens);
                 } catch (TuileException | DominoException e) {
