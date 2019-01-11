@@ -24,10 +24,14 @@ public class SimpleIA extends AbstractIA
     }
 
     @Override
-    public PlacementDomino pickPossibilite(IDomino domino) {
+    public PlacementDomino pickPossibilite(IDomino domino) throws Exception{
         Random r = new Random();
         List<PlacementDomino> placementDominoList = new ArrayList<PlacementDomino>();
         placementDominoList = this.getPlateau().possibilite(domino);
+        if(placementDominoList.size() == 0)
+        {
+            throw new Exception("Impossible pour l'IA de placer le domino");
+        }
         return placementDominoList.get(r.nextInt(placementDominoList.size()));
     }
 }

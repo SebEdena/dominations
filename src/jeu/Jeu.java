@@ -43,6 +43,24 @@ public class Jeu {
     }
 
     private void intitialisationJeu() throws Exception {
+        System.out.println("Bienvenue sur Dominations quel mode de jeu souhaitez-vous ?");
+        for(int compteur = 0; compteur < ModeJeu.values().length; compteur++)
+        {
+            System.out.println(""+ (compteur) + " - " + ModeJeu.values()[compteur].toString());
+        }
+        int modeJeu = 0;
+        do {
+            try{
+                modeJeu = Integer.parseInt(scan.next());
+            } catch (NumberFormatException e){
+                System.out.println("Erreur de saisie");
+            }
+            if(modeJeu < 0 || modeJeu > ModeJeu.values().length - 1)
+            {
+                System.out.println("Veuillez saisir un bon numéro");
+            }
+        } while(modeJeu < 0 || modeJeu > ModeJeu.values().length - 1);
+        System.out.println("Vous avez sélectionné le mode de jeu : " + ModeJeu.values()[modeJeu].toString());
         int nbJoueurs = 0;
         do {
             try{
@@ -53,19 +71,29 @@ public class Jeu {
             }
         } while(nbJoueurs < NB_JOUEURS_MIN || nbJoueurs > NB_JOUEURS_MAX);
         NbJoueur paramJeu = NbJoueur.getParamsJeu(nbJoueurs);
-        List<Joueur> joueurs = allocateRoi(paramJeu, MODE_JEU_DEFAUT);
-        dominosDebut = Jeu.chargementDominos("./dominos.csv");
-        partie = new Partie(joueurs, dominosDebut, paramJeu, MODE_JEU_DEFAUT);
+        List<Joueur> joueurs = allocateRoi(paramJeu, ModeJeu.values()[modeJeu]);
+        dominosDebut = chargementDominos("./dominos.csv");
+        partie = new Partie(joueurs, dominosDebut, paramJeu, ModeJeu.values()[modeJeu]);
     }
 
     private List<Joueur> allocateRoi(NbJoueur nbJoueur, ModeJeu modeJeu) throws Exception {
         List<Joueur> joueurs = new ArrayList<>();
         for (int i = 0; i < nbJoueur.getNbJoueurs(); i++) {
-            System.out.println("Joueur "+ (i+1) +" veuillez renseigner votre pseudo : ");
+            System.out.println("Joueur "+ (i+1) +" veuillez renseigner votre pseudo ou écrivez ia pour créer un bot");
             String nom = scan.next();
-            Joueur j = new Joueur(nom, Roi.getRoiInt(i), nbJoueur, modeJeu, SCORE_DEFAUT);
-            joueurs.add(j);
-            System.out.println(nom + " vous êtes le roi " + Roi.getRoiInt(i));
+            if(nom.equals("ia"))
+            {
+                System.out.println("IA Créé");
+                Joueur j = ModeIA.getIAClasse(ModeIA.SIMPLE,("IA " + Roi.getRoiInt(i).getLibelle() + ""), Roi.getRoiInt(i), nbJoueur, modeJeu, SCORE_DEFAUT);
+                joueurs.add(j);
+                System.out.println(j.getNomJoueur() + " / vous êtes le roi " + Roi.getRoiInt(i));
+            }
+            else
+            {
+                Joueur j = new Joueur(nom, Roi.getRoiInt(i), nbJoueur, modeJeu, SCORE_DEFAUT);
+                joueurs.add(j);
+                System.out.println(nom + " vous êtes le roi " + Roi.getRoiInt(i));
+            }
         }
         return joueurs;
     }
@@ -101,10 +129,28 @@ public class Jeu {
         List<IDomino> cartesSurBoard = new ArrayList<IDomino>(partie.getTirage()); //en faisant le remove des domino du tirage tu casses ta fonction de getTourOrder. je t'ai fait un petit clonage pour éviter cela
         for (Roi roi : rois) {
             Joueur joueur = partie.getJoueur(roi);
-            System.out.println("Tour : " + roi.toString());
-            System.out.println("Entrez le num du domino : (entre 1 et " + (cartesSurBoard.size()) + ")");
-            int domino = scan.nextInt();
-            joueur.addDomino(cartesSurBoard.remove(domino - 1));
+            if(joueur.isIA())
+            {
+                try
+                {
+                    System.out.println("Tour : " + roi.toString());
+                    int numeroTire = joueur.pickInPioche(cartesSurBoard,partie.getJoueurs());
+                    System.out.println("IA a choisi le domino : " + cartesSurBoard.get(numeroTire).getIdentifiant());
+                    joueur.addDomino(cartesSurBoard.remove(numeroTire));
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+            else
+            {
+                System.out.println("Tour : " + roi.toString());
+                System.out.println("Entrez le num du domino : (entre 1 et " + (cartesSurBoard.size()) + ")");
+                int domino = scan.nextInt();
+                System.out.println("Domino tiré : " + cartesSurBoard.get(domino - 1).getIdentifiant());
+                joueur.addDomino(cartesSurBoard.remove(domino - 1));
+            }
         }
     }
 
@@ -113,23 +159,45 @@ public class Jeu {
         for (Pair<IDomino, Joueur> paire : assortiment) {
             IDomino domino = paire.getKey();
             Joueur joueur = paire.getValue();
-            System.out.println("Placement : " + joueur.getCouleurRoi().getLibelle());
-            System.out.println(joueur.getPioche());
-            System.out.println(joueur.getPlateau().affichePlateau(true));
-            System.out.println("Domino : "+ domino);
-            System.out.print("x : ");
-            int x = scan.nextInt();
-            System.out.print("y : ");
-            int y = scan.nextInt();
-            System.out.print("Orientation : ");
-            Orientation sens = Orientation.getOrientation(scan.next());
-            try {
-                joueur.getPlateau().addDomino(domino,x,y,0, sens);
-            } catch (TuileException | DominoException e) {
-                System.out.println(e.getMessage());
+            if(joueur.isIA())
+            {
+                try
+                {
+                    System.out.println("IA Placement : " + joueur.getCouleurRoi().getLibelle());
+                    PlacementDomino p = joueur.pickPossibilite(domino);
+                    joueur.getPlateau().addDomino(p.getDomino(),p.getRow(),p.getColumn(),p.getCaseId(),p.getSens());
+                    System.out.println("IA a décidé de placer son domino en x : " + p.getRow() + "/ y : " + p.getColumn() + " / sens : " + p.getSens().getText());
+                    System.out.println("Domino concerné : " + p.getDomino().toString());
+                    System.out.println(joueur.getPlateau().affichePlateau(true));
+                    //Thread.sleep(1000);
+                }
+                catch(Exception e)
+                {
+                    System.out.println("IA n'a pas pu placer son domino ! Aucune possibilité");
+                    System.out.println("Domino concerné : " + domino.toString());
+                    System.out.println(joueur.getPlateau().affichePlateau(true));
+                }
             }
-            System.out.println(joueur.getPlateau().affichePlateau(true));
-            System.out.println("Fin tour de : "+ joueur.getCouleurRoi().getLibelle());
+            else
+            {
+                System.out.println("Placement : " + joueur.getCouleurRoi().getLibelle());
+                System.out.println(joueur.getPioche());
+                System.out.println(joueur.getPlateau().affichePlateau(true));
+                System.out.println("Domino : "+ domino);
+                System.out.print("x : ");
+                int x = scan.nextInt();
+                System.out.print("y : ");
+                int y = scan.nextInt();
+                System.out.print("Orientation : ");
+                Orientation sens = Orientation.getOrientation(scan.next());
+                try {
+                    joueur.getPlateau().addDomino(domino,x,y,0, sens);
+                } catch (TuileException | DominoException e) {
+                    System.out.println(e.getMessage());
+                }
+                System.out.println(joueur.getPlateau().affichePlateau(true));
+                System.out.println("Fin tour de : "+ joueur.getCouleurRoi().getLibelle());
+            }
         }
     }
 
