@@ -13,10 +13,12 @@ public class ConfigStyle {
     private static ConfigStyle instance;
 
     private final double caseDimension = 50;
-    private final double petiteCaseDimension = 50;
+    private final double petiteCaseDimension = 40;
     private final double piocheJetonDimension = 35;
     private final double piocheAccepteurJetonDimension = 40;
     private final double piocheDominoInsideSpacing = 30;
+    private final double resizeCrownLimit = 50;
+    private final double resizedCrownSize = 40;
 
     private Map<String, Background> correspondanceStyleBackground;
     private Map<String, Border> correspondanceStyleBorder;
@@ -75,6 +77,10 @@ public class ConfigStyle {
 
     public Border getBorder(String style){
         return correspondanceStyleBorder.get(style);
+    }
+
+    public double getResizeCrownLimit() {
+        return resizeCrownLimit;
     }
 
     public void setFixedDimensions(Region r, double width, double height) {

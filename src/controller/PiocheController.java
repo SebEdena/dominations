@@ -111,7 +111,7 @@ public class PiocheController {
         this.partieLocker = partieLocker;
         this.status = status;
         double dominoInsideSpacing = configStyle.getPiocheDominoInsideSpacing();
-        double caseDimension = configStyle.getPetiteCaseDimension();
+        double caseDimension = configStyle.getCaseDimension();
         double jetonDimension = configStyle.getPiocheJetonDimension();
         double accepteurJetonDimension = configStyle.getPiocheAccepteurJetonDimension();
         for(int i = 0; i < partie.getTotalRois(); i++){
