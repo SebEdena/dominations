@@ -67,7 +67,7 @@ public enum Orientation {
         }
     }
 
-    public Orientation getOrientationByText(String nom)
+    public static Orientation getOrientationByText(String nom)
     {
         nom = nom.toUpperCase();
         switch(nom)

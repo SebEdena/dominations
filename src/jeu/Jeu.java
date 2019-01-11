@@ -175,7 +175,7 @@ public class Jeu {
                 }
                 do {
                     try{
-                        numDomino = Integer.parseInt(scan.next());
+                        numDomino = Integer.parseInt(scan.nextLine());
                     } catch (NumberFormatException e){
                         System.out.println("Erreur de saisie");
                     }
@@ -195,7 +195,6 @@ public class Jeu {
         for (Pair<IDomino, Joueur> paire : assortiment) {
             IDomino domino = paire.getKey();
             Joueur joueur = paire.getValue();
-            scan.nextLine();
             if(joueur.isIA())
             {
                 try
@@ -251,7 +250,7 @@ public class Jeu {
                 {
                     try{
                         System.out.print("Orientation : ");
-                        sens = sens.getOrientationByText(scan.nextLine());
+                        sens = Orientation.getOrientationByText(scan.nextLine());
                     }
                     catch(Exception e)
                     {
