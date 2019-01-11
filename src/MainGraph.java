@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 
 public class MainGraph extends Application {
 
-    private int standardWidth = 1600, standardHeight = 900;
+    public static final int standardWidth = 1600, standardHeight = 900;
 
     @Override
     public void start(Stage primaryStage) throws Exception{

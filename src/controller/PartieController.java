@@ -7,6 +7,9 @@ import controller.util.IndicatorFader;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.PointLight;
+import javafx.stage.Screen;
+import javafx.stage.StageStyle;
+import javafx.stage.Window;
 import jeu.*;
 import plateau.PlacementDomino;
 import exceptions.DominoException;
@@ -35,6 +38,9 @@ public class PartieController {
 
     @FXML
     private URL location;
+
+    @FXML
+    private GridPane partieRootNode;
 
     @FXML
     private GridPane partieIndicator;
@@ -107,6 +113,8 @@ public class PartieController {
     private Plateau plateauActuel = null;
 
     private Partie partie;
+
+    private double windowWidth, windowHeight, offsetDialog = 100;
 
     private final DataFormat caseDominoFormat = new DataFormat("plateau.Case");
 
@@ -202,13 +210,8 @@ public class PartieController {
             piocheController.initContent(partie, partieLocker);
             preparePioche(partie.pioche(), partie.melangerRois());
             showPiocheDialog();
-            try {
-                synchronized(partieLocker) {
-                    partieLocker.wait();
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            try { synchronized(partieLocker) { partieLocker.wait(); }
+            } catch (InterruptedException ignored) { }
             closePiocheDialog();
         }).start();
        /* do {
@@ -233,7 +236,7 @@ public class PartieController {
         dialog.toBack();
         dialog.setContent(pioche);
         dialog.setDialogContainer(partiePiocheParent);
-        configStyle.setFixedDimensions(dialog.getContent(), 1500, 800);
+        configStyle.setFixedDimensions(dialog.getContent(), 1200, 900);
         dialog.setOverlayClose(false);
     }
 

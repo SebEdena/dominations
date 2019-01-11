@@ -321,9 +321,7 @@ public class PiocheController {
         choixEnCours = null;
         System.out.println(choix);
         if(piocheJetonsContainer.getChildren().size() == 0){
-            synchronized (partieLocker){
-                partieLocker.notifyAll();
-            }
+            synchronized (partieLocker){ partieLocker.notifyAll(); }
         }
     }
 
