@@ -23,6 +23,9 @@ public class Jeu {
     private List<IDomino> dominosDebut;
     private Partie partie;
 
+    /**
+     * Constructeur d'un jeu
+     */
     private Jeu(){
         try {
             intitialisationJeu();
@@ -35,6 +38,10 @@ public class Jeu {
         }
     }
 
+    /**
+     * Methode permettant de retourner l'instance du jeu en cours
+     * @return instance du jeu en cours
+     */
     public static Jeu getInstance(){
         if (instance == null) {
             instance = new Jeu();
@@ -42,6 +49,18 @@ public class Jeu {
         return instance;
     }
 
+    /**
+     * Methode d'initialisation des paramètres généraux du jeu comprenant :
+     *  - Le mode de jeu
+     *  - Le nombre de joueurs
+     *  - Les paramètres du jeu
+     *  - Les dominos à utiliser
+     *  - La liste des rois
+     *  - La partie de jeu
+     * @see #chargementDominos
+     * @see #allocateRoi
+     * @throws Exception
+     */
     private void intitialisationJeu() throws Exception {
         System.out.println("Bienvenue sur Dominations quel mode de jeu souhaitez-vous ?");
         for(int compteur = 0; compteur < ModeJeu.values().length; compteur++)
@@ -77,6 +96,16 @@ public class Jeu {
         partie = new Partie(joueurs, dominosDebut, paramJeu, ModeJeu.values()[modeJeu]);
     }
 
+    /**
+     * Methode qui créée les joueurs en leur attribuant un ou deux roi(s) de couleur.
+     * Il y a aussi la possibilité de créer des IA
+     * @param nbJoueur Le nombre de joueurs participant au jeu
+     * @param modeJeu Le mode de jeu choisi
+     * @return La liste des joueurs inscris dans le jeu
+     * @throws Exception
+     * @see ModeIA#getIAClasse
+     * @see Joueur#getNomJoueur
+     */
     private List<Joueur> allocateRoi(NbJoueur nbJoueur, ModeJeu modeJeu) throws Exception {
         List<Joueur> joueurs = new ArrayList<>();
         for (int i = 0; i < nbJoueur.getNbJoueurs(); i++) {
@@ -119,6 +148,13 @@ public class Jeu {
         return joueurs;
     }
 
+    /**
+     * Methode de chargement des dominos à partir d'un fichier csv et les transformes en objet IDomino
+     * @param path Chemin d'accès à la liste des dominos
+     * @return La liste des dominos chargés
+     * @throws IOException
+     * @see CSVParser#parse
+     */
     private List<IDomino> chargementDominos(String path) throws IOException {
         List<String[]> dominos = CSVParser.parse(path, ",", true);
         List<IDomino> dominosCharges = new ArrayList<>();
@@ -131,6 +167,23 @@ public class Jeu {
         return dominosCharges;
     }
 
+    /**
+     * Methode permettant de dérouler le jeu tant qu'il reste des dominos à joueur
+     * Un tour est décomposer en plusieurs étapes :
+     *  - tirage des dominos de la pioche
+     *  - afficher la pioche
+     *  - mélanger les rois
+     *  - tirage des dominos par les joueurs
+     *  - placement des dominos par les joueurs
+     *  - afficher le score final
+     * @see Partie#pioche
+     * @see #afficherPioche
+     * @see Partie#melangerRois
+     * @see #tirageJoueur
+     * @see #placementJoueur
+     * @see Partie#partieFinie
+     * @see #afficheScore
+     */
     public void tourDeJeu(){
         do {
             List<IDomino> pioche = partie.pioche();
@@ -145,6 +198,15 @@ public class Jeu {
         System.out.println("Fin du jeu !");
     }
 
+    /**
+     * Methode permetant au joueur ou a l'IA de tirer un domino suivant la liste des rois préalablement mélangée
+     * @see Partie#getTirage
+     * @see Partie#getJoueur
+     * @see IDomino#getIdentifiant
+     * @see Joueur#pickInPioche
+     * @see Joueur#addDomino
+     * @param rois Liste des rois en jeu
+     */
     private void tirageJoueur(List<Roi> rois){
         System.out.println("Entrez le numéro pour choisir le domino");
         List<IDomino> cartesSurBoard = new ArrayList<IDomino>(partie.getTirage()); //en faisant le remove des domino du tirage tu casses ta fonction de getTourOrder. je t'ai fait un petit clonage pour éviter cela
@@ -190,6 +252,10 @@ public class Jeu {
         }
     }
 
+    /**
+     * Methode permettant aux joueurs de placer leurs dominos piochés
+     *
+     */
     private void placementJoueur(){
         List<Pair<IDomino, Joueur>> assortiment = partie.getTourOrder();
         for (Pair<IDomino, Joueur> paire : assortiment) {
@@ -309,36 +375,4 @@ public class Jeu {
         }
 
     }
-
-    /*
-     * Tour 1
-     * pioche de la tuile de départ
-     *      -> créer tuile de départ
-     * puis re pioche des 1ere tuiles
-     * Afficher pioche (les dominos face numérotée et rangés par ordre croissant) OK
-     * Si peux pas poser domino -> le défausser
-     *
-     *
-     *
-     *
-     * Tour 1 ex:
-     * tour 1a pour pioche pour tuile de départ ON ZAPPE
-     * tour 1b pour pioche 1er domino
-     *
-     * Tour 2 ex:
-     * tour pour pioche 2e domino
-     *
-     * Tour 3 ex:
-     * tour pour pioche 3e domino
-     *
-     * Tour 4
-     * ...
-     *
-     * pioche(tuile);
-     * do {
-     * pioche(dominos);
-     * foreach -> joueurs
-     * j.jouer();
-     * } while (plusDeDomino);
-     */
 }
