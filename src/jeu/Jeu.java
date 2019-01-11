@@ -402,7 +402,7 @@ public class Jeu {
             StringBuilder sb = new StringBuilder("Participants : " + "\n");
             for (Joueur j : scores)
             {
-                sb.append("Joueur : " + j.getNomJoueur() + " / score : " + j.getScore() + "\n");
+                sb.append("Joueur : " + j.getNomJoueur() + "/ Roi : " + j.getCouleurRoi().getLibelle() + " / score : " + j.getScore() + "\n");
             }
             sb.append("Vainqueur : " + scores.get(0));
             System.out.println(sb.toString());
