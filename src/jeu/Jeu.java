@@ -6,7 +6,6 @@ import exceptions.TuileException;
 import javafx.util.Pair;
 import plateau.*;
 import util.CSVParser;
-
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.*;
@@ -24,7 +23,7 @@ public class Jeu {
     private Partie partie;
 
     /**
-     * Constructeur d'un jeu
+     * Constructeur du jeu (pattern singleton)
      */
     private Jeu(){
         try {
@@ -63,11 +62,13 @@ public class Jeu {
      */
     private void intitialisationJeu() throws Exception {
         System.out.println("Bienvenue sur Dominations quel mode de jeu souhaitez-vous ?");
+        // On affiche les différents modes de jeu supportés
         for(int compteur = 0; compteur < ModeJeu.values().length; compteur++)
         {
             System.out.println(""+ (compteur) + " - " + ModeJeu.values()[compteur].toString());
         }
         int modeJeu = -1;
+        // On récupère le mode choisi
         do {
             try{
                 modeJeu = Integer.parseInt(scan.next());
@@ -80,6 +81,7 @@ public class Jeu {
             }
         } while(modeJeu < 0 || modeJeu > ModeJeu.values().length - 1);
         System.out.println("Vous avez sélectionné le mode de jeu : " + ModeJeu.values()[modeJeu].toString());
+        // On récupère le nombre de joueur pour la partie
         int nbJoueurs = 0;
         do {
             try{
@@ -90,9 +92,13 @@ public class Jeu {
             }
         } while(nbJoueurs < NB_JOUEURS_MIN || nbJoueurs > NB_JOUEURS_MAX);
         scan.nextLine();
+        // On récupère l'énum des paramètres du jeu
         NbJoueur paramJeu = NbJoueur.getParamsJeu(nbJoueurs);
+        // On récupère la liste des joueurs
         List<Joueur> joueurs = allocateRoi(paramJeu, ModeJeu.values()[modeJeu]);
+        // On récupère la liste des dominos du jeu
         dominosDebut = chargementDominos("./dominos.csv");
+        // On créé la partie de jeu
         partie = new Partie(joueurs, dominosDebut, paramJeu, ModeJeu.values()[modeJeu]);
     }
 
@@ -254,7 +260,17 @@ public class Jeu {
 
     /**
      * Methode permettant aux joueurs de placer leurs dominos piochés
-     *
+     * @see Partie#getTourOrder
+     * @see Pair#getKey
+     * @see Pair#getValue
+     * @see Joueur#isIA
+     * @see Roi#getLibelle
+     * @see Joueur#pickPossibilite
+     * @see Plateau#addDomino
+     * @see PlacementDomino#getRow
+     * @see Domino#toString
+     * @see Plateau#affichePlateau
+     * @see Orientation#getOrientationByText
      */
     private void placementJoueur(){
         List<Pair<IDomino, Joueur>> assortiment = partie.getTourOrder();
@@ -334,18 +350,36 @@ public class Jeu {
         }
     }
 
+    /**
+     * Methode affichant en console la pioche en deux parties :
+     *  - D'abord les numéros des dominos par ordre croissant
+     *  - Ensuite en affichant les faces avec les terrains
+     * @param pioche La pioche de domino à afficher
+     * @see Domino#getIdentifiant
+     * @see Domino#getCases
+     */
     public void afficherPioche(List<IDomino> pioche){
         if(pioche != null){
             for (IDomino domino : pioche) {
                 System.out.println("[ "+domino.getIdentifiant()+" ]");
             }
-            // Mettre une pause
+            //Thread.sleep(1000);
             for (IDomino domino : pioche) {
                 System.out.println("[ "+domino.getCases()[0]+","+domino.getCases()[1]+" ]");
             }
         }
     }
 
+    /**
+     * Methode affichant les scores des joueurs en fonction :
+     *  - Du score de chaque joueur
+     *  - De plusieurs joueurs qui sont exaequos
+     * @see Partie#calculScores
+     * @see Joueur#getEgalite
+     * @see Joueur#getScoreCouronne
+     * @see Joueur#getNomJoueur
+     * @see Joueur#getScore
+     */
     private void afficheScore(){
         List<Joueur> scores = partie.calculScores();
         List<Joueur> exaequo = new ArrayList<>();
