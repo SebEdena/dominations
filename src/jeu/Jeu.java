@@ -62,13 +62,13 @@ public class Jeu {
      */
     private void intitialisationJeu() throws Exception {
         System.out.println("Bienvenue sur Dominations quel mode de jeu souhaitez-vous ?");
-        // On affiche les différents modes de jeu supportés
+        // Affichage des différents modes de jeu supportés
         for(int compteur = 0; compteur < ModeJeu.values().length; compteur++)
         {
             System.out.println(""+ (compteur) + " - " + ModeJeu.values()[compteur].toString());
         }
         int modeJeu = -1;
-        // On récupère le mode choisi
+        // Récupération du mode choisi
         do {
             try{
                 modeJeu = Integer.parseInt(scan.next());
@@ -81,7 +81,7 @@ public class Jeu {
             }
         } while(modeJeu < 0 || modeJeu > ModeJeu.values().length - 1);
         System.out.println("Vous avez sélectionné le mode de jeu : " + ModeJeu.values()[modeJeu].toString());
-        // On récupère le nombre de joueur pour la partie
+        // Récupération du nombre de joueur pour la partie
         int nbJoueurs = 0;
         do {
             try{
@@ -92,13 +92,13 @@ public class Jeu {
             }
         } while(nbJoueurs < NB_JOUEURS_MIN || nbJoueurs > NB_JOUEURS_MAX);
         scan.nextLine();
-        // On récupère l'énum des paramètres du jeu
+        // Récupération de l'énum des paramètres du jeu
         NbJoueur paramJeu = NbJoueur.getParamsJeu(nbJoueurs);
-        // On récupère la liste des joueurs
+        // Récupération de la liste des joueurs
         List<Joueur> joueurs = allocateRoi(paramJeu, ModeJeu.values()[modeJeu]);
-        // On récupère la liste des dominos du jeu
+        // Récupération de la liste des dominos du jeu
         dominosDebut = chargementDominos("./dominos.csv");
-        // On créé la partie de jeu
+        // Création de la partie de jeu
         partie = new Partie(joueurs, dominosDebut, paramJeu, ModeJeu.values()[modeJeu]);
     }
 
@@ -114,11 +114,14 @@ public class Jeu {
      */
     private List<Joueur> allocateRoi(NbJoueur nbJoueur, ModeJeu modeJeu) throws Exception {
         List<Joueur> joueurs = new ArrayList<>();
+        // Création de chaque roi et de chaque joueur
         for (int i = 0; i < nbJoueur.getNbJoueurs(); i++) {
             System.out.println("Joueur "+ (i+1) +" veuillez renseigner votre pseudo ou écrivez ia pour créer un bot");
             String nom = scan.nextLine();
+            // Si c'est un IA
             if(nom.equals("ia"))
             {
+                // Choix du niveau de difficulté
                 System.out.println("Veuillez choisir un niveau IA :");
                 for(int compteur = 0; compteur < ModeIA.values().length; compteur++)
                 {
@@ -138,15 +141,21 @@ public class Jeu {
                 } while(modeIA < 0 || modeIA > ModeIA.values().length - 1);
                 System.out.println("IA Créé avec comme niveau : " + ModeIA.values()[modeIA].getLibelle());
                 scan.nextLine(); // pour flush
+                // Saisie du nom de l'IA
                 System.out.println("veuillez saisir un nom pour ce bot : ");
                 String nomIA = scan.nextLine();
+                // Cast de l'IA en joueur
                 Joueur j = ModeIA.getIAClasse(ModeIA.values()[modeIA],nomIA, Roi.getRoiInt(i), nbJoueur, modeJeu, SCORE_DEFAUT);
+                // Ajout dans la liste des joueurs
                 joueurs.add(j);
                 System.out.println(j.getNomJoueur() + " / vous êtes le roi " + Roi.getRoiInt(i));
             }
+            // Cas d'un joueur normal
             else
             {
+                // Création du joueur
                 Joueur j = new Joueur(nom, Roi.getRoiInt(i), nbJoueur, modeJeu, SCORE_DEFAUT);
+                // Ajout dans la liste des joueurs
                 joueurs.add(j);
                 System.out.println(nom + " vous êtes le roi " + Roi.getRoiInt(i));
             }
@@ -162,8 +171,10 @@ public class Jeu {
      * @see CSVParser#parse
      */
     private List<IDomino> chargementDominos(String path) throws IOException {
+        // Récupération des dominos parsés
         List<String[]> dominos = CSVParser.parse(path, ",", true);
         List<IDomino> dominosCharges = new ArrayList<>();
+        // Création des dominos et de leurs cases
         for(String[] strs : dominos) {
             Case case1 = new Case(Integer.parseInt(strs[0]), Terrain.getTerrain(strs[1]));
             Case case2 = new Case(Integer.parseInt(strs[2]), Terrain.getTerrain(strs[3]));
@@ -175,7 +186,7 @@ public class Jeu {
 
     /**
      * Methode permettant de dérouler le jeu tant qu'il reste des dominos à joueur
-     * Un tour est décomposer en plusieurs étapes :
+     * Un tour est composé en plusieurs étapes :
      *  - tirage des dominos de la pioche
      *  - afficher la pioche
      *  - mélanger les rois
@@ -217,14 +228,18 @@ public class Jeu {
         System.out.println("Entrez le numéro pour choisir le domino");
         List<IDomino> cartesSurBoard = new ArrayList<IDomino>(partie.getTirage()); //en faisant le remove des domino du tirage tu casses ta fonction de getTourOrder. je t'ai fait un petit clonage pour éviter cela
         for (Roi roi : rois) {
+            // Récupération du joueur du roi tiré (par ordre croissant)
             Joueur joueur = partie.getJoueur(roi);
+            // Cas d'un joueur IA
             if(joueur.isIA())
             {
                 try
                 {
                     System.out.println("Tour : " + roi.toString());
+                    // Pioche un domino depuis la pioche
                     int numeroTire = joueur.pickInPioche(cartesSurBoard,partie.getJoueurs());
                     System.out.println("IA a choisi le domino : " + cartesSurBoard.get(numeroTire).getIdentifiant());
+                    // Ajout du domino dans les dominos tirés par l'IA
                     joueur.addDomino(cartesSurBoard.remove(numeroTire));
                 }
                 catch(Exception e)
@@ -232,11 +247,13 @@ public class Jeu {
                     e.printStackTrace();
                 }
             }
+            // Cas d'un joueur normal
             else
             {
                 int numDomino = -1;
                 System.out.println("Tour : " + roi.toString());
                 System.out.println("Entrez le num du domino : (entre 0 et " + (cartesSurBoard.size() - 1) + ")");
+                // Saisie du domino pioché par le joueur
                 for (int compteur = 0; compteur < cartesSurBoard.size();compteur++)
                 {
                     System.out.println(compteur + " - domino : " + cartesSurBoard.get(compteur).toString());
@@ -253,13 +270,14 @@ public class Jeu {
                     }
                 } while(numDomino < 0 || numDomino > (cartesSurBoard.size() - 1));
                 System.out.println("Domino tiré : " + cartesSurBoard.get(numDomino).getIdentifiant());
+                // Ajout du domino dans les dominos tirés par le joueur
                 joueur.addDomino(cartesSurBoard.remove(numDomino));
             }
         }
     }
 
     /**
-     * Methode permettant aux joueurs de placer leurs dominos piochés
+     * Methode permettant aux joueurs de placer leurs dominos piochés en fonction de leur ordre de tirage
      * @see Partie#getTourOrder
      * @see Pair#getKey
      * @see Pair#getValue
@@ -277,12 +295,15 @@ public class Jeu {
         for (Pair<IDomino, Joueur> paire : assortiment) {
             IDomino domino = paire.getKey();
             Joueur joueur = paire.getValue();
+            // Cas d'un joueur IA
             if(joueur.isIA())
             {
                 try
                 {
                     System.out.println("IA Placement : " + joueur.getCouleurRoi().getLibelle());
+                    // Récupération d'un emplacement possible du domino sur son plateau
                     PlacementDomino p = joueur.pickPossibilite(domino);
+                    // Ajout sur le plateau
                     joueur.getPlateau().addDomino(p.getDomino(),p.getRow(),p.getColumn(),p.getCaseId(),p.getSens());
                     System.out.println("IA a décidé de placer son domino en x : " + p.getRow() + "/ y : " + p.getColumn() + " / sens : " + p.getSens().getText());
                     System.out.println("Domino concerné : " + p.getDomino().toString());
@@ -296,6 +317,7 @@ public class Jeu {
                     System.out.println(joueur.getPlateau().affichePlateau(true));
                 }
             }
+            // Cas d'un joueur normal
             else
             {
                 System.out.println("Placement : " + joueur.getCouleurRoi().getLibelle());
@@ -304,6 +326,7 @@ public class Jeu {
                 System.out.println("Domino : "+ domino);
                 boolean numValide = false;
                 int x = 0, y = 0;
+                // Saisie des coordonnées du domino à placer (ligne,colonne,orientation)
                 while(!numValide)
                 {
                     try{
@@ -339,6 +362,7 @@ public class Jeu {
                         System.out.println("Erreur de saisie");
                     }
                 }
+                // Essai de l'ajout au plateau, sinon le domino est défaussé
                 try {
                     joueur.getPlateau().addDomino(domino,x,y,0, sens);
                 } catch (TuileException | DominoException e) {
@@ -360,10 +384,12 @@ public class Jeu {
      */
     public void afficherPioche(List<IDomino> pioche){
         if(pioche != null){
+            // Affichage des numéros des dominos
             for (IDomino domino : pioche) {
                 System.out.println("[ "+domino.getIdentifiant()+" ]");
             }
             //Thread.sleep(1000);
+            // Affichage des faces avec les terrains des mêmes dominos
             for (IDomino domino : pioche) {
                 System.out.println("[ "+domino.getCases()[0]+","+domino.getCases()[1]+" ]");
             }
@@ -381,14 +407,18 @@ public class Jeu {
      * @see Joueur#getScore
      */
     private void afficheScore(){
+        // Calcul et tri des scores des joueurs (ordre décroissant)
         List<Joueur> scores = partie.calculScores();
         List<Joueur> exaequo = new ArrayList<>();
+        // Recherche d'une égalité pour les vainqueurs
         if(scores.get(0).getEgalite()){
             exaequo.add(scores.get(0));
+            // Recherche des vainqueurs exaequos
             for (int i = 1; i < scores.size(); i++) {
                 if(scores.get(i).getEgalite() && scores.get(i).getScoreCouronne() == scores.get(0).getScoreCouronne())
                     exaequo.add(scores.get(i));
             }
+            // Affichage des vainqueurs
             StringBuilder sb = new StringBuilder("Vainqueurs : ");
             for (int i = 0; i < exaequo.size(); i++) {
                 if(i<exaequo.size()-1)
@@ -397,13 +427,16 @@ public class Jeu {
             }
             System.out.println(sb.toString());
         }
+        // Cas sans exaequos
         else
         {
+            // Affichage des scores des joueurs
             StringBuilder sb = new StringBuilder("Participants : " + "\n");
             for (Joueur j : scores)
             {
                 sb.append("Joueur : " + j.getNomJoueur() + "/ Roi : " + j.getCouleurRoi().getLibelle() + " / score : " + j.getScore() + "\n");
             }
+            // Affichage du vainqueur
             sb.append("Vainqueur : " + scores.get(0));
             System.out.println(sb.toString());
         }
