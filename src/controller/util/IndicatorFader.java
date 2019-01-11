@@ -12,11 +12,12 @@ public class IndicatorFader {
     private Node element;
     private Label title, text;
     private FadeTransition fadeIn, fadeOut;
-    private long idleTime;
+    private long idleTime, toggleTime;
 
     public IndicatorFader(Node element, Label title, Label text, long idleTime, long toggleTime){
         this.element = element;
         this.idleTime = idleTime;
+        this.toggleTime = toggleTime;
         this.title = title;
         this.text = text;
 
@@ -31,6 +32,14 @@ public class IndicatorFader {
         fadeOut.setCycleCount(1);
     }
 
+    public long getIdleTime() {
+        return idleTime;
+    }
+
+    public long getToggleTime() {
+        return toggleTime;
+    }
+
     public void display(String textString, String titleString, Color titleColor){
         new Thread(() -> {
             Platform.runLater(() -> {
@@ -40,11 +49,12 @@ public class IndicatorFader {
                 element.toFront();
                 fadeIn.play();
             });
-            try {
-                Thread.sleep(idleTime);
-            } catch (InterruptedException ignored) { }
+            try { Thread.sleep(idleTime); } catch (InterruptedException ignored) { }
             Platform.runLater(() -> {
                 fadeOut.play();
+            });
+            try { Thread.sleep(toggleTime); } catch (InterruptedException ignored) { }
+            Platform.runLater(() -> {
                 element.toBack();
             });
         }).start();
@@ -53,5 +63,4 @@ public class IndicatorFader {
     public void display(String textString, String titleString){
         display(textString, titleString, Color.WHITE);
     }
-
 }

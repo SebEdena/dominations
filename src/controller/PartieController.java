@@ -10,6 +10,7 @@ import javafx.scene.PointLight;
 import javafx.stage.Screen;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
+import javafx.util.Pair;
 import jeu.*;
 import plateau.PlacementDomino;
 import exceptions.DominoException;
@@ -112,6 +113,8 @@ public class PartieController {
 
     private Plateau plateauActuel = null;
 
+    private IDomino dominoActuel = null;
+
     private Partie partie;
 
     private double windowWidth, windowHeight, offsetDialog = 100;
@@ -165,8 +168,6 @@ public class PartieController {
             }
         });
 
-        plateauActuel = new Plateau(5);
-
         partieRevertDominoButton.setOnAction(event -> {
             resetDomino();
         });
@@ -186,7 +187,6 @@ public class PartieController {
         initDominoSourceDrag();
         initDominoTargetDrag();
 
-        nextStep();
         try {
             jouerPartie();
         } catch (Exception e) {
@@ -207,12 +207,24 @@ public class PartieController {
 
         new Thread(() -> {
             Object partieLocker = new Object();
-            piocheController.initContent(partie, partieLocker);
+            piocheController.initContent(partie, status, partieLocker);
             preparePioche(partie.pioche(), partie.melangerRois());
             showPiocheDialog();
-            try { synchronized(partieLocker) { partieLocker.wait(); }
+            try {
+                Thread.sleep(500);
+                piocheController.startPioche();
+                synchronized(partieLocker) { partieLocker.wait(); }
             } catch (InterruptedException ignored) { }
             closePiocheDialog();
+            List<Pair<IDomino, Joueur>> choix = piocheController.getChoix();
+            for(Pair<IDomino, Joueur> combi : choix){
+                IDomino d = combi.getKey();
+                Joueur j = combi.getValue();
+                Platform.runLater(()->{
+                    fillDomino(d);
+                    fillPlateau(j.getPlateau(), j);
+                });
+            }
         }).start();
        /* do {
             List<IDomino> pioche = partie.pioche();
@@ -236,7 +248,7 @@ public class PartieController {
         dialog.toBack();
         dialog.setContent(pioche);
         dialog.setDialogContainer(partiePiocheParent);
-        configStyle.setFixedDimensions(dialog.getContent(), 1200, 900);
+        configStyle.setFixedDimensions(dialog.getContent(), 1500, 800);
         dialog.setOverlayClose(false);
     }
 
@@ -314,9 +326,9 @@ public class PartieController {
                 if (event.getGestureSource() != child &&
                         event.getDragboard().hasContent(caseDominoFormat)) {
                     if(plateauActuel.placementValide(placement.getDomino(), getRow(child) - 1, getCol(child) - 1, placement.getCaseId(), placement.getSens()) == null &&
-                        !placement.isOnPlateau()){
-                            fillLabelWithCase((Label) child, null, isLockedWhenNoDomino(plateauActuel, getRow(child) - 1, getCol(child) - 1));
-                            if(lCase2 != null) fillLabelWithCase(lCase2, null, isLockedWhenNoDomino(plateauActuel, getRow(lCase2) - 1, getCol(lCase2) - 1));
+                            !placement.isOnPlateau()){
+                        fillLabelWithCase((Label) child, null, isLockedWhenNoDomino(plateauActuel, getRow(child) - 1, getCol(child) - 1));
+                        if(lCase2 != null) fillLabelWithCase(lCase2, null, isLockedWhenNoDomino(plateauActuel, getRow(lCase2) - 1, getCol(lCase2) - 1));
                     }
                 }
                 event.consume();
@@ -423,22 +435,20 @@ public class PartieController {
     }
 
     private void fillPlateau(Plateau p, Joueur joueur) {
-        if (p.tuilePresente()) {
-            int pSize = p.getSize();
-            for (int i = -1; i <= pSize; i++) {
-                for (int j = -1; j <= pSize; j++) {
-                    Label lab = getCaseLabel(i + 1, j + 1, null);
-                    fillLabelWithCase(lab, p.getCaseAt(i, j), isLockedWhenNoDomino(p, i, j));
-                }
+        int pSize = p.getSize();
+        plateauActuel = p;
+        for (int i = -1; i <= pSize; i++) {
+            for (int j = -1; j <= pSize; j++) {
+                Label lab = getCaseLabel(i + 1, j + 1, null);
+                fillLabelWithCase(lab, p.getCaseAt(i, j), isLockedWhenNoDomino(p, i, j));
             }
-        } else {
-
         }
     }
 
     private void fillDomino(IDomino d) {
         double caseDimension = configStyle.getCaseDimension();
         if (d instanceof Domino) {
+            dominoActuel = d;
             placement = new PlacementDomino(d, Orientation.EST);
             Case[] cases = d.getCases();
             for (int i = 0; i < cases.length; i++) {

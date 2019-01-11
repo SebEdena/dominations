@@ -8,9 +8,12 @@ import java.util.ResourceBundle;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
+import com.jfoenix.controls.cells.editors.IntegerTextFieldEditorBuilder;
+import com.sun.corba.se.impl.logging.InterceptorsSystemException;
 import com.sun.xml.internal.bind.v2.model.core.ID;
 import com.sun.xml.internal.ws.model.ParameterImpl;
 import controller.util.ConfigStyle;
+import controller.util.IndicatorFader;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -70,6 +73,7 @@ public class PiocheController {
 
     private final DataFormat roiFormat = new DataFormat("jeu.roi");
     private boolean finished = false;
+    private IndicatorFader status;
 
     @FXML
     void initialize() {
@@ -85,6 +89,8 @@ public class PiocheController {
 
         piocheValidateJetonButton.setOnAction(event -> {
             validerAffectationDominoJoueur();
+            piocheValidateJetonButton.setDisable(true);
+
         });
 
         piocheRevertJetonButton.setOnAction(event -> {
@@ -100,9 +106,10 @@ public class PiocheController {
         });
     }
 
-    public void initContent(Partie p, Object partieLocker){
+    public void initContent(Partie p, IndicatorFader status, Object partieLocker){
         this.partie = p;
         this.partieLocker = partieLocker;
+        this.status = status;
         double dominoInsideSpacing = configStyle.getPiocheDominoInsideSpacing();
         double caseDimension = configStyle.getPetiteCaseDimension();
         double jetonDimension = configStyle.getPiocheJetonDimension();
@@ -141,6 +148,7 @@ public class PiocheController {
             //jeton.setDisable(true);
             configStyle.setFixedDimensions(jeton, jetonDimension, jetonDimension);
             jeton.setStyle(jeton.getStyle() + "-fx-alignment:center;-fx-text-fill:white;-fx-font-weight:bold;-fx-font-size:18px");
+            jeton.setDisable(true);
             piocheJetonsContainer.getChildren().add(jeton);
             jetons.add(jeton);
             initSourceDrag(jeton);
@@ -218,6 +226,10 @@ public class PiocheController {
         });
     }
 
+    public List<Pair<IDomino, Joueur>> getChoix(){
+        return choix;
+    }
+
     public void resetPioche() {
         choix.clear();
         for(Node dominoContainer : piocheDominosContainer.getChildren()){
@@ -227,9 +239,9 @@ public class PiocheController {
             if(accepteurJeton.getChildren().size() != 0){
                 Label jeton = (Label) accepteurJeton.getChildren().remove(0);
                 piocheJetonsContainer.getChildren().add(jeton);
+                jeton.setDisable(true);
             }
         }
-        piocheJetonsContainer.setDisable(false);
     }
 
     public void fillPioche(List<IDomino> pioche, List<Roi> rois){
@@ -322,10 +334,41 @@ public class PiocheController {
         System.out.println(choix);
         if(piocheJetonsContainer.getChildren().size() == 0){
             synchronized (partieLocker){ partieLocker.notifyAll(); }
+        }else{
+            new Thread(()->{
+                try {
+                    Thread.sleep(500);
+                    Platform.runLater(()->{
+                        Label jeton = (Label) piocheJetonsContainer.getChildren().get(0);
+                        Roi roi = Roi.getRoiInt(Integer.parseInt(jeton.getText()) - 1);
+                        status.display("Glissez votre jeton sous le domino voulu", partie.getJoueur(roi).getNomJoueur(), Color.web(roi.getColor()));
+                        jeton.setDisable(false);
+                    });
+                } catch (InterruptedException ignored) { }
+            }).start();
+            piocheJetonsContainer.getChildren().get(0).setDisable(false);
         }
     }
 
     public boolean isFinished() {
         return finished;
+    }
+
+    public void startPioche() {
+        new Thread(()->{
+            try {
+                Thread.sleep(500);
+                Label jeton = (Label) piocheJetonsContainer.getChildren().get(0);
+                Roi roi = Roi.getRoiInt(Integer.parseInt(jeton.getText()) - 1);
+                status.display("Glissez votre jeton sous le domino voulu", "Début de la pioche");
+                Thread.sleep(status.getIdleTime() + status.getToggleTime() + 100);
+                status.display("Glissez votre jeton sous le domino voulu", partie.getJoueur(roi).getNomJoueur(), Color.web(roi.getColor()));
+                Platform.runLater(()->{
+                    jeton.setDisable(false);
+                });
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 }
