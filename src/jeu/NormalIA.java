@@ -23,9 +23,8 @@ public class NormalIA extends AbstractIA{
         List<PlacementDomino> possibilites = new ArrayList<>();
         PlacementDomino placement = null;
         int score = this.getPlateau().calculPoint();
-        System.out.println("D "+score);
         for (IDomino d : cartesSurBoard) {
-            placement = getPlacement(score,possibilites, placement,d,false);
+            placement = getPlacement(score,possibilites, placement);
         }
         positionDomino.add(placement);
         Random rand = new Random();
@@ -39,23 +38,14 @@ public class NormalIA extends AbstractIA{
         } else return rand.nextInt(cartesSurBoard.size());
     }
 
-    private PlacementDomino getPlacement(int score, List<PlacementDomino> possibilites, PlacementDomino placement, IDomino d, boolean pick) throws DominoException, TuileException {
+    private PlacementDomino getPlacement(int score, List<PlacementDomino> possibilites, PlacementDomino placement) throws DominoException, TuileException {
         for (PlacementDomino pos : possibilites) {
             Plateau p = clonePlateau(this.getPlateau());
             p.addDomino(pos.getDomino(),pos.getRow(),pos.getColumn(),pos.getCaseId(),pos.getSens());
             int scorePos = p.calculPoint();
-            if(pick){
-                if(score <= scorePos) {
-                    score = scorePos;
-                    placement = pos;
-                    System.out.println("f "+score+ " "+pos.getDomino().getIdentifiant());
-                }
-            } else {
-                if(score < scorePos) {
-                    score = scorePos;
-                    placement = pos;
-                    System.out.println("f "+score+ " "+pos.getDomino().getIdentifiant());
-                }
+            if(score <= scorePos) {
+                score = scorePos;
+                placement = pos;
             }
         }
         return placement;
@@ -78,7 +68,7 @@ public class NormalIA extends AbstractIA{
     public PlacementDomino pickPossibilite(IDomino domino) throws Exception {
         int score = this.getPlateau().calculPoint();
         List<PlacementDomino> placement = this.getPlateau().possibilite(domino);
-        PlacementDomino bestPlacement = getPlacement(score,placement,null,domino,true);
+        PlacementDomino bestPlacement = getPlacement(score,placement,null);
         if(bestPlacement == null){
             throw new Exception("Impossible pour l'IA de placer le domino");
         }
