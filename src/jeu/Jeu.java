@@ -261,7 +261,8 @@ public class Jeu {
                 // Saisie du domino pioché par le joueur
                 for (int compteur = 0; compteur < cartesSurBoard.size();compteur++)
                 {
-                    System.out.println(compteur + " - domino : " + cartesSurBoard.get(compteur).toString());
+                    System.out.println(compteur + " - domino : " + "[ "+cartesSurBoard.get(compteur).getCases()[0]+
+                            ","+cartesSurBoard.get(compteur).getCases()[1]+" ]");
                 }
                 do {
                     try{
@@ -318,7 +319,7 @@ public class Jeu {
                 catch(Exception e)
                 {
                     System.out.println("IA n'a pas pu placer son domino ! Aucune possibilité");
-                    System.out.println("Domino concerné : " + domino.toString());
+                    System.out.println("Domino concerné : " + "[ "+domino.getCases()[0]+","+domino.getCases()[1]+" ]");
                     System.out.println(joueur.getPlateau().affichePlateau(true));
                 }
             }
