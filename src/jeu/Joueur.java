@@ -161,36 +161,77 @@ public class Joueur {
         this.scoreDomaine = calculGrosDomaine;
     }
 
+    /**
+     * Methode retournant le score de la taille du domaine du joueur
+     * @return Le score de la taille du domaine du joueur
+     */
     public int getScoreDomaine() {
         return this.scoreDomaine;
     }
 
+    /**
+     * Methode retournant le score des couronnes du joueur
+     * @return Le score des couronnes du joueur
+     */
     public int getScoreCouronne() {
         return this.scoreCouronne;
     }
 
+    /**
+     * Methode retournant si le joueur est en égalité
+     * @return Le joueur est en égalité (true) et sinon (false)
+     */
     public boolean getEgalite() {
         return this.egalite;
     }
 
+    /**
+     * Methode modifiant le status d'égalité du joueur
+     * @param b Nouveau statut d'égalité du joueur
+     */
     public void setEgalite(boolean b) {
         this.egalite = b;
     }
 
+    /**
+     * Methode retournant le plateau du joueur
+     * @return Le plateau du joueur
+     */
     public Plateau getPlateau() {
         return plateau;
     }
 
+    /**
+     * Methode permettant de savoir si le joueur a un domino dans sa pioche
+     * @param d Domino en question
+     * @return (true) si le domino est dans la pioche du joueur et (false) sinon
+     */
     public boolean piocheContainsDomino(IDomino d){
         return pioche.contains(d);
     }
 
+    /**
+     * Methode affectant les scores du plateau du joueur, au joueur
+     * @param mode Mode du jeu joué
+     * @see #setScore
+     * @see Plateau#calculPoint
+     * @see #bonusPoint
+     * @see #setScoreDomaine
+     * @see Plateau#calculGrosDomaine
+     * @see #setScoreCouronne
+     * @see Plateau#calculCouronne
+     */
     public void calculScore(ModeJeu mode) {
         this.setScore(plateau.calculPoint() + this.bonusPoint(mode));
         this.setScoreDomaine(plateau.calculGrosDomaine());
         this.setScoreCouronne(plateau.calculCouronne());
     }
 
+    /**
+     * Methode permettant de calculer les points bonus obtenu par le joueur en fonctin du mode de jeu joué
+     * @param mode Mode de jeu joué
+     * @return Le nombre de points bonus
+     */
     private int bonusPoint(ModeJeu mode)
     {
         switch(mode)
@@ -198,8 +239,10 @@ public class Joueur {
             case STANDARD:
                 return 0;
             case EMPIRE_DU_MILIEU:
+                // Recherche du chateau au milieu du royaume et attribution des points bonus si c'est le cas
                 return this.getPlateau().getCaseAt(2,2).getTerrain().equals(Terrain.CHATEAU)?10:0;
             case HARMONIE:
+                // Recherche d'une case vide dans le royaume
                 Plateau plateau = this.getPlateau();
                 for(int i = 0; i < mode.getTaillePlateau(); i++)
                 {
@@ -207,25 +250,45 @@ public class Joueur {
                     {
                         if(plateau.getCaseAt(i,j) == null)
                         {
+                            // Pas de points bonus car une case est vide
                             return 0;
                         }
                     }
                 }
+                // Sinon retourne les points bonus
                 return 5;
             default:
                 return 0;
         }
     }
 
+    /**
+     * Methode permettant d'identifier un IA d'un joueur
+     * @return Si le joueur est un IA (true) ou un joueur normal (false)
+     */
     public boolean isIA(){
         return false;
     }
 
+    /**
+     * Methode permettant de choisir un domino dans la pioche
+     * @param cartesSurBoard Pioche contenant les dominos restants
+     * @param joueursAdverses Liste des joueurs en jeu
+     * @return Le numéro du domino à piocher
+     * @throws DominoException
+     * @throws TuileException
+     */
     public int pickInPioche(List<IDomino> cartesSurBoard, List<Joueur> joueursAdverses) throws Exception
     {
         throw new Exception("impposible de faire cela avec un joueur");
     }
 
+    /**
+     * Methode permettant de choisir le placement d'un domino
+     * @param domino Domino à placer
+     * @return La position du domino à placer
+     * @throws Exception
+     */
     public PlacementDomino pickPossibilite(IDomino domino) throws Exception
     {
         throw new Exception("impposible de faire cela avec un joueur");
