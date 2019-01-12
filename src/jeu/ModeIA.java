@@ -25,9 +25,9 @@ public enum ModeIA {
             case SIMPLE:
                 return new SimpleIA(nom, couleur, nbJoueur, modeJeu, score);
             case NORMAL:
-                return null;
+                return new NormalIA(nom, couleur, nbJoueur, modeJeu, score);
             case DIFFICILE:
-                return null;
+                return new DifficileIA(nom, couleur, nbJoueur, modeJeu, score);
             default:
                 return null;
         }

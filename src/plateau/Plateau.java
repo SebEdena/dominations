@@ -569,4 +569,28 @@ public class Plateau {
         }
         return listeOrientationsValides;
     }
+
+    /**
+     * Methode ajoutant une case dans le tableau du plateau
+     * @param row Ligne de la case
+     * @param col Colonne de la case
+     * @param c Case à ajouter
+     */
+    public void setCaseAt(int row, int col, Case c){
+        this.tableau[row][col] = c;
+    }
+
+    public void setXBound(int xMin, int xMax){
+        this.minX = xMin;
+        this.maxX = xMax;
+    }
+
+    public void setYBound(int yMin, int yMax){
+        this.minY = yMin;
+        this.maxY = yMax;
+    }
+
+    public void setTuileAjoutee(boolean bool){
+        this.tuileAjoutee = bool;
+    }
 }

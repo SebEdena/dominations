@@ -10,6 +10,8 @@ import java.util.List;
 
 public class DifficileIA extends AbstractIA {
 
+    private PlacementDomino positionDomino;
+
     public DifficileIA(String nom, Roi couleur, NbJoueur nbJoueur, ModeJeu modeJeu, int score) throws DominoException, TuileException {
         super(nom, couleur, nbJoueur, modeJeu, score);
     }
@@ -34,23 +36,32 @@ public class DifficileIA extends AbstractIA {
         }*/
         Plateau p = this.getPlateau();
         List<PlacementDomino> possibilites;
-        PlacementDomino best;
+        positionDomino = null;
         for (IDomino d : cartesSurBoard) {
             possibilites = this.getPlateau().possibilite(d);
             int score = this.getScore();
-            best = possibilites.get(0);
             for (PlacementDomino pos : possibilites) {
                 p.addDomino(pos.getDomino(),pos.getRowCase2(),pos.getColCase2(),pos.getCaseId(),pos.getSens());
                 int scorePos = p.calculPoint();
                 if(score < scorePos)
-                    best = pos;
+                    positionDomino = pos;
             }
         }
-        return 0;
+        if(positionDomino != null) {
+            for (int i = 0; i < cartesSurBoard.size(); ++i) {
+                if (cartesSurBoard.get(i).getIdentifiant() == positionDomino.getDomino().getIdentifiant())
+                    return i;
+            }
+            return 0;
+        } else return 0;
     }
 
     @Override
     public PlacementDomino pickPossibilite(IDomino domino) throws Exception {
-        return null;
+        if(positionDomino == null)
+        {
+            throw new Exception("Impossible pour l'IA de placer le domino");
+        }
+        return positionDomino;
     }
 }
