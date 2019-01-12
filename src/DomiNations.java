@@ -1,6 +1,6 @@
 import jeu.Jeu;
 
-public class MainMathieu {
+public class DomiNations {
 
     public static void main(String[] args) {
         Jeu jeu  = Jeu.getInstance();

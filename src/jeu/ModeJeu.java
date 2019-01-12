@@ -2,6 +2,7 @@ package jeu;
 
 public enum ModeJeu {
     STANDARD("Standard", 5, 0, 0),
+    GRAND_DUEL("Grand Duel",7,0,0),
     EMPIRE_DU_MILIEU("Empire du Milieu", 5, 10, 0),
     HARMONIE("Harmonie", 5, 0, 5);
 

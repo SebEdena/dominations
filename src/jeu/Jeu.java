@@ -86,14 +86,16 @@ public class Jeu {
         System.out.println("Vous avez sélectionné le mode de jeu : " + ModeJeu.values()[modeJeu].toString());
         // Récupération du nombre de joueur pour la partie
         int nbJoueurs = 0;
-        do {
-            try{
-                System.out.println("Nombre de joueurs ? (2 à 4)");
-                nbJoueurs = Integer.parseInt(scan.next());
-            } catch (NumberFormatException e){
-                System.out.println("Erreur de saisie");
-            }
-        } while(nbJoueurs < NB_JOUEURS_MIN || nbJoueurs > NB_JOUEURS_MAX);
+        if(!ModeJeu.values()[modeJeu].getLibelle().equals("Grand Duel")){
+            do {
+                try{
+                    System.out.println("Nombre de joueurs ? (2 à 4)");
+                    nbJoueurs = Integer.parseInt(scan.next());
+                } catch (NumberFormatException e){
+                    System.out.println("Erreur de saisie");
+                }
+            } while(nbJoueurs < NB_JOUEURS_MIN || nbJoueurs > NB_JOUEURS_MAX);
+        } else nbJoueurs = NB_JOUEURS_MIN;
         scan.nextLine();
         // Récupération de l'énum des paramètres du jeu
         NbJoueur paramJeu = NbJoueur.getParamsJeu(nbJoueurs);

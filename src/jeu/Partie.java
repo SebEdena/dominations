@@ -75,13 +75,15 @@ public class Partie {
      * @see NbJoueur#getNbDominosRetires
      */
     private void retirerDominos(){
-        // Récupération du nombre de domino à retirer e, fonction du nombre de joueur
-        int nbDominos = nbJoueur.getNbDominosRetires();
-        Random rand = new Random();
-        // Suppression aléatoire des dominos
-        for (int i = 0; i < nbDominos; i++) {
-            int index = rand.nextInt(dominosRestants.size());
-            dominosRestants.remove(index);
+        // Récupération du nombre de domino à retirer e, fonction du nombre de joueur et du mode de jeu utilisé
+        if(!modeJeu.getLibelle().equals("Grand Duel")) {
+            int nbDominos = nbJoueur.getNbDominosRetires();
+            Random rand = new Random();
+            // Suppression aléatoire des dominos
+            for (int i = 0; i < nbDominos; i++) {
+                int index = rand.nextInt(dominosRestants.size());
+                dominosRestants.remove(index);
+            }
         }
     }
 
