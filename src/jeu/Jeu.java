@@ -243,7 +243,8 @@ public class Jeu {
                     System.out.println("Tour : " + roi.toString());
                     // Pioche un domino depuis la pioche
                     int numeroTire = joueur.pickInPioche(cartesSurBoard,partie.getJoueurs());
-                    System.out.println("IA a choisi le domino : " + cartesSurBoard.get(numeroTire).getIdentifiant());
+                    System.out.println("IA a choisi le domino : " + "[ "+cartesSurBoard.get(numeroTire).getCases()[0]+
+                            ","+cartesSurBoard.get(numeroTire).getCases()[1]+" ]");
                     // Ajout du domino dans les dominos tirés par l'IA
                     joueur.addDomino(cartesSurBoard.remove(numeroTire));
                 }
@@ -275,7 +276,8 @@ public class Jeu {
                         System.out.println("Veuillez saisir un bon numéro");
                     }
                 } while(numDomino < 0 || numDomino > (cartesSurBoard.size() - 1));
-                System.out.println("Domino tiré : " + cartesSurBoard.get(numDomino).getIdentifiant());
+                System.out.println("Domino tiré : " + "[ "+cartesSurBoard.get(numDomino).getCases()[0]+
+                        ","+cartesSurBoard.get(numDomino).getCases()[1]+" ]");
                 // Ajout du domino dans les dominos tirés par le joueur
                 joueur.addDomino(cartesSurBoard.remove(numDomino));
             }
