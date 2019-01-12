@@ -6,11 +6,13 @@ import plateau.IDomino;
 import plateau.PlacementDomino;
 import plateau.Plateau;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class DifficileIA extends AbstractIA {
 
-    private PlacementDomino positionDomino;
+    private List<PlacementDomino> positionDomino = new ArrayList<>();
 
     public DifficileIA(String nom, Roi couleur, NbJoueur nbJoueur, ModeJeu modeJeu, int score) throws DominoException, TuileException {
         super(nom, couleur, nbJoueur, modeJeu, score);
@@ -18,50 +20,58 @@ public class DifficileIA extends AbstractIA {
 
     @Override
     public int pickInPioche(List<IDomino> cartesSurBoard, List<Joueur> joueursAdverses) throws DominoException, TuileException {
-/*        for (Joueur j : joueursAdverses) {
-            Plateau p = j.getPlateau();
-            if(j.getNbRois() < j.getPioche().size()){
-                for (IDomino d : cartesSurBoard) {
-                    List<PlacementDomino> possibilites = j.getPlateau().possibilite(d);
-                    PlacementDomino best = possibilites.get(0);
-                    int score = j.getScore();
-                    for (PlacementDomino pos : possibilites) {
-                        p.addDomino(pos.getDomino(),pos.getRowCase2(),pos.getColCase2(),pos.getCaseId(),pos.getSens());
-                        int scorePos = p.calculPoint();
-                        if(score < scorePos)
-                            best = pos;
-                    }
+        List<PlacementDomino> possibilites = new ArrayList<>();
+        PlacementDomino placement = null;
+        int score = this.getPlateau().calculPoint();
+        for (IDomino d : cartesSurBoard) {
+            placement = getPlacement(score,possibilites, placement);
+        }
+        positionDomino.add(placement);
+        Random rand = new Random();
+        if(placement != null) {
+            for (int i = 0; i < cartesSurBoard.size(); i++) {
+                if (cartesSurBoard.get(i).getIdentifiant() == placement.getDomino().getIdentifiant()) {
+                    return i;
                 }
             }
-        }*/
-        Plateau p = this.getPlateau();
-        List<PlacementDomino> possibilites;
-        positionDomino = null;
-        for (IDomino d : cartesSurBoard) {
-            possibilites = this.getPlateau().possibilite(d);
-            int score = this.getScore();
-            for (PlacementDomino pos : possibilites) {
-                p.addDomino(pos.getDomino(),pos.getRowCase2(),pos.getColCase2(),pos.getCaseId(),pos.getSens());
-                int scorePos = p.calculPoint();
-                if(score < scorePos)
-                    positionDomino = pos;
+            return rand.nextInt(cartesSurBoard.size());
+        } else return rand.nextInt(cartesSurBoard.size());
+    }
+
+    private PlacementDomino getPlacement(int score, List<PlacementDomino> possibilites, PlacementDomino placement) throws DominoException, TuileException {
+        for (PlacementDomino pos : possibilites) {
+            Plateau p = clonePlateau(this.getPlateau());
+            p.addDomino(pos.getDomino(),pos.getRow(),pos.getColumn(),pos.getCaseId(),pos.getSens());
+            int scorePos = p.calculPoint();
+            if(score <= scorePos) {
+                score = scorePos;
+                placement = pos;
             }
         }
-        if(positionDomino != null) {
-            for (int i = 0; i < cartesSurBoard.size(); ++i) {
-                if (cartesSurBoard.get(i).getIdentifiant() == positionDomino.getDomino().getIdentifiant())
-                    return i;
+        return placement;
+    }
+
+    private Plateau clonePlateau(Plateau plateau) {
+        Plateau p = new Plateau(this.getPlateau().getSize());
+        for (int i = 0; i < p.getSize(); i++) {
+            for (int j = 0; j < p.getSize(); j++) {
+                p.setCaseAt(i,j,plateau.getCaseAt(i,j));
             }
-            return 0;
-        } else return 0;
+        }
+        p.setTuileAjoutee(true);
+        p.setXBound(plateau.getXBounds()[0],plateau.getXBounds()[1]);
+        p.setYBound(plateau.getYBounds()[0],plateau.getYBounds()[1]);
+        return p;
     }
 
     @Override
     public PlacementDomino pickPossibilite(IDomino domino) throws Exception {
-        if(positionDomino == null)
-        {
+        int score = this.getPlateau().calculPoint();
+        List<PlacementDomino> placement = this.getPlateau().possibilite(domino);
+        PlacementDomino bestPlacement = getPlacement(score,placement,null);
+        if(bestPlacement == null){
             throw new Exception("Impossible pour l'IA de placer le domino");
         }
-        return positionDomino;
+        return bestPlacement;
     }
 }

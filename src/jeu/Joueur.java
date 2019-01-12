@@ -116,12 +116,12 @@ public class Joueur {
     }
 
     public void calculScore(ModeJeu mode) {
-        this.setScore(plateau.calculPoint() + this.BonusPoint(mode));
+        this.setScore(plateau.calculPoint() + this.bonusPoint(mode));
         this.setScoreDomaine(plateau.calculGrosDomaine());
         this.setScoreCouronne(plateau.calculCouronne());
     }
 
-    private int BonusPoint(ModeJeu mode)
+    private int bonusPoint(ModeJeu mode)
     {
         switch(mode)
         {
