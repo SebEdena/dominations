@@ -162,7 +162,7 @@ public class Jeu {
                 Joueur j = new Joueur(nom, Roi.getRoiInt(i), nbJoueur, modeJeu, SCORE_DEFAUT);
                 // Ajout dans la liste des joueurs
                 joueurs.add(j);
-                System.out.println(nom + " vous êtes le roi " + Roi.getRoiInt(i));
+                System.out.println(nom + " / vous êtes le roi " + Roi.getRoiInt(i));
             }
         }
         return joueurs;
