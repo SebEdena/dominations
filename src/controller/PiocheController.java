@@ -15,6 +15,7 @@ import com.sun.xml.internal.ws.model.ParameterImpl;
 import controller.util.ConfigStyle;
 import controller.util.IndicatorFader;
 import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -145,7 +146,6 @@ public class PiocheController {
             piocheDominosContainer.getChildren().add(domino);
 
             Label jeton = new Label();
-            //jeton.setDisable(true);
             configStyle.setFixedDimensions(jeton, jetonDimension, jetonDimension);
             jeton.setStyle(jeton.getStyle() + "-fx-alignment:center;-fx-text-fill:white;-fx-font-weight:bold;-fx-font-size:18px");
             jeton.setDisable(true);
@@ -181,9 +181,7 @@ public class PiocheController {
             event.consume();
         });
 
-        node.setOnDragDone(event -> {
-            event.consume();
-        });
+        node.setOnDragDone(Event::consume);
     }
 
     private void initTargetDrag(VBox node){
@@ -334,19 +332,7 @@ public class PiocheController {
         if(piocheJetonsContainer.getChildren().size() == 0){
             synchronized (partieLocker){ partieLocker.notifyAll(); }
         }else{
-            new Thread(()->{
-                try {
-                    Thread.sleep(500);
-                    Label jeton = (Label) piocheJetonsContainer.getChildren().get(0);
-                    Platform.runLater(()->{
-                        Roi roi = Roi.getRoiInt(Integer.parseInt(jeton.getText()) - 1);
-                        fillPlateau(partie.getJoueurs().get(Integer.parseInt(jeton.getText()) - 1).getPlateau());
-                        status.display("Glissez votre jeton sous le domino voulu", partie.getJoueur(roi).getNomJoueur(), Color.web(roi.getColor()));
-                        jeton.setDisable(false);
-                    });
-                } catch (InterruptedException ignored) { }
-            }).start();
-            piocheJetonsContainer.getChildren().get(0).setDisable(false);
+            new Thread(this::nextPioche).start();
         }
     }
 
@@ -358,18 +344,25 @@ public class PiocheController {
         new Thread(()->{
             try {
                 Thread.sleep(500);
-                Label jeton = (Label) piocheJetonsContainer.getChildren().get(0);
-                Roi roi = Roi.getRoiInt(Integer.parseInt(jeton.getText()) - 1);
-                Platform.runLater(() -> fillPlateau(partie.getJoueurs().get(Integer.parseInt(jeton.getText()) - 1).getPlateau()));
                 status.display("Glissez votre jeton sous le domino voulu", "Début de la pioche");
                 Thread.sleep(status.getTotalTime() + 100);
-                status.display("Glissez votre jeton sous le domino voulu", partie.getJoueur(roi).getNomJoueur(), Color.web(roi.getColor()));
-                Platform.runLater(()->{
-                    jeton.setDisable(false);
-                });
+                nextPioche();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    private void nextPioche(){
+        try {
+            Thread.sleep(500);
+            Label jeton = (Label) piocheJetonsContainer.getChildren().get(0);
+            Roi roi = Roi.getRoiInt(Integer.parseInt(jeton.getText()) - 1);
+            status.display("Glissez votre jeton sous le domino voulu", partie.getJoueur(roi).getNomJoueur(), Color.web(roi.getColor()));
+            Platform.runLater(()->{
+                fillPlateau(partie.getJoueurs().get(Integer.parseInt(jeton.getText()) - 1).getPlateau());
+                jeton.setDisable(false);
+            });
+        } catch (InterruptedException ignored) { }
     }
 }

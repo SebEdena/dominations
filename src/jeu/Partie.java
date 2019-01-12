@@ -31,6 +31,10 @@ public class Partie {
         return dominosRestants.size() == 0 && tirage == null; //vérifier que le tirage n'est pas vide aussi. c'est bien is null car à chaque fois on clear le tirage
     }
 
+    public boolean hasNextTurn(){
+        return dominosRestants.size() == 0;
+    }
+
     public NbJoueur getParamJeu() {
         return nbJoueur;
     }

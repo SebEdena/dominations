@@ -2,9 +2,13 @@ package controller;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
+import com.sun.rowset.internal.Row;
 import controller.util.ConfigStyle;
 import controller.util.IndicatorFader;
 import javafx.application.Platform;
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
+import javafx.scene.Parent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.util.Pair;
@@ -22,6 +26,7 @@ import javafx.scene.layout.*;
 import plateau.*;
 import util.CSVParser;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -179,6 +184,7 @@ public class PartieController {
 
         partieDropDominoButton.setOnAction(event -> {
             try {
+                partieDomino.setVisible(false);
                 synchronized (partieLocker) { partieLocker.notifyAll(); }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -198,15 +204,19 @@ public class PartieController {
     }
 
     private void jouerPartie() {
-
         new Thread(() -> {
             try{
                 piocheController.initContent(partie, status, partieLocker);
                 Thread.sleep(500);
                 Platform.runLater(() -> status.display("Débutons la partie, que le meilleur gagne!", "C'est parti !"));
                 Thread.sleep(status.getTotalTime());
-                do{
-                    preparePioche(partie.pioche(), partie.melangerRois());
+                int i = 1;
+                while (i > 0 && true) {
+                    i--;
+                    List<IDomino> tirage = partie.pioche();
+                    if(partie.partieFinie()) break;
+
+                    preparePioche(tirage, partie.melangerRois());
                     Platform.runLater(this::showPiocheDialog);
                     Platform.runLater(piocheController::startPioche);
                     synchronized(partieLocker) { partieLocker.wait(); }
@@ -227,31 +237,25 @@ public class PartieController {
                         });
                         synchronized(partieLocker) { partieLocker.wait(); }
                     }
+                    Platform.runLater(() -> {
+                        partieTourJoueurLabel.setVisible(false);
+                        partieDropDominoButton.setDisable(true);
+                        partieValidateButton.setDisable(true);
+                        partiePlateauContainer.setVisible(false);
+                    });
                     Thread.sleep(500);
-                    status.display("Préparez-vous à piocher.", "Fin du tour");
-                    Thread.sleep(status.getTotalTime() + 100);
-                } while (!partie.partieFinie());
+                    if(partie.hasNextTurn()) {
+                        status.display("Préparez-vous à piocher.", "Fin du tour");
+                        Thread.sleep(status.getTotalTime() + 100);
+                    }
+                }
                 List<Joueur> results = partie.calculScores();
+                Platform.runLater(() -> displayResultsDialog(results));
                 System.out.println(results);
             } catch (Exception ignored) {
                 ignored.printStackTrace();
             }
         }).start();
-       /* do {
-            List<IDomino> pioche = partie.pioche();
-            preparePioche(pioche);
-            showPiocheDialog();
-            afficherPioche(pioche);
-            closePiocheDialog();
-            if(!partie.partieFinie()){
-                List<Roi> rois = partie.melangerRois();
-                tirageJoueur(rois);
-                placementJoueur();
-            }
-        } while(!partie.partieFinie());
-        afficheScore();
-        System.out.println("Fin du jeu !");*/
-
     }
 
     private void initDialog(){
@@ -489,6 +493,7 @@ public class PartieController {
                 fillLabelWithCase(lab, p.getCaseAt(i, j), isLockedWhenNoDomino(p, i, j));
             }
         }
+        partiePlateauContainer.setVisible(true);
     }
 
     private void fillMiniPlateau(Joueur joueur) {
@@ -520,6 +525,8 @@ public class PartieController {
                 n.setRotate(0);
             }
             partieDomino.setVisible(true);
+            partieValidateButton.setDisable(true);
+            partieDropDominoButton.setDisable(false);
             configStyle.setFixedDimensions(partieDomino, caseDimension * 2, caseDimension);
         }
     }
@@ -527,6 +534,7 @@ public class PartieController {
     private void fillJoueurLabel(Joueur j) {
         partieTourJoueurLabel.setTextFill(Color.web(j.getCouleurRoi().getColor()));
         partieTourJoueurLabel.setText(j.getNomJoueur());
+        partieTourJoueurLabel.setVisible(true);
     }
 
     private void fillLabelWithCase(Label l, Case c, boolean lockedOnCaseNull) {
@@ -539,8 +547,8 @@ public class PartieController {
                 if(c.getTerrain().equals(Terrain.CHATEAU)){
                     ImageView crown = new ImageView("./view/img/crown.png");
                     if(l.getWidth() < configStyle.getResizeCrownLimit()){
-                        crown.setFitHeight(configStyle.getResizeCrownLimit() - 10);
-                        crown.setFitWidth(configStyle.getResizeCrownLimit() - 10);
+                        crown.setFitHeight(configStyle.getResizedCrownSize());
+                        crown.setFitWidth(configStyle.getResizedCrownSize());
                     }
                     l.setGraphic(crown);
                 }else{
@@ -656,6 +664,144 @@ public class PartieController {
             }
             Platform.runLater(()->partiePiocheParent.toBack());
         }).start();
+    }
+
+    private void displayResultsDialog(List<Joueur> joueurs){
+        List<List<Joueur>> formattedScore = formatScores(joueurs);
+
+        JFXDialog resultDialog = new JFXDialog();
+        resultDialog.setOverlayClose(false);
+        resultDialog.setDialogContainer(partiePiocheParent);
+
+        GridPane resultsContent = new GridPane();
+        ColumnConstraints c1 = new ColumnConstraints();
+        c1.setHalignment(HPos.CENTER);
+        RowConstraints r1 = new RowConstraints();
+        r1.setPercentHeight(20);
+        RowConstraints r2 = new RowConstraints();
+        r2.setPercentHeight(60);
+        RowConstraints r3 = new RowConstraints();
+        r3.setPercentHeight(20);
+        resultsContent.getRowConstraints().addAll(r1, r2, r3);
+        resultsContent.getColumnConstraints().add(c1);
+
+        Label fini = new Label("Partie terminée !");
+        configStyle.setFixedWidth(fini, 600);
+        fini.setStyle("-fx-alignment:center;-fx-font-size:24px;-fx-font-weight:bold");
+        resultsContent.add(fini, 0, 0);
+
+        GridPane scorePane = new GridPane();
+        ColumnConstraints c21 = new ColumnConstraints();
+        c21.setHalignment(HPos.CENTER);
+        RowConstraints r21 = new RowConstraints();
+        r21.setPercentHeight(15);
+        RowConstraints r22 = new RowConstraints();
+        r22.setPercentHeight(85);
+        r22.setValignment(VPos.CENTER);
+        scorePane.getColumnConstraints().add(c21);
+        scorePane.getRowConstraints().addAll(r21, r22);
+
+        VBox scoresList = new VBox();
+        scoresList.setAlignment(Pos.CENTER);
+        for(int i = 0; i < joueurs.size(); i++){
+            if(i == 0){
+                StringBuilder sb = new StringBuilder();
+                for(Joueur j : formattedScore.get(i)){
+                    sb.append(j.getNomJoueur()).append(", ");
+                }
+                if(formattedScore.get(i).size() == 1){
+                    sb.append("vous êtes le vainqueur !");
+                } else {
+
+                    sb.append("vous êtes les vainqueurs !");
+                }
+                Label vainqueurs = new Label(sb.toString());
+                configStyle.setFixedWidth(vainqueurs, 600);
+                vainqueurs.setStyle("-fx-alignment:center;-fx-font-size:18px;-fx-font-weight:bold;");
+                scorePane.add(vainqueurs, 0, 0);
+
+                Label titreScores = new Label("Les scores :");
+                configStyle.setFixedWidth(titreScores, 600);
+                titreScores.setStyle("-fx-alignment:center;-fx-font-size:14px;-fx-font-weight:bold;");
+                scoresList.getChildren().add(titreScores);
+            }
+
+            for(Joueur j : formattedScore.get(i)){
+                Label scoreJoueur = new Label(formatScoreLineString(i + 1, j.getNomJoueur(), j.getScore(), configStyle.getScoreLineSize()));
+                scoreJoueur.setStyle("-fx-alignment:center;-fx-font-size:14px;-fx-font-weight:bold;");
+                scoresList.getChildren().add(scoreJoueur);
+                configStyle.setFixedWidth(scoreJoueur, 600);
+            }
+        }
+        scorePane.add(scoresList, 0, 1);
+        resultsContent.add(scorePane, 0 , 1);
+
+        HBox buttons = new HBox();
+        buttons.setAlignment(Pos.CENTER);
+        buttons.setSpacing(10);
+
+        ImageView home = new ImageView("./view/img/home.png");
+        home.setFitHeight(configStyle.getResizedCrownSize());
+        home.setFitWidth(configStyle.getResizedCrownSize());
+        JFXButton homeButton = new JFXButton("Menu principal", home);
+        homeButton.setStyle("-fx-background-color:#424242;-fx-text-fill:white;");
+        configStyle.setFixedDimensions(homeButton, 190, 40);
+        homeButton.setOnAction(event -> {
+
+        });
+
+
+        ImageView param = new ImageView("./view/img/settings.png");
+        param.setFitHeight(configStyle.getResizedCrownSize());
+        param.setFitWidth(configStyle.getResizedCrownSize());
+        JFXButton paramButton = new JFXButton("Menu des paramètres", param);
+        paramButton.setStyle("-fx-background-color:#424242;-fx-text-fill:white;");
+        configStyle.setFixedDimensions(paramButton, 190, 40);
+        paramButton.setOnAction(event -> {
+
+        });
+        buttons.getChildren().addAll(homeButton, paramButton);
+
+        resultsContent.add(buttons, 0 , 2);
+        dialog.setContent(resultsContent);
+        configStyle.setFixedDimensions(dialog.getContent(), 600, 400);
+        dialog.toFront();
+        dialog.show();
+    }
+
+    private List<List<Joueur>> formatScores(List<Joueur> joueurs){
+        List<List<Joueur>> formattedScores = new ArrayList<>();
+        for(int i = 0; i < joueurs.size(); i++){
+            Joueur joueur1 = joueurs.get(i);
+            formattedScores.add(i, new ArrayList<>());
+            formattedScores.get(i).add(joueur1);
+            if(joueur1.getEgalite()){
+                for(int j = i+1; j < joueurs.size(); j++){
+                    Joueur joueur2 = joueurs.get(j);
+                    if(joueur2.getEgalite() && joueur1.getScoreCouronne() == joueur2.getScoreCouronne()){
+                        formattedScores.get(i).add(joueur2);
+                        formattedScores.add(j, new ArrayList<>());
+                        i = j;
+                    }else{
+                        break;
+                    }
+                }
+            }
+        }
+        return formattedScores;
+    }
+
+    private String formatScoreLineString(int rankIndex, String playerName, int points, int targetSize) {
+        StringBuilder result = new StringBuilder(""+rankIndex+". ");
+        result.append(playerName);
+        String pointsString = ""+points+"pt"+(points==1?"":"s");
+        System.out.println(result.length());
+        System.out.println(pointsString.length());
+        while (result.length() + pointsString.length() <= targetSize){
+            result.append(" ");
+        }
+        result.append(pointsString);
+        return result.toString();
     }
 
     private void displayTab() {
