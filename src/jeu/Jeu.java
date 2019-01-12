@@ -1,13 +1,16 @@
+/**
+ * Classe permettant de décrire le jeu
+ * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
+ * @version 1.0
+ */
 package jeu;
 
-import com.sun.xml.internal.bind.v2.model.core.ID;
 import exceptions.DominoException;
 import exceptions.TuileException;
 import javafx.util.Pair;
 import plateau.*;
 import util.CSVParser;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class Jeu {
