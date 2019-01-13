@@ -75,10 +75,11 @@ public class SceneSwitcher {
         Parent parent = loader.load();
         PartieController controller = loader.getController();
         controller.init(joueurs, deck, nbJoueur, modeJeu);
-        currentPartieScene = new Scene(parent, 200, 200);
+        currentPartieScene = new Scene(parent, standardWidth, standardHeight);
 
         primaryStage.hide();
         primaryStage.setScene(currentPartieScene);
         primaryStage.show();
+        controller.jouerPartie();
     }
 }

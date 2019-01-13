@@ -5,9 +5,11 @@ import com.jfoenix.controls.JFXDialog;
 import com.sun.rowset.internal.Row;
 import controller.util.ConfigStyle;
 import controller.util.IndicatorFader;
+import controller.util.SceneSwitcher;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -766,8 +768,13 @@ public class PartieController {
         JFXButton homeButton = new JFXButton("Menu principal", home);
         homeButton.setStyle("-fx-background-color:#424242;-fx-text-fill:white;");
         configStyle.setFixedDimensions(homeButton, 190, 40);
+        homeButton.setCursor(Cursor.HAND);
         homeButton.setOnAction(event -> {
-
+            try {
+                SceneSwitcher.getInstance().displayScene("accueil");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
 
         ImageView param = new ImageView("./view/img/settings.png");
@@ -776,8 +783,13 @@ public class PartieController {
         JFXButton paramButton = new JFXButton("Menu des paramètres", param);
         paramButton.setStyle("-fx-background-color:#424242;-fx-text-fill:white;");
         configStyle.setFixedDimensions(paramButton, 190, 40);
+        paramButton.setCursor(Cursor.HAND);
         paramButton.setOnAction(event -> {
-
+            try {
+                SceneSwitcher.getInstance().displayScene("menu");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
         buttons.getChildren().addAll(homeButton, paramButton);
 

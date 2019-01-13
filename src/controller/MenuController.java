@@ -5,6 +5,9 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.controls.JFXToggleButton;
 import com.jfoenix.validation.RequiredFieldValidator;
+import controller.util.SceneSwitcher;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
@@ -15,8 +18,15 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import jeu.*;
+import plateau.Case;
+import plateau.Domino;
+import plateau.IDomino;
+import plateau.Terrain;
+import util.CSVParser;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -90,6 +100,7 @@ public class MenuController {
         menuStartButton.setOnAction(event -> {
             validateForm();
         });
+        menuModeJeuCBox.valueProperty().addListener((observable, oldValue, newValue) -> updateNbJoueursCBox(oldValue, newValue));
     }
 
     private void initGameMode(){
@@ -97,11 +108,8 @@ public class MenuController {
             Label label = new Label(modeJeu.getLibelle());
             menuModeJeuCBox.getItems().add(label);
         }
-        for(NbJoueur nbJoueur : NbJoueur.values()) {
-            Label label = new Label(nbJoueur.getNbJoueurs() + " Joueurs");
-            label.setUserData(nbJoueur.getNbJoueurs());
-            menuNbJoueursCBox.getItems().add(label);
-        }
+
+        fillNbJoueursCBox(Arrays.asList(NbJoueur.values()), null);
 
         menuNbJoueursCBox.setOnAction(event -> {
             Label data = menuNbJoueursCBox.getSelectionModel().getSelectedItem();
@@ -113,6 +121,18 @@ public class MenuController {
 
         menuModeJeuCBox.getValidators().add(new RequiredFieldValidator("Le champ est obligatoire"));
         menuNbJoueursCBox.getValidators().add(new RequiredFieldValidator("Le champ est obligatoire"));
+    }
+
+    private void fillNbJoueursCBox(List<NbJoueur> listeModesJeuAcceptes, NbJoueur selectedItem) {
+        Label selectedOption = null;
+        menuNbJoueursCBox.getItems().clear();
+        for(NbJoueur nbJoueur : listeModesJeuAcceptes) {
+            Label label = new Label(nbJoueur.getNbJoueurs() + " Joueurs");
+            label.setUserData(nbJoueur.getNbJoueurs());
+            if(selectedItem != null && nbJoueur.equals(selectedItem)) selectedOption = label;
+            menuNbJoueursCBox.getItems().add(label);
+        }
+        if(selectedOption != null) menuNbJoueursCBox.getSelectionModel().select(selectedOption);
     }
 
     private void initPlayerPanes() {
@@ -177,6 +197,23 @@ public class MenuController {
         }
     }
 
+    private void updateNbJoueursCBox(Label oldValue, Label newValue){
+        if(newValue != null){
+            NbJoueur selectedItem = null;
+            ModeJeu nouveauMode = ModeJeu.getModeJeu(newValue.getText());
+            if(oldValue != null && menuNbJoueursCBox.getSelectionModel().getSelectedItem() != null){
+                NbJoueur nbJ = NbJoueur.getParamsJeu((int)menuNbJoueursCBox.getSelectionModel().getSelectedItem().getUserData());
+                if(nouveauMode.getListeModesJeuAcceptes().contains(nbJ)) selectedItem = nbJ;
+            }
+            fillNbJoueursCBox(nouveauMode.getListeModesJeuAcceptes(), selectedItem);
+            for(int i = (selectedItem == null)?0:selectedItem.getNbJoueurs() + 1; i < players.size(); i++){
+                togglePlayerPane(players.get(i), false);
+            }
+        } else {
+            fillNbJoueursCBox(Arrays.asList(NbJoueur.values()), null);
+        }
+    }
+
     private void resetForm(){
         menuModeJeuCBox.getSelectionModel().clearSelection();
         menuNbJoueursCBox.getSelectionModel().clearSelection();
@@ -214,23 +251,63 @@ public class MenuController {
     }
 
     private void lancerPartie(){
+        List<IDomino> deck = null;
+        try {
+            deck = chargementDominos("./dominos.csv");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         ModeJeu modeJeu = ModeJeu.getModeJeu(menuModeJeuCBox.getSelectionModel().getSelectedItem().getText());
         NbJoueur nbJoueurs = NbJoueur.getParamsJeu((int)menuNbJoueursCBox.getSelectionModel().getSelectedItem().getUserData());
+        List<Joueur> joueurs = new ArrayList<>();
 
         for(int i = 0; i < nbJoueurs.getNbJoueurs(); i++){
             GridPane player = players.get(i);
-            Joueur j;
+            Joueur j = null;
+            String nomJoueur = ((TextField) player.getChildren().get(GP_NOM_JOUEUR_INDEX)).getText();
+            Roi roi = Roi.getRoiInt(i);
             if(((Toggle) player.getChildren().get(GP_IA_TOGGLE_INDEX)).isSelected()){
-                j = ModeIA.getIAClasse()
+                ModeIA modeIA = ModeIA.getModeIA(((ComboBox) player.getChildren().get(GP_IA_DIFFICULTE_INDEX)).getSelectionModel().getSelectedItem().toString());
+                try {
+                    j = ModeIA.getIAClasse(modeIA, nomJoueur, roi, nbJoueurs, modeJeu, 0);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } else {
-
+                try {
+                    j = new Joueur(nomJoueur, roi, nbJoueurs, modeJeu, 0);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-            System.out.println("  "+ (i+1) + " - " + ((TextField) player.getChildren().get(GP_NOM_JOUEUR_INDEX)).getText() +
-                    " - " + (((Toggle) player.getChildren().get(GP_IA_TOGGLE_INDEX)).isSelected()?"IA " +
-                    ((ComboBox) player.getChildren().get(GP_IA_DIFFICULTE_INDEX)).getSelectionModel()
-                            .getSelectedItem().toString()
-                    :"Humain"));
+            joueurs.add(j);
+        }
+
+        try {
+            SceneSwitcher.getInstance().startPartie(joueurs, deck, nbJoueurs, modeJeu);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-}
 
+    /**
+     * Methode de chargement des dominos à partir d'un fichier csv et les transformes en objet IDomino
+     * @param path Chemin d'accès à la liste des dominos
+     * @return La liste des dominos chargés
+     * @throws IOException
+     * @see CSVParser#parse
+     */
+    private List<IDomino> chargementDominos(String path) throws IOException {
+        // Récupération des dominos parsés
+        List<String[]> dominos = CSVParser.parse(path, ",", true);
+        List<IDomino> dominosCharges = new ArrayList<>();
+        // Création des dominos et de leurs cases
+        for(String[] strs : dominos) {
+            Case case1 = new Case(Integer.parseInt(strs[0]), Terrain.getTerrain(strs[1]));
+            Case case2 = new Case(Integer.parseInt(strs[2]), Terrain.getTerrain(strs[3]));
+            IDomino domino = new Domino(case1,case2,Integer.parseInt(strs[4]));
+            dominosCharges.add(domino);
+        }
+        return dominosCharges;
+    }
+}

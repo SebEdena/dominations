@@ -6,23 +6,23 @@ import java.util.List;
 import static jeu.NbJoueur.*;
 
 public enum ModeJeu {
-    STANDARD("Standard", 5, 0, 0, Arrays.asList()),
-    GRAND_DUEL("Grand Duel",7,0,0, Arrays.asList(jeuA3,jeuA4)),
-    EMPIRE_DU_MILIEU("Empire du Milieu", 5, 10, 0, Arrays.asList()),
-    HARMONIE("Harmonie", 5, 0, 5, Arrays.asList());
+    STANDARD("Standard", 5, 0, 0, Arrays.asList(jeuA2, jeuA3, jeuA4)),
+    GRAND_DUEL("Grand Duel",7,0,0, Arrays.asList(jeuA2)),
+    EMPIRE_DU_MILIEU("Empire du Milieu", 5, 10, 0, Arrays.asList(jeuA2, jeuA3, jeuA4)),
+    HARMONIE("Harmonie", 5, 0, 5, Arrays.asList(jeuA2, jeuA3, jeuA4));
 
     private String libelle;
     private int taillePlateau;
     private int bonusPlacementMilieu;
     private int bonusPlateauComplet;
-    private List<NbJoueur> listerefuse;
+    private List<NbJoueur> listeModesJeuAcceptes;
 
-    ModeJeu(String libelle, int taillePlateau, int bonusPlacementMilieu, int bonusPlateauComplet, List<NbJoueur> listerefuse){
+    ModeJeu(String libelle, int taillePlateau, int bonusPlacementMilieu, int bonusPlateauComplet, List<NbJoueur> listeModesJeuAcceptes){
         this.libelle = libelle;
         this.taillePlateau = taillePlateau;
         this.bonusPlacementMilieu = bonusPlacementMilieu;
         this.bonusPlateauComplet = bonusPlateauComplet;
-        this.listerefuse = listerefuse;
+        this.listeModesJeuAcceptes = listeModesJeuAcceptes;
     }
 
     public static ModeJeu getModeJeu(String modeJeu){
@@ -40,7 +40,7 @@ public enum ModeJeu {
         return taillePlateau;
     }
 
-    public List<NbJoueur> getListerefuse() {
-        return this.listerefuse;
+    public List<NbJoueur> getListeModesJeuAcceptes() {
+        return this.listeModesJeuAcceptes;
     }
 }
