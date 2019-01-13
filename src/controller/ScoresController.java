@@ -15,6 +15,11 @@ import javafx.scene.layout.VBox;
 import model.joueur.Joueur;
 import model.jeu.NbJoueur;
 
+/**
+ * Classe du controlleur de la sous-scène d'affichage de scores
+ * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
+ * @version 1.0
+ */
 public class ScoresController {
 
     @FXML
@@ -53,6 +58,9 @@ public class ScoresController {
 
     private List<GridPane> scores;
 
+    /**
+     * Fonction appelée automatiquement à l'instantiation de la classe
+     */
     @FXML
     void initialize() {
         assert scoresVainqueursLabel != null : "fx:id=\"scoresVainqueursLabel\" was not injected: check your FXML file 'scores.fxml'.";
@@ -84,6 +92,11 @@ public class ScoresController {
         });
     }
 
+    /**
+     * Prépare l'affichage des scores
+     * @param scores la liste des joueurs ordonnée par score
+     * @param nbJoueurs l'énumération du nombre de joueurs
+     */
     public void prepareDisplay(List<Joueur> scores, NbJoueur nbJoueurs){
         List<List<Joueur>> formattedScore = formatScores(scores);
         int scoreCursor = 1;
@@ -112,6 +125,11 @@ public class ScoresController {
         scoresVainqueursLabel.setText(vainqueurs.toString());
     }
 
+    /**
+     * Fomate le tableau des scores en un format plus facile à réaliser
+     * @param joueurs la liste des joueurs ordonnée par scores
+     * @return la liste formatée de joueurs avec en indice des sous-listes le classement
+     */
     private List<List<Joueur>> formatScores(List<Joueur> joueurs){
         List<List<Joueur>> formattedScores = new ArrayList<>();
         for(int i = 0; i < joueurs.size(); i++){

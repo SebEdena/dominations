@@ -23,6 +23,11 @@ import model.jeu.Partie;
 import model.jeu.Roi;
 import model.plateau.*;
 
+/**
+ * Classe du controlleur de la sous-scène de pioche
+ * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
+ * @version 1.0
+ */
 public class PiocheController {
 
     @FXML
@@ -64,6 +69,9 @@ public class PiocheController {
     private final DataFormat roiFormat = new DataFormat("model.jeu.roi");
     private IndicatorFader status;
 
+    /**
+     * Fonction appelée automatiquement à l'instantiation de la classe
+     */
     @FXML
     void initialize() {
         assert piocheRootNode != null : "fx:id=\"piocheRootNode\" was not injected: check your FXML file 'pioche.fxml'.";
@@ -93,6 +101,12 @@ public class PiocheController {
         });
     }
 
+    /**
+     * Initialise le contenu de la pioche
+     * @param p la partie en cours
+     * @param status l'indicateur de statut de partie
+     * @param partieLocker l'objet à débloquer par notifyAll() quand la phase de pioche est terminée
+     */
     public void initContent(Partie p, IndicatorFader status, Object partieLocker){
         this.partie = p;
         this.partieLocker = partieLocker;
@@ -158,6 +172,10 @@ public class PiocheController {
         fillPlateau(partie.getJoueurs().get(0).getPlateau());
     }
 
+    /**
+     * Initialise le drag and drop pour un jeton
+     * @param node le jeton
+     */
     private void initSourceDrag(Node node){
         node.setOnDragDetected(event -> {
             Dragboard db = node.startDragAndDrop(TransferMode.MOVE);
@@ -170,6 +188,10 @@ public class PiocheController {
         node.setOnDragDone(Event::consume);
     }
 
+    /**
+     * Initialise le drag and drop pour un accepteur de jeton
+     * @param node
+     */
     private void initTargetDrag(VBox node){
         node.setOnDragOver(event -> {
             if (event.getGestureSource() != node &&
@@ -204,10 +226,17 @@ public class PiocheController {
         });
     }
 
+    /**
+     * Retourne la liste des choix réaliser : Domino > Joueur
+     * @return la liste des choix réaliser : Domino > Joueur
+     */
     public List<Pair<IDomino, Joueur>> getChoix(){
         return choix;
     }
 
+    /**
+     * Réinitialise la pioche
+     */
     public void resetPioche() {
         choix.clear();
         for(Node dominoContainer : piocheDominosContainer.getChildren()){
@@ -222,6 +251,11 @@ public class PiocheController {
         }
     }
 
+    /**
+     * Remplit la pioche avec les jetons demandés
+     * @param pioche la liste des dominos de la pioche
+     * @param rois la liste des rois piochés
+     */
     public void fillPioche(List<IDomino> pioche, List<Roi> rois){
         for (int i = 0; i < piocheDominosContainer.getChildren().size(); i++){
             IDomino domino = pioche.get(i);
@@ -233,6 +267,11 @@ public class PiocheController {
         }
     }
 
+    /**
+     * Renvoie la position du domino dans la liste de dominos
+     * @param dominoContainer le domino cherché
+     * @return la position du domino si c'est un domino, -1 sinon;
+     */
     private int positionAmongDominos(Node dominoContainer){
         for(int i = 0; i < piocheDominosContainer.getChildren().size(); i++){
             if(piocheDominosContainer.getChildren().get(i).equals(dominoContainer)) return i;
@@ -240,10 +279,20 @@ public class PiocheController {
         return -1;
     }
 
+    /**
+     * Renvoie le roi associé au jeton
+     * @param jeton le jetoon
+     * @return le roi
+     */
     private Roi getRoiFromLabel(Label jeton){
         return Roi.getRoiInt(Integer.parseInt(jeton.getText()) - 1);
     }
 
+    /**
+     * Insère le jeton dans un accepteur
+     * @param accepteur l'accepteur de jeton
+     * @param joueur le joueur associé au jeton
+     */
     private void insertJeton(VBox accepteur, Joueur joueur){
         Node jeton = piocheJetonsContainer.getChildren().remove(0);
         accepteur.getChildren().add(jeton);
@@ -255,6 +304,11 @@ public class PiocheController {
         choixEnCours = new Pair<>(choisi.getKey(), joueur);
     }
 
+    /**
+     * Remplit un domino
+     * @param d le domino
+     * @param dContainer le conteneur de domino
+     */
     private void fillDomino(IDomino d, VBox dContainer){
         if (d instanceof Domino) {
             Case[] cases = d.getCases();
@@ -268,12 +322,21 @@ public class PiocheController {
         }
     }
 
+    /**
+     * Remplit un jeton
+     * @param jeton le jeton cible
+     * @param roi le roi associé
+     */
     private void fillJeton(Label jeton, Roi roi){
         jeton.setBackground(configStyle.getBackground(roi.getLibelle()));
         jeton.setBorder(configStyle.getBorder(roi.getLibelle()));
         jeton.setText(""+(Roi.getRoiIndex(roi)+1));
     }
 
+    /**
+     * Remplit le plateau
+     * @param p le plateau en modèle
+     */
     private void fillPlateau(Plateau p){
         int pSize = p.getSize();
         for (int i = 0; i < pSize; i++) {
@@ -283,6 +346,12 @@ public class PiocheController {
         }
     }
 
+    /**
+     * Récupère le label dans la case du plateau cherchée
+     * @param row la ligne de la case
+     * @param col la colonne de la case
+     * @return le label trouvé
+     */
     private Label getCaseLabel(int row, int col) {
         try {
             GridPane p = (GridPane) piochePlateauContainer.getChildren().get(indexDomino);
@@ -292,6 +361,11 @@ public class PiocheController {
         }
     }
 
+    /**
+     * Remplit un label du plateau avec une case
+     * @param l le label
+     * @param c la case
+     */
     private void fillLabelWithCase(Label l, Case c) {
         if(l != null){
             l.setGraphic(null);
@@ -309,6 +383,9 @@ public class PiocheController {
         }
     }
 
+    /**
+     * Valide l'affectation du domino au joueur
+     */
     private void validerAffectationDominoJoueur(){
         IDomino d = choixEnCours.getKey();
         int indexDomino = 0;
@@ -328,6 +405,9 @@ public class PiocheController {
         piocheValidateJetonButton.setDisable(true);
     }
 
+    /**
+     * Démarre la phase de pioche
+     */
     public void startPioche() {
         new Thread(()->{
             try {
@@ -341,6 +421,9 @@ public class PiocheController {
         }).start();
     }
 
+    /**
+     * Passe au prochain joueur
+     */
     private void nextPioche(){
         try {
             Thread.sleep(configStyle.getStandardWaitTime());
@@ -362,6 +445,10 @@ public class PiocheController {
         } catch (Exception ignored) { }
     }
 
+    /**
+     * Simule le choix d'un domino par une IA
+     * @param domino le domino à choisir
+     */
     private void simulePickDomino(IDomino domino) {
         new Thread(() -> {
             try {

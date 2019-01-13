@@ -24,6 +24,11 @@ import model.plateau.*;
 import java.net.URL;
 import java.util.*;
 
+/**
+ * Classe du controlleur de la scène de partie
+ * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
+ * @version 1.0
+ */
 public class PartieController {
 
     @FXML
@@ -110,6 +115,9 @@ public class PartieController {
 
     private final DataFormat caseDominoFormat = new DataFormat("model.plateau.Case");
 
+    /**
+     * Fonction appelée automatiquement à l'instantiation de la classe
+     */
     @FXML
     void initialize() {
         assert partieRootNode != null : "fx:id=\"partieRootNode\" was not injected: check your FXML file 'partie.fxml'.";
@@ -134,6 +142,15 @@ public class PartieController {
         partieDropDominoButton.setDisable(false);
     }
 
+    /**
+     * Intialise la partie et les éléments graphiques de l'application
+     * @param joueurs la liste des joueurs
+     * @param deck la liste des dominos
+     * @param nbJoueur l'énumération du nombre de joueurs
+     * @param modeJeu l'énumération du mode de jeu
+     * @param windowWidth la longueur de la fenêtre
+     * @param windowHeight la hauteur de la fenêtre
+     */
     public void init(List<Joueur> joueurs, List<IDomino> deck, NbJoueur nbJoueur, ModeJeu modeJeu, double windowWidth, double windowHeight) {
         partie = new Partie(joueurs, deck, nbJoueur, modeJeu);
         this.windowHeight = windowHeight;
@@ -180,6 +197,9 @@ public class PartieController {
         initDominoTargetDrag();
     }
 
+    /**
+     * Lance officiellement la partie en lançant un thread attitré
+     */
     public void jouerPartie() {
         new Thread(() -> {
             try{
@@ -240,6 +260,9 @@ public class PartieController {
         }).start();
     }
 
+    /**
+     * Initialise les fenêtres modales (JFXDialog) de la scène
+     */
     private void initDialogs(){
         piocheDialog = new JFXDialog();
         piocheDialog.toBack();
@@ -254,6 +277,10 @@ public class PartieController {
         scoresDialog.setOverlayClose(false);
     }
 
+    /**
+     * Initialise le plateau central
+     * @param nbColLig le nombre de ligne et colonnes
+     */
     private void initPlateau(int nbColLig) {
         double caseDimension = configStyle.getCaseDimension();
         this.colRowSize = nbColLig;
@@ -275,6 +302,9 @@ public class PartieController {
         partiePlateauContainer.getChildren().add(plateauDisplay);
     }
 
+    /**
+     * Initialise l'évènement de drag and drop pour le domino
+     */
     private void initDominoSourceDrag() {
         for (Node caseDom : partieDomino.getChildren()) {
             caseDom.setOnDragDetected(event -> {
@@ -299,6 +329,9 @@ public class PartieController {
         }
     }
 
+    /**
+     * Initialise l'évènement de drag and drop pour les cases du plateau
+     */
     private void initDominoTargetDrag() {
         for (Node child : plateauDisplay.getChildren()) {
             child.setOnDragOver(event -> {
@@ -353,6 +386,11 @@ public class PartieController {
         }
     }
 
+    /**
+     * Calcul l'indice de la case sur le domino (0 ou 1)
+     * @param caseDom la case
+     * @return son indice sur le domino
+     */
     private int getCaseDominoIndex(Node caseDom) {
         int i = 0;
         for (Node caseDisplay : partieDomino.getChildren()) {
@@ -364,6 +402,9 @@ public class PartieController {
         return -1;
     }
 
+    /**
+     * Initialise les plateaux latéraux
+     */
     private void initMiniPlateau() {
         miniPlateaux = new ArrayList<>();
         double caseDimension = configStyle.getPetiteCaseDimension();
@@ -399,6 +440,14 @@ public class PartieController {
         }
     }
 
+    /**
+     * Récupère le label correspondant à la case du plateau
+     * @param plateau le plateau de jeu sur lequel chercher
+     * @param row la ligne de la ligne
+     * @param col la colonne de la ligne
+     * @param sens s'il faut chercher autour de la case demandée
+     * @return le label de la case
+     */
     private Label getCaseLabel(GridPane plateau, int row, int col, Orientation sens) {
         try {
             int pSize = partie.getModeJeu().getTaillePlateau();
@@ -416,14 +465,31 @@ public class PartieController {
         }
     }
 
+    /**
+     * Retourne la ligne d'un élément dans un plateau
+     * @param node l'élément
+     * @return la ligne de l'élément
+     */
     private int getRow(Node node) {
         return GridPane.getRowIndex(node);
     }
 
+    /**
+     * Retourne la  colonne d'un élément dans un plateau
+     * @param node l'élément
+     * @return la colonne de l'élément
+     */
     private int getCol(Node node) {
         return GridPane.getColumnIndex(node);
     }
 
+    /**
+     * Cherche si la case concernée devrait avoir l'affichage hors-limites (rouge) ou vide (gris clair)
+     * @param p le plateau sur lequel chercher
+     * @param i la ligne de la case
+     * @param j la colonne de la case
+     * @return true si la case doit être hors-limites, faux sinon
+     */
     private boolean isLockedWhenNoDomino(Plateau p, int i, int j){
         int[] xBounds = p.getXBounds();
         int[] yBounds = p.getYBounds();
@@ -436,11 +502,21 @@ public class PartieController {
                 (ySize == pSize && (j == yBounds[0] - 1 || j == yBounds[1] + 1));
     }
 
+    /**
+     * Prépare l'affichage de la pioche
+     * @param pioche la liste des dominos piochés
+     * @param rois la liste des rois dans l'ordre de tirage
+     */
     private void preparePioche(List<IDomino> pioche, List<Roi> rois){
         piocheController.resetPioche();
         piocheController.fillPioche(pioche, rois);
     }
 
+    /**
+     * Met à jour l'orientation du domino
+     * @param placement le placement de domino
+     * @param caseId la case qui a été prise
+     */
     private void updateOrientationDomino(PlacementDomino placement, int caseId){
         Orientation o = null;
         switch((int)partieDomino.getRotate()){
@@ -457,6 +533,12 @@ public class PartieController {
         }
     }
 
+    /**
+     * Insère le domino pris sur le plateau
+     * @param placementDomino le placement du domino
+     * @param label la case sur laquelle insérer la case prise
+     * @param c la case prise
+     */
     private void insertDomino(PlacementDomino placementDomino, Node label, Case c){
         int row = getRow(label);
         int col = getCol(label);
@@ -477,6 +559,11 @@ public class PartieController {
         partieDropDominoButton.setDisable(true);
     }
 
+    /**
+     * Remplit le plateau choisi
+     * @param p le plateau choisi
+     * @param joueur le joueur qui possède le plateau
+     */
     private void fillPlateau(Plateau p, Joueur joueur) {
         int pSize = p.getSize();
         for (int i = -1; i <= pSize; i++) {
@@ -488,6 +575,11 @@ public class PartieController {
         partiePlateauContainer.setVisible(!joueur.isIA());
     }
 
+    /**
+     * Remplit le plateau latéral choisi
+     * @param p le plateau latéral choisi
+     * @param joueur le joueur qui possède le plateau latéral
+     */
     private void fillMiniPlateau(Joueur joueur) {
         Plateau p = joueur.getPlateau();
         Roi r = joueur.getCouleurRoi();
@@ -499,6 +591,10 @@ public class PartieController {
         }
     }
 
+    /**
+     * Remplir le domino
+     * @param d l'objet domino associé
+     */
     private void fillDomino(IDomino d) {
         double caseDimension = configStyle.getCaseDimension();
         if (d instanceof Domino) {
@@ -523,12 +619,22 @@ public class PartieController {
         }
     }
 
+    /**
+     * Remplit le label en haut de la scène
+     * @param j le joueur à utiliser pour le remplissage
+     */
     private void fillJoueurLabel(Joueur j) {
         partieTourJoueurLabel.setTextFill(Color.web(j.getCouleurRoi().getColor()));
         partieTourJoueurLabel.setText(j.getNomJoueur());
         partieTourJoueurLabel.setVisible(true);
     }
 
+    /**
+     * Remplit un label du plateau en fonction de la case choisie
+     * @param l le label du plateau
+     * @param c la case à utiliser
+     * @param lockedOnCaseNull si la case est null, vrai si la case doit être représentée en hors-limites, faux sinon
+     */
     private void fillLabelWithCase(Label l, Case c, boolean lockedOnCaseNull) {
         if(l != null){
             l.setGraphic(null);
@@ -551,6 +657,9 @@ public class PartieController {
         }
     }
 
+    /**
+     * Réalise une translation du plateau en fonction du placement actuel
+     */
     private void translatePlateau() {
         if(placement.needsTranslation()){
             int[] translation = placement.getTranslation();
@@ -598,6 +707,10 @@ public class PartieController {
         }
     }
 
+    /**
+     * Recalcule les cases hors-limites
+     * @param placementDomino le placement considéré
+     */
     private void recomputeLockedCases(PlacementDomino placementDomino) {
         int[] translation = placementDomino.getTranslation();
         int[] xBounds = placementDomino.getNewXBounds(joueurActuel.getPlateau().getXBounds());
@@ -621,6 +734,9 @@ public class PartieController {
         }
     }
 
+    /**
+     * Réinitialise le domino
+     */
     private void resetDomino() {
         if (placement != null && placement.isOnPlateau()) {
             placement.removeFromPlateau();
@@ -636,17 +752,29 @@ public class PartieController {
         partieDropDominoButton.setDisable(false);
     }
 
+    /**
+     * Réalise la validation du placement de domino
+     * @param placementDomino le placement considéré
+     * @throws DominoException si le placement de domino est incorrect
+     * @throws TuileException si la tuile n'est pas encore placée
+     */
     private void validateDominoPlacement(PlacementDomino placementDomino) throws DominoException, TuileException {
         joueurActuel.getPlateau().addDomino(placementDomino.getDomino(), placementDomino.getRow() - 1, placementDomino.getColumn() - 1, placementDomino.getCaseId(), placementDomino.getSens());
         fillMiniPlateau(joueurActuel);
         synchronized (partieLocker) { partieLocker.notifyAll(); }
     }
 
+    /**
+     * Affiche la fenêtre modale
+     */
     public void showPiocheDialog(){
         partieDialogParent.toFront();
         piocheDialog.show();
     }
 
+    /**
+     * Ferme la fenêtre modale
+     */
     public void closePiocheDialog(){
         new Thread(()->{
             try { Thread.sleep(configStyle.getStandardWaitTime()); } catch (InterruptedException ignored) { }
@@ -656,6 +784,9 @@ public class PartieController {
         }).start();
     }
 
+    /**
+     * Simule le placement d'un domino par une IA
+     */
     private void simulePlacementDomino(){
         new Thread(() -> {
             try {
@@ -682,6 +813,10 @@ public class PartieController {
         }).start();
     }
 
+    /**
+     * Affiche la fenêtre modale d'affichage des résultats
+     * @param joueurs la liste ordonnée des joueurs pas score
+     */
     private void displayResultsDialog(List<Joueur> joueurs) {
         scoresController.prepareDisplay(joueurs, partie.getNbJoueur());
         scoresDialog.setContent(scores);
@@ -690,6 +825,9 @@ public class PartieController {
         scoresDialog.show();
     }
 
+    /**
+     * Fonction de debug pour afficher le plateau en console
+     */
     private void displayTab() {
         for (Node n : plateauDisplay.getChildren()) {
             List<BackgroundFill> fills = ((Label) n).getBackground().getFills();
