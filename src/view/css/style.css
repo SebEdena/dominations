@@ -5,3 +5,8 @@
 .error-tooltip{
     -fx-font-size: 14px;
 }
+
+.accueil-root {
+    -fx-background-image: url("../img/accueil-background.png");
+    -fx-background-size: cover;
+}

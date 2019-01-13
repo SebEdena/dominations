@@ -19,7 +19,9 @@ public class ConfigStyle {
     private final double piocheDominoInsideSpacing = 30;
     private final double resizeCrownLimit = 50;
     private final double resizedCrownSize = 40;
-    private final int scoreLineSize = 50;
+    private final double offsetMaximizedDialog = 100;
+    private final long standardWaitTime = 500;
+    private final long technicalWaitTime = 100;
 
     private Map<String, Background> correspondanceStyleBackground;
     private Map<String, Border> correspondanceStyleBorder;
@@ -88,25 +90,21 @@ public class ConfigStyle {
         return resizedCrownSize;
     }
 
-    public int getScoreLineSize() {
-        return scoreLineSize;
+    public double getOffsetMaximizedDialog() {
+        return offsetMaximizedDialog;
+    }
+
+    public long getStandardWaitTime() {
+        return standardWaitTime;
+    }
+
+    public long getTechnicalWaitTime() {
+        return technicalWaitTime;
     }
 
     public void setFixedDimensions(Region r, double width, double height) {
         r.setPrefSize(width, height);
         r.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         r.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-    }
-
-    public void setFixedWidth(Region r, double width) {
-        r.setPrefWidth(width);
-        r.setMinWidth(Region.USE_PREF_SIZE);
-        r.setMaxWidth(Region.USE_PREF_SIZE);
-    }
-
-    public void setFixedHeight(Region r, double height) {
-        r.setPrefHeight(height);
-        r.setMinHeight(Region.USE_PREF_SIZE);
-        r.setMaxHeight(Region.USE_PREF_SIZE);
     }
 }

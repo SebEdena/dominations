@@ -19,10 +19,11 @@ import java.util.Map;
 
 public class SceneSwitcher {
 
-    public static final int standardWidth = 1600, standardHeight = 900;
+    public static final double standardWidth = 1600, standardHeight = 900;
     private static SceneSwitcher instance;
 
     private Map<String, Scene> scenes;
+    private double windowWidth, windowHeight;
     private Scene currentPartieScene;
     private Stage primaryStage;
 
@@ -42,19 +43,23 @@ public class SceneSwitcher {
     }
 
     public void init() throws IOException {
-        primaryStage.setTitle("Dominations");
+        primaryStage.setTitle("Domi Nations");
         primaryStage.setResizable(false);
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
-        if(bounds.getHeight() < standardHeight ||
-                bounds.getWidth() < standardWidth){
+        if(bounds.getHeight() < standardHeight || bounds.getWidth() < standardWidth){
             primaryStage.setMaximized(true);
+            windowHeight = bounds.getHeight();
+            windowWidth = bounds.getWidth();
+        } else{
+            windowHeight = standardHeight;
+            windowWidth = standardWidth;
         }
 
         Parent accueilRoot = FXMLLoader.load(getClass().getResource("/view/accueil.fxml"));
-        scenes.put("accueil", new Scene(accueilRoot, standardWidth, standardHeight));
+        scenes.put("accueil", new Scene(accueilRoot, windowWidth, windowHeight));
 
         Parent menuRoot = FXMLLoader.load(getClass().getResource("/view/menu.fxml"));
-        scenes.put("menu", new Scene(menuRoot, standardWidth, standardHeight));
+        scenes.put("menu", new Scene(menuRoot, windowWidth, windowHeight));
     }
 
     public void displayScene(String scene) throws Exception {
@@ -74,12 +79,17 @@ public class SceneSwitcher {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/partie.fxml"));
         Parent parent = loader.load();
         PartieController controller = loader.getController();
-        controller.init(joueurs, deck, nbJoueur, modeJeu);
-        currentPartieScene = new Scene(parent, standardWidth, standardHeight);
+        controller.init(joueurs, deck, nbJoueur, modeJeu, windowWidth, windowHeight);
+        currentPartieScene = new Scene(parent, windowWidth, windowHeight);
 
         primaryStage.hide();
         primaryStage.setScene(currentPartieScene);
         primaryStage.show();
         controller.jouerPartie();
+    }
+
+    public void resetParameters() throws IOException {
+        Parent menuRoot = FXMLLoader.load(getClass().getResource("/view/menu.fxml"));
+        scenes.put("menu", new Scene(menuRoot, windowWidth, windowHeight));
     }
 }

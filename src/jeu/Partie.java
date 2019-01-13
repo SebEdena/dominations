@@ -41,7 +41,7 @@ public class Partie {
     }
 
     public boolean hasNextTurn(){
-        return dominosRestants.size() == 0;
+        return dominosRestants.size() != 0;
     }
 
     /**

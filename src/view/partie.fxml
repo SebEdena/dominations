@@ -23,9 +23,12 @@
         <RowConstraints />
         <RowConstraints />
     </rowConstraints>
-    <StackPane fx:id="partiePiocheParent">
+    <StackPane fx:id="partieDialogParent">
         <fx:define>
             <fx:include fx:id="pioche" source="pioche.fxml" />
+        </fx:define>
+        <fx:define>
+            <fx:include fx:id="scores" source="scores.fxml" />
         </fx:define>
     </StackPane>
     <GridPane fx:id="partieIndicator" alignment="CENTER" opacity="0.0" GridPane.columnSpan="3" GridPane.rowSpan="3">

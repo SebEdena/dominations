@@ -5,13 +5,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-
-import com.jfoenix.controls.cells.editors.IntegerTextFieldEditorBuilder;
-import com.sun.corba.se.impl.logging.InterceptorsSystemException;
-import com.sun.xml.internal.bind.v2.model.core.ID;
-import com.sun.xml.internal.ws.model.ParameterImpl;
 import controller.util.ConfigStyle;
 import controller.util.IndicatorFader;
 import javafx.application.Platform;
@@ -19,7 +12,6 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
@@ -70,7 +62,6 @@ public class PiocheController {
     private Object partieLocker;
 
     private final DataFormat roiFormat = new DataFormat("jeu.roi");
-    private boolean finished = false;
     private IndicatorFader status;
 
     @FXML
@@ -337,16 +328,12 @@ public class PiocheController {
         piocheValidateJetonButton.setDisable(true);
     }
 
-    public boolean isFinished() {
-        return finished;
-    }
-
     public void startPioche() {
         new Thread(()->{
             try {
-                Thread.sleep(500);
+                Thread.sleep(configStyle.getStandardWaitTime());
                 status.display("Glissez votre jeton sous le domino voulu", "Début de la pioche");
-                Thread.sleep(status.getTotalTime() + 100);
+                Thread.sleep(status.getTotalTime() + configStyle.getTechnicalWaitTime());
                 nextPioche();
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -356,7 +343,7 @@ public class PiocheController {
 
     private void nextPioche(){
         try {
-            Thread.sleep(500);
+            Thread.sleep(configStyle.getStandardWaitTime());
             Label jeton = (Label) piocheJetonsContainer.getChildren().get(0);
             Roi roi = Roi.getRoiInt(Integer.parseInt(jeton.getText()) - 1);
             status.display("Glissez votre jeton sous le domino voulu", partie.getJoueur(roi).getNomJoueur(), Color.web(roi.getColor()));
@@ -383,9 +370,9 @@ public class PiocheController {
                     if(((Label)((VBox) dominoContainer).getChildren().get(indexIdDomino)).getText().equals(""+domino.getIdentifiant())){
                         Label jeton = (Label) piocheJetonsContainer.getChildren().get(0);
                         VBox accepteur = (VBox) ((VBox) dominoContainer).getChildren().get(indexAccepteurJeton);
-                        Thread.sleep(500);
+                        Thread.sleep(configStyle.getStandardWaitTime());
                         Platform.runLater(()->insertJeton(accepteur, partie.getJoueur(Roi.getRoiInt(Integer.parseInt(jeton.getText()) - 1))));
-                        Thread.sleep(2*500);
+                        Thread.sleep(2*configStyle.getStandardWaitTime());
                         validerAffectationDominoJoueur();
                         break;
                     }
