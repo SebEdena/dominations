@@ -113,7 +113,7 @@ public class PartieController {
 
     private double windowWidth, windowHeight;
 
-    private final DataFormat caseDominoFormat = new DataFormat("model.plateau.Case");
+    private static final DataFormat caseDominoFormat = new DataFormat("model.plateau.Case");
 
     /**
      * Fonction appelée automatiquement à l'instantiation de la classe

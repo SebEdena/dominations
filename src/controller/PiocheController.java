@@ -67,7 +67,7 @@ public class PiocheController {
     private Object partieLocker;
     private Joueur joueurActuel = null;
 
-    private final DataFormat roiFormat = new DataFormat("model.jeu.roi");
+    private static final DataFormat roiFormat = new DataFormat("model.jeu.roi");
     private IndicatorFader status;
 
     /**

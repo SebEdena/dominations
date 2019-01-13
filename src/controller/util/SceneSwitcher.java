@@ -1,6 +1,7 @@
 package controller.util;
 
 import controller.PartieController;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
@@ -63,6 +64,11 @@ public class SceneSwitcher {
      * @throws IOException si le fichier .fxml des scènes n'existe pas
      */
     public void init() throws IOException {
+        Platform.setImplicitExit(true);
+        primaryStage.setOnCloseRequest((ae) -> {
+            Platform.exit();
+            System.exit(0);
+        });
         primaryStage.setTitle("Domi Nations");
         primaryStage.setResizable(false);
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
