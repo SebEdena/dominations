@@ -230,8 +230,8 @@ public class PiocheController {
     }
 
     /**
-     * Retourne la liste des choix réaliser : Domino > Joueur
-     * @return la liste des choix réaliser : Domino > Joueur
+     * Retourne la liste des choix réaliser : Domino : Joueur
+     * @return la liste des choix réaliser : Domino : Joueur
      */
     public List<Pair<IDomino, Joueur>> getChoix(){
         return choix;

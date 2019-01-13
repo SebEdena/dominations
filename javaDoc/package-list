@@ -1,6 +1,9 @@
 
+controller
+controller.util
 model.exceptions
 model.jeu
+model.joueur
 model.plateau
 model.test
 model.util
