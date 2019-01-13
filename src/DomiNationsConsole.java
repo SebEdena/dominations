@@ -1,3 +1,8 @@
+/**
+ * Classe permettant de lancer le jeu en mode console
+ * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
+ * @version 1.0
+ */
 import model.jeu.Jeu;
 
 public class DomiNationsConsole {
