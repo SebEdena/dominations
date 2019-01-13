@@ -1,3 +1,5 @@
+
+
 package model.jeu;
 
 import model.exceptions.DominoException;
@@ -6,6 +8,12 @@ import model.joueur.AbstractIA;
 import model.joueur.DifficileIA;
 import model.joueur.NormalIA;
 import model.joueur.SimpleIA;
+
+/**
+ * Enumération permettant de décrire les modes d'IA possible
+ * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
+ * @version 1.0
+ */
 
 public enum ModeIA {
     SIMPLE("Simple"),

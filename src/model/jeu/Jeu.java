@@ -1,8 +1,3 @@
-/**
- * Classe permettant de décrire le model.jeu
- * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
- * @version 1.0
- */
 package model.jeu;
 
 import model.exceptions.DominoException;
@@ -13,6 +8,12 @@ import model.plateau.*;
 import model.util.CSVParser;
 import java.io.IOException;
 import java.util.*;
+
+/**
+ * Classe permettant de décrire le model.jeu
+ * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
+ * @version 1.0
+ */
 
 public class Jeu {
     private static final int SCORE_DEFAUT = 0;
