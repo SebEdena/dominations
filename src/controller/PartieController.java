@@ -173,12 +173,16 @@ public class PartieController {
         });
 
         partieRevertDominoButton.setOnAction(event -> {
-            resetDomino();
+            if(joueurActuel != null && !joueurActuel.isIA()){
+                resetDomino();
+            }
         });
 
         partieValidateButton.setOnAction(event -> {
             try {
-                validateDominoPlacement(placement);
+                if(joueurActuel != null && !joueurActuel.isIA()){
+                    validateDominoPlacement(placement);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -186,8 +190,10 @@ public class PartieController {
 
         partieDropDominoButton.setOnAction(event -> {
             try {
-                partieDomino.setVisible(false);
-                synchronized (partieLocker) { partieLocker.notifyAll(); }
+                if(joueurActuel != null && !joueurActuel.isIA()){
+                    partieDomino.setVisible(false);
+                    synchronized (partieLocker) { partieLocker.notifyAll(); }
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -577,7 +583,6 @@ public class PartieController {
 
     /**
      * Remplit le plateau latéral choisi
-     * @param p le plateau latéral choisi
      * @param joueur le joueur qui possède le plateau latéral
      */
     private void fillMiniPlateau(Joueur joueur) {

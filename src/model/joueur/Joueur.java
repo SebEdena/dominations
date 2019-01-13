@@ -47,7 +47,7 @@ public class Joueur {
         this.nbRois = nbJoueur.getNbRoiParJoueur();
         couleurRoi = couleur;
         plateau = new Plateau(modeJeu.getTaillePlateau());
-        plateau.addDomino(new Tuile(),2,2,0,null);
+        plateau.addDomino(new Tuile(),modeJeu.getTaillePlateau()/2,modeJeu.getTaillePlateau()/2,0,null);
     }
 
     /**

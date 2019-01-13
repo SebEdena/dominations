@@ -65,6 +65,7 @@ public class PiocheController {
     private ConfigStyle configStyle;
     private Node lastMovedJeton;
     private Object partieLocker;
+    private Joueur joueurActuel = null;
 
     private final DataFormat roiFormat = new DataFormat("model.jeu.roi");
     private IndicatorFader status;
@@ -85,11 +86,13 @@ public class PiocheController {
         choix = new ArrayList<>();
 
         piocheValidateJetonButton.setOnAction(event -> {
-            validerAffectationDominoJoueur();
+            if(joueurActuel != null && !joueurActuel.isIA()){
+                validerAffectationDominoJoueur();
+            }
         });
 
         piocheRevertJetonButton.setOnAction(event -> {
-            if(lastMovedJeton != null){
+            if(joueurActuel != null && !joueurActuel.isIA() && lastMovedJeton != null){
                 VBox accepter = (VBox) lastMovedJeton.getParent();
                 Node dominoContainer = accepter.getParent();
                 accepter.getChildren().remove(0);
@@ -249,6 +252,7 @@ public class PiocheController {
                 jeton.setDisable(true);
             }
         }
+        joueurActuel = null;
     }
 
     /**
@@ -429,6 +433,7 @@ public class PiocheController {
             Thread.sleep(configStyle.getStandardWaitTime());
             Label jeton = (Label) piocheJetonsContainer.getChildren().get(0);
             Roi roi = Roi.getRoiInt(Integer.parseInt(jeton.getText()) - 1);
+            joueurActuel = partie.getJoueur(roi);
             status.display("Glissez votre jeton sous le domino voulu", partie.getJoueur(roi).getNomJoueur(), Color.web(roi.getColor()));
             Platform.runLater(()->{
                 fillPlateau(partie.getJoueurs().get(Integer.parseInt(jeton.getText()) - 1).getPlateau());
