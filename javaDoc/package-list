@@ -1,6 +1,6 @@
 
-exceptions
-jeu
-plateau
-test
-util
+model.exceptions
+model.jeu
+model.plateau
+model.test
+model.util

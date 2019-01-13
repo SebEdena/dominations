@@ -7,10 +7,10 @@ import controller.util.IndicatorFader;
 import javafx.application.Platform;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
-import jeu.*;
-import plateau.PlacementDomino;
-import exceptions.DominoException;
-import exceptions.TuileException;
+import model.jeu.*;
+import model.plateau.PlacementDomino;
+import model.exceptions.DominoException;
+import model.exceptions.TuileException;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -18,7 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import plateau.*;
+import model.plateau.*;
 
 import java.net.URL;
 import java.util.*;
@@ -107,7 +107,7 @@ public class PartieController {
 
     private double windowWidth, windowHeight;
 
-    private final DataFormat caseDominoFormat = new DataFormat("plateau.Case");
+    private final DataFormat caseDominoFormat = new DataFormat("model.plateau.Case");
 
     @FXML
     void initialize() {

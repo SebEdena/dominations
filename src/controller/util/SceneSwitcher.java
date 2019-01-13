@@ -7,10 +7,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import jeu.Joueur;
-import jeu.ModeJeu;
-import jeu.NbJoueur;
-import plateau.IDomino;
+import model.jeu.Joueur;
+import model.jeu.ModeJeu;
+import model.jeu.NbJoueur;
+import model.plateau.IDomino;
 
 import java.io.IOException;
 import java.util.HashMap;

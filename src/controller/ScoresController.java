@@ -12,8 +12,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import jeu.Joueur;
-import jeu.NbJoueur;
+import model.jeu.Joueur;
+import model.jeu.NbJoueur;
 
 public class ScoresController {
 

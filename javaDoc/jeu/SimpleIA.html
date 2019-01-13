@@ -49,11 +49,11 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../jeu/Roi.html" title="enum in jeu"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../model.jeu/Roi.html" title="enum in model.jeu"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li>Next&nbsp;Class</li>
 </ul>
 <ul class="navList">
-<li><a href="../index.html?jeu/SimpleIA.html" target="_top">Frames</a></li>
+<li><a href="../index.html?model.jeu/SimpleIA.html" target="_top">Frames</a></li>
 <li><a href="SimpleIA.html" target="_top">No&nbsp;Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_top">
@@ -92,7 +92,7 @@ var activeTableTab = "activeTableTab";
 <!-- ========= END OF TOP NAVBAR ========= -->
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
-<div class="subTitle">jeu</div>
+<div class="subTitle">model.jeu</div>
 <h2 title="Class SimpleIA" class="title">Class SimpleIA</h2>
 </div>
 <div class="contentContainer">
@@ -100,13 +100,13 @@ var activeTableTab = "activeTableTab";
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li><a href="../jeu/Joueur.html" title="class in jeu">jeu.Joueur</a></li>
+<li><a href="../model.jeu/Joueur.html" title="class in model.jeu">model.jeu.Joueur</a></li>
 <li>
 <ul class="inheritance">
-<li><a href="../jeu/AbstractIA.html" title="class in jeu">jeu.AbstractIA</a></li>
+<li><a href="../model.jeu/AbstractIA.html" title="class in model.jeu">model.jeu.AbstractIA</a></li>
 <li>
 <ul class="inheritance">
-<li>jeu.SimpleIA</li>
+<li>model.jeu.SimpleIA</li>
 </ul>
 </li>
 </ul>
@@ -120,7 +120,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">SimpleIA</span>
-extends <a href="../jeu/AbstractIA.html" title="class in jeu">AbstractIA</a></pre>
+extends <a href="../model.jeu/AbstractIA.html" title="class in model.jeu">AbstractIA</a></pre>
 </li>
 </ul>
 </div>
@@ -139,10 +139,10 @@ extends <a href="../jeu/AbstractIA.html" title="class in jeu">AbstractIA</a></pr
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../jeu/SimpleIA.html#SimpleIA-java.lang.String-jeu.Roi-jeu.NbJoueur-jeu.ModeJeu-int-">SimpleIA</a></span>(java.lang.String&nbsp;nom,
-        <a href="../jeu/Roi.html" title="enum in jeu">Roi</a>&nbsp;couleur,
-        <a href="../jeu/NbJoueur.html" title="enum in jeu">NbJoueur</a>&nbsp;nbJoueur,
-        <a href="../jeu/ModeJeu.html" title="enum in jeu">ModeJeu</a>&nbsp;modeJeu,
+<td class="colOne"><code><span class="memberNameLink"><a href="../model.jeu/SimpleIA.html#SimpleIA-java.lang.String-model.jeu.Roi-model.jeu.NbJoueur-model.jeu.ModeJeu-int-">SimpleIA</a></span>(java.lang.String&nbsp;nom,
+        <a href="../model.jeu/Roi.html" title="enum in model.jeu">Roi</a>&nbsp;couleur,
+        <a href="../model.jeu/NbJoueur.html" title="enum in model.jeu">NbJoueur</a>&nbsp;nbJoueur,
+        <a href="../model.jeu/ModeJeu.html" title="enum in model.jeu">ModeJeu</a>&nbsp;modeJeu,
         int&nbsp;score)</code>
 <div class="block">Constructeur d'un IA simple</div>
 </td>
@@ -164,31 +164,31 @@ extends <a href="../jeu/AbstractIA.html" title="class in jeu">AbstractIA</a></pr
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../jeu/SimpleIA.html#pickInPioche-java.util.List-java.util.List-">pickInPioche</a></span>(java.util.List&lt;<a href="../plateau/IDomino.html" title="interface in plateau">IDomino</a>&gt;&nbsp;cartesSurBoard,
-            java.util.List&lt;<a href="../jeu/Joueur.html" title="class in jeu">Joueur</a>&gt;&nbsp;joueursAdverses)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../model.jeu/SimpleIA.html#pickInPioche-java.model.util.List-java.model.util.List-">pickInPioche</a></span>(java.model.util.List&lt;<a href="../model.plateau/IDomino.html" title="interface in model.plateau">IDomino</a>&gt;&nbsp;cartesSurBoard,
+            java.model.util.List&lt;<a href="../model.jeu/Joueur.html" title="class in model.jeu">Joueur</a>&gt;&nbsp;joueursAdverses)</code>
 <div class="block">Methode permettant de choisir un domino dans la pioche</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code><a href="../plateau/PlacementDomino.html" title="class in plateau">PlacementDomino</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../jeu/SimpleIA.html#pickPossibilite-plateau.IDomino-">pickPossibilite</a></span>(<a href="../plateau/IDomino.html" title="interface in plateau">IDomino</a>&nbsp;domino)</code>
+<td class="colFirst"><code><a href="../model.plateau/PlacementDomino.html" title="class in model.plateau">PlacementDomino</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../model.jeu/SimpleIA.html#pickPossibilite-model.plateau.IDomino-">pickPossibilite</a></span>(<a href="../model.plateau/IDomino.html" title="interface in model.plateau">IDomino</a>&nbsp;domino)</code>
 <div class="block">Methode permettant de choisir le placement d'un domino</div>
 </td>
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.jeu.AbstractIA">
+<li class="blockList"><a name="methods.inherited.from.class.model.jeu.AbstractIA">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;jeu.<a href="../jeu/AbstractIA.html" title="class in jeu">AbstractIA</a></h3>
-<code><a href="../jeu/AbstractIA.html#isIA--">isIA</a></code></li>
+<h3>Methods inherited from class&nbsp;model.jeu.<a href="../model.jeu/AbstractIA.html" title="class in model.jeu">AbstractIA</a></h3>
+<code><a href="../model.jeu/AbstractIA.html#isIA--">isIA</a></code></li>
 </ul>
 <ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.jeu.Joueur">
+<li class="blockList"><a name="methods.inherited.from.class.model.jeu.Joueur">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;jeu.<a href="../jeu/Joueur.html" title="class in jeu">Joueur</a></h3>
-<code><a href="../jeu/Joueur.html#addDomino-plateau.IDomino-">addDomino</a>, <a href="../jeu/Joueur.html#calculScore-jeu.ModeJeu-">calculScore</a>, <a href="../jeu/Joueur.html#getCouleurRoi--">getCouleurRoi</a>, <a href="../jeu/Joueur.html#getEgalite--">getEgalite</a>, <a href="../jeu/Joueur.html#getNbRois--">getNbRois</a>, <a href="../jeu/Joueur.html#getNomJoueur--">getNomJoueur</a>, <a href="../jeu/Joueur.html#getPioche--">getPioche</a>, <a href="../jeu/Joueur.html#getPlateau--">getPlateau</a>, <a href="../jeu/Joueur.html#getScore--">getScore</a>, <a href="../jeu/Joueur.html#getScoreCouronne--">getScoreCouronne</a>, <a href="../jeu/Joueur.html#getScoreDomaine--">getScoreDomaine</a>, <a href="../jeu/Joueur.html#piocheContainsDomino-plateau.IDomino-">piocheContainsDomino</a>, <a href="../jeu/Joueur.html#resetTirage--">resetTirage</a>, <a href="../jeu/Joueur.html#setCouleurRoi-jeu.Roi-">setCouleurRoi</a>, <a href="../jeu/Joueur.html#setEgalite-boolean-">setEgalite</a>, <a href="../jeu/Joueur.html#setNomJoueur-java.lang.String-">setNomJoueur</a>, <a href="../jeu/Joueur.html#setScore-int-">setScore</a>, <a href="../jeu/Joueur.html#setScoreCouronne-int-">setScoreCouronne</a>, <a href="../jeu/Joueur.html#setScoreDomaine-int-">setScoreDomaine</a>, <a href="../jeu/Joueur.html#toString--">toString</a></code></li>
+<h3>Methods inherited from class&nbsp;model.jeu.<a href="../model.jeu/Joueur.html" title="class in model.jeu">Joueur</a></h3>
+<code><a href="../model.jeu/Joueur.html#addDomino-model.plateau.IDomino-">addDomino</a>, <a href="../model.jeu/Joueur.html#calculScore-model.jeu.ModeJeu-">calculScore</a>, <a href="../model.jeu/Joueur.html#getCouleurRoi--">getCouleurRoi</a>, <a href="../model.jeu/Joueur.html#getEgalite--">getEgalite</a>, <a href="../model.jeu/Joueur.html#getNbRois--">getNbRois</a>, <a href="../model.jeu/Joueur.html#getNomJoueur--">getNomJoueur</a>, <a href="../model.jeu/Joueur.html#getPioche--">getPioche</a>, <a href="../model.jeu/Joueur.html#getPlateau--">getPlateau</a>, <a href="../model.jeu/Joueur.html#getScore--">getScore</a>, <a href="../model.jeu/Joueur.html#getScoreCouronne--">getScoreCouronne</a>, <a href="../model.jeu/Joueur.html#getScoreDomaine--">getScoreDomaine</a>, <a href="../model.jeu/Joueur.html#piocheContainsDomino-model.plateau.IDomino-">piocheContainsDomino</a>, <a href="../model.jeu/Joueur.html#resetTirage--">resetTirage</a>, <a href="../model.jeu/Joueur.html#setCouleurRoi-model.jeu.Roi-">setCouleurRoi</a>, <a href="../model.jeu/Joueur.html#setEgalite-boolean-">setEgalite</a>, <a href="../model.jeu/Joueur.html#setNomJoueur-java.lang.String-">setNomJoueur</a>, <a href="../model.jeu/Joueur.html#setScore-int-">setScore</a>, <a href="../model.jeu/Joueur.html#setScoreCouronne-int-">setScoreCouronne</a>, <a href="../model.jeu/Joueur.html#setScoreDomaine-int-">setScoreDomaine</a>, <a href="../model.jeu/Joueur.html#toString--">toString</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -211,32 +211,32 @@ extends <a href="../jeu/AbstractIA.html" title="class in jeu">AbstractIA</a></pr
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="SimpleIA-java.lang.String-jeu.Roi-jeu.NbJoueur-jeu.ModeJeu-int-">
+<a name="SimpleIA-java.lang.String-model.jeu.Roi-model.jeu.NbJoueur-model.jeu.ModeJeu-int-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>SimpleIA</h4>
 <pre>public&nbsp;SimpleIA(java.lang.String&nbsp;nom,
-                <a href="../jeu/Roi.html" title="enum in jeu">Roi</a>&nbsp;couleur,
-                <a href="../jeu/NbJoueur.html" title="enum in jeu">NbJoueur</a>&nbsp;nbJoueur,
-                <a href="../jeu/ModeJeu.html" title="enum in jeu">ModeJeu</a>&nbsp;modeJeu,
+                <a href="../model.jeu/Roi.html" title="enum in model.jeu">Roi</a>&nbsp;couleur,
+                <a href="../model.jeu/NbJoueur.html" title="enum in model.jeu">NbJoueur</a>&nbsp;nbJoueur,
+                <a href="../model.jeu/ModeJeu.html" title="enum in model.jeu">ModeJeu</a>&nbsp;modeJeu,
                 int&nbsp;score)
-         throws <a href="../exceptions/DominoException.html" title="class in exceptions">DominoException</a>,
-                <a href="../exceptions/TuileException.html" title="class in exceptions">TuileException</a></pre>
+         throws <a href="../model.exceptions/DominoException.html" title="class in model.exceptions">DominoException</a>,
+                <a href="../model.exceptions/TuileException.html" title="class in model.exceptions">TuileException</a></pre>
 <div class="block">Constructeur d'un IA simple</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>nom</code> - Pseudo de l'IA</dd>
 <dd><code>couleur</code> - Roi attribué à l'IA</dd>
-<dd><code>nbJoueur</code> - Paramètre du jeu</dd>
-<dd><code>modeJeu</code> - Mode du jeu</dd>
+<dd><code>nbJoueur</code> - Paramètre du model.jeu</dd>
+<dd><code>modeJeu</code> - Mode du model.jeu</dd>
 <dd><code>score</code> - Score de départ de l'IA</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../exceptions/DominoException.html" title="class in exceptions">DominoException</a></code></dd>
-<dd><code><a href="../exceptions/TuileException.html" title="class in exceptions">TuileException</a></code></dd>
+<dd><code><a href="../model.exceptions/DominoException.html" title="class in model.exceptions">DominoException</a></code></dd>
+<dd><code><a href="../model.exceptions/TuileException.html" title="class in model.exceptions">TuileException</a></code></dd>
 <dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../jeu/AbstractIA.html" title="class in jeu"><code>AbstractIA</code></a></dd>
+<dd><a href="../model.jeu/AbstractIA.html" title="class in model.jeu"><code>AbstractIA</code></a></dd>
 </dl>
 </li>
 </ul>
@@ -248,38 +248,38 @@ extends <a href="../jeu/AbstractIA.html" title="class in jeu">AbstractIA</a></pr
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="pickInPioche-java.util.List-java.util.List-">
+<a name="pickInPioche-java.model.util.List-java.model.util.List-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>pickInPioche</h4>
-<pre>public&nbsp;int&nbsp;pickInPioche(java.util.List&lt;<a href="../plateau/IDomino.html" title="interface in plateau">IDomino</a>&gt;&nbsp;cartesSurBoard,
-                        java.util.List&lt;<a href="../jeu/Joueur.html" title="class in jeu">Joueur</a>&gt;&nbsp;joueursAdverses)</pre>
+<pre>public&nbsp;int&nbsp;pickInPioche(java.model.util.List&lt;<a href="../model.plateau/IDomino.html" title="interface in model.plateau">IDomino</a>&gt;&nbsp;cartesSurBoard,
+                        java.model.util.List&lt;<a href="../model.jeu/Joueur.html" title="class in model.jeu">Joueur</a>&gt;&nbsp;joueursAdverses)</pre>
 <div class="block">Methode permettant de choisir un domino dans la pioche</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../jeu/AbstractIA.html#pickInPioche-java.util.List-java.util.List-">pickInPioche</a></code>&nbsp;in class&nbsp;<code><a href="../jeu/AbstractIA.html" title="class in jeu">AbstractIA</a></code></dd>
+<dd><code><a href="../model.jeu/AbstractIA.html#pickInPioche-java.model.util.List-java.model.util.List-">pickInPioche</a></code>&nbsp;in class&nbsp;<code><a href="../model.jeu/AbstractIA.html" title="class in model.jeu">AbstractIA</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>cartesSurBoard</code> - Pioche contenant les dominos restants</dd>
-<dd><code>joueursAdverses</code> - Liste des joueurs en jeu</dd>
+<dd><code>joueursAdverses</code> - Liste des joueurs en model.jeu</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>Le numéro du domino à piocher</dd>
 </dl>
 </li>
 </ul>
-<a name="pickPossibilite-plateau.IDomino-">
+<a name="pickPossibilite-model.plateau.IDomino-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>pickPossibilite</h4>
-<pre>public&nbsp;<a href="../plateau/PlacementDomino.html" title="class in plateau">PlacementDomino</a>&nbsp;pickPossibilite(<a href="../plateau/IDomino.html" title="interface in plateau">IDomino</a>&nbsp;domino)
+<pre>public&nbsp;<a href="../model.plateau/PlacementDomino.html" title="class in model.plateau">PlacementDomino</a>&nbsp;pickPossibilite(<a href="../model.plateau/IDomino.html" title="interface in model.plateau">IDomino</a>&nbsp;domino)
                                 throws java.lang.Exception</pre>
 <div class="block">Methode permettant de choisir le placement d'un domino</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../jeu/AbstractIA.html#pickPossibilite-plateau.IDomino-">pickPossibilite</a></code>&nbsp;in class&nbsp;<code><a href="../jeu/AbstractIA.html" title="class in jeu">AbstractIA</a></code></dd>
+<dd><code><a href="../model.jeu/AbstractIA.html#pickPossibilite-model.plateau.IDomino-">pickPossibilite</a></code>&nbsp;in class&nbsp;<code><a href="../model.jeu/AbstractIA.html" title="class in model.jeu">AbstractIA</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>domino</code> - Domino à placer</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -287,7 +287,7 @@ extends <a href="../jeu/AbstractIA.html" title="class in jeu">AbstractIA</a></pr
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd>
 <dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../plateau/Plateau.html#possibilite-plateau.IDomino-"><code>Plateau.possibilite(plateau.IDomino)</code></a></dd>
+<dd><a href="../model.plateau/Plateau.html#possibilite-model.plateau.IDomino-"><code>Plateau.possibilite(model.plateau.IDomino)</code></a></dd>
 </dl>
 </li>
 </ul>
@@ -319,11 +319,11 @@ extends <a href="../jeu/AbstractIA.html" title="class in jeu">AbstractIA</a></pr
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../jeu/Roi.html" title="enum in jeu"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../model.jeu/Roi.html" title="enum in model.jeu"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li>Next&nbsp;Class</li>
 </ul>
 <ul class="navList">
-<li><a href="../index.html?jeu/SimpleIA.html" target="_top">Frames</a></li>
+<li><a href="../index.html?model.jeu/SimpleIA.html" target="_top">Frames</a></li>
 <li><a href="SimpleIA.html" target="_top">No&nbsp;Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_bottom">

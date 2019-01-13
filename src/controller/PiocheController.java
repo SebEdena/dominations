@@ -18,10 +18,10 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
-import jeu.Joueur;
-import jeu.Partie;
-import jeu.Roi;
-import plateau.*;
+import model.jeu.Joueur;
+import model.jeu.Partie;
+import model.jeu.Roi;
+import model.plateau.*;
 
 public class PiocheController {
 
@@ -61,7 +61,7 @@ public class PiocheController {
     private Node lastMovedJeton;
     private Object partieLocker;
 
-    private final DataFormat roiFormat = new DataFormat("jeu.roi");
+    private final DataFormat roiFormat = new DataFormat("model.jeu.roi");
     private IndicatorFader status;
 
     @FXML

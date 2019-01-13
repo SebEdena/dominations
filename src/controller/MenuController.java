@@ -15,12 +15,12 @@ import javafx.scene.control.Toggle;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import jeu.*;
-import plateau.Case;
-import plateau.Domino;
-import plateau.IDomino;
-import plateau.Terrain;
-import util.CSVParser;
+import model.jeu.*;
+import model.plateau.Case;
+import model.plateau.Domino;
+import model.plateau.IDomino;
+import model.plateau.Terrain;
+import model.util.CSVParser;
 
 import java.io.IOException;
 import java.net.URL;

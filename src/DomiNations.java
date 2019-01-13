@@ -1,17 +1,17 @@
-import jeu.Jeu;
+import controller.util.SceneSwitcher;
+import javafx.application.Application;
+import javafx.stage.Stage;
 
-public class DomiNations {
+public class DomiNations extends Application {
 
-    /**
-     * Methode permettant de lancer le jeu en mode console
-     * @param args Liste des paramètres transmis lors de l'éxécution de la methode
-     * @see Jeu#getInstance
-     * @see Jeu#tourDeJeu
-     */
-    public static void main(String[] args) {
-        Jeu jeu  = Jeu.getInstance();
-        jeu.tourDeJeu();
-
+    @Override
+    public void start(Stage primaryStage) throws Exception{
+        SceneSwitcher.getInstance().setPrimaryStage(primaryStage);
+        SceneSwitcher.getInstance().init();
+        SceneSwitcher.getInstance().displayScene("accueil");
     }
 
+    public static void main(String[] args) {
+        launch(args);
+    }
 }

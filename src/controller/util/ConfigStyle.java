@@ -2,8 +2,8 @@ package controller.util;
 
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import jeu.Roi;
-import plateau.Terrain;
+import model.jeu.Roi;
+import model.plateau.Terrain;
 
 import java.util.HashMap;
 import java.util.Map;
