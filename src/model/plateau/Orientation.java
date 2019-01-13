@@ -12,12 +12,23 @@ public enum Orientation {
     private int offsetX, offsetY;
     private String text;
 
+    /**
+     * Constructeur de la classe d'énumération
+     * @param x Numéro de la ligne
+     * @param y Numéro de la colonne
+     * @param text Direction du domino
+     */
     Orientation(int x, int y, String text){
         this.offsetX = x;
         this.offsetY = y;
         this.text = text;
     }
 
+    /**
+     * Methode retournant l'orientation
+     * @param nom Nom de l'orientation
+     * @return L'orientation
+     */
     public static Orientation getOrientation(String nom)
     {
         switch(nom)
@@ -35,16 +46,32 @@ public enum Orientation {
         }
     }
 
+    /**
+     * Methode retourant l'offset de la ligne
+     * @return L'offset de la ligne
+     */
     public int getOffsetX() {
         return offsetX;
     }
 
+    /**
+     * Methode retournant l'offset de la colonne
+     * @return L'offset de la colonne
+     */
     public int getOffsetY() {
         return offsetY;
     }
 
+    /**
+     * Methode retournant le nom de l'orientation
+     * @return Le nom de l'orientation
+     */
     public String getText() { return text; }
 
+    /**
+     * Methode retournant l'orientation opposée de l'orientation actuelle
+     * @return L'orientation opposée de l'orientation actuelle
+     */
     public Orientation getOppose(){
         switch (this){
             case NORD: return SUD;
@@ -55,6 +82,10 @@ public enum Orientation {
         }
     }
 
+    /**
+     * Methde retournant l'orientation suivante selon une rotation horaire
+     * @return L'orientation suivante selon une rotation horaire
+     */
     public Orientation getRotationHoraire(){
         switch (this){
             case NORD: return EST;
@@ -65,6 +96,11 @@ public enum Orientation {
         }
     }
 
+    /**
+     * Methode retournant l'orientation en fonction d'une lettre
+     * @param nom Premiere lettre de l'orientation
+     * @return L'orientation en fonction d'une lettre
+     */
     public static Orientation getOrientationByText(String nom)
     {
         nom = nom.toUpperCase();
