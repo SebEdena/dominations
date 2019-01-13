@@ -1,5 +1,6 @@
 package jeu;
 
+import javax.jws.WebParam;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,6 +24,13 @@ public enum ModeJeu {
         this.bonusPlacementMilieu = bonusPlacementMilieu;
         this.bonusPlateauComplet = bonusPlateauComplet;
         this.listerefuse = listerefuse;
+    }
+
+    public static ModeJeu getModeJeu(String modeJeu){
+        for(ModeJeu m : values()){
+            if(m.getLibelle().equals(modeJeu)) return m;
+        }
+        return null;
     }
 
     public String getLibelle(){

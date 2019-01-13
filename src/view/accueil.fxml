@@ -35,9 +35,9 @@
                   <Font size="120.0" />
                </font>
             </Label>
-            <JFXButton alignment="CENTER" buttonType="RAISED" prefHeight="60.0" prefWidth="187.0" ripplerFill="WHITE" style="-fx-background-color: #689F38;" text="Jouer" textFill="WHITE" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+            <JFXButton fx:id="accueilPlayButton" alignment="CENTER" buttonType="RAISED" prefHeight="60.0" prefWidth="187.0" ripplerFill="WHITE" style="-fx-background-color: #689F38;" text="Jouer" textFill="WHITE" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                <graphic>
-                  <ImageView fx:id="accueilPlayButton" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@img/sword-cross.png" />
                      </image>

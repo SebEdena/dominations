@@ -1,18 +1,12 @@
+import controller.util.SceneSwitcher;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class MainGraph extends Application {
 
-    public static final int standardWidth = 1600, standardHeight = 900;
-
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("/view/partie.fxml"));
+        /*Parent root = FXMLLoader.load(getClass().getResource("/view/partie.fxml"));
         primaryStage.setTitle("Hello World");
         Scene s = new Scene(root, standardWidth, standardHeight);
 
@@ -24,7 +18,10 @@ public class MainGraph extends Application {
 
         primaryStage.setScene(s);
         primaryStage.setResizable(false);
-        primaryStage.show();
+        primaryStage.show();*/
+        SceneSwitcher.getInstance().setPrimaryStage(primaryStage);
+        SceneSwitcher.getInstance().init();
+        SceneSwitcher.getInstance().displayScene("accueil");
     }
 
     public static void main(String[] args) {

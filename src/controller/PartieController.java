@@ -130,8 +130,12 @@ public class PartieController {
         configStyle = ConfigStyle.getInstance();
         leftContent.setSpacing(configStyle.getPiocheDominoInsideSpacing());
         rightContent.setSpacing(configStyle.getPiocheDominoInsideSpacing());
+        partieValidateButton.setDisable(true);
+        partieDropDominoButton.setDisable(false);
+    }
 
-        try {
+    public void init(List<Joueur> joueurs, List<IDomino> deck, NbJoueur nbJoueur, ModeJeu modeJeu) {
+        /*try {
             List<IDomino> deck = Jeu.chargementDominos("./dominos.csv");
             ModeJeu modeJeu = ModeJeu.STANDARD;
             NbJoueur nbJoueur = NbJoueur.jeuA4;
@@ -143,21 +147,14 @@ public class PartieController {
             partie = new Partie(joueurs, deck, nbJoueur, modeJeu);
         } catch (Exception e){
             e.printStackTrace();
-        }
+        }*/
 
+        partie = new Partie(joueurs, deck, nbJoueur, modeJeu);
         initDialog();
-        initPlateau(7);
+        initPlateau(modeJeu.getTaillePlateau() + 2);
         initMiniPlateau();
         for(int i = 0; i < miniPlateaux.size(); i++){
             fillMiniPlateau(partie.getJoueurs().get(i));
-        }
-        partieValidateButton.setDisable(true);
-        partieDropDominoButton.setDisable(false);
-
-        try {
-            dominosPlacement = CSVParser.parse("./test_plateau.csv", ",", true);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
         partieDomino.setOnMouseClicked(event -> {
@@ -190,19 +187,11 @@ public class PartieController {
             }
         });
 
-
-
         initDominoSourceDrag();
         initDominoTargetDrag();
-
-        try {
-            jouerPartie();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
-    private void jouerPartie() {
+    public void jouerPartie() {
         new Thread(() -> {
             try{
                 piocheController.initContent(partie, status, partieLocker);
@@ -613,7 +602,7 @@ public class PartieController {
     }
 
     private void recomputeLockedCases(PlacementDomino placementDomino) {
-        /*int[] translation = placementDomino.getTranslation();
+        int[] translation = placementDomino.getTranslation();
         int[] xBounds = placementDomino.getNewXBounds(joueurActuel.getPlateau().getXBounds());
         int[] yBounds = placementDomino.getNewYBounds(joueurActuel.getPlateau().getYBounds());
 
@@ -632,7 +621,7 @@ public class PartieController {
                     }
                 }
             }
-        }*/
+        }
     }
 
     private void resetDomino() {

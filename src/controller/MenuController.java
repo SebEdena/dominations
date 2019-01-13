@@ -14,10 +14,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import jeu.ModeIA;
-import jeu.ModeJeu;
-import jeu.NbJoueur;
-import jeu.Roi;
+import jeu.*;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -81,7 +78,6 @@ public class MenuController {
         players = Arrays.asList(player1, player2, player3, player4);
 
         initData();
-
     }
 
     private void initData(){
@@ -153,22 +149,6 @@ public class MenuController {
             iaDifficulte.setFocusColor(color);
             iaDifficulte.getValidators().add(new RequiredFieldValidator("Le champ est obligatoire"));
 
-           /* iaDifficulte.setCellFactory(
-                    param -> {
-                        final ListCell<String> cell = new ListCell<String>() {
-                            {
-                                super.setTextFill(color);
-                            }
-                            @Override public void updateItem(String item,
-                                                             boolean empty) {
-                                super.updateItem(item, empty);
-                                setText(item);
-                                setTextFill(color);
-                            }
-                        };
-                        return cell;
-                    });*/
-
             updateIADifficulteStatut(iaToggle, player);
             togglePlayerPane(player, false);
 
@@ -234,12 +214,17 @@ public class MenuController {
     }
 
     private void lancerPartie(){
-        System.out.println("> Début jeu :");
-        System.out.println("  Mode : " + menuModeJeuCBox.getSelectionModel().getSelectedItem().getText());
-        int nbJoueurs = (int)menuNbJoueursCBox.getSelectionModel().getSelectedItem().getUserData();
-        System.out.println("  NbJoueurs : " + nbJoueurs);
-        for(int i = 0; i < (nbJoueurs); i++){
+        ModeJeu modeJeu = ModeJeu.getModeJeu(menuModeJeuCBox.getSelectionModel().getSelectedItem().getText());
+        NbJoueur nbJoueurs = NbJoueur.getParamsJeu((int)menuNbJoueursCBox.getSelectionModel().getSelectedItem().getUserData());
+
+        for(int i = 0; i < nbJoueurs.getNbJoueurs(); i++){
             GridPane player = players.get(i);
+            Joueur j;
+            if(((Toggle) player.getChildren().get(GP_IA_TOGGLE_INDEX)).isSelected()){
+                j = ModeIA.getIAClasse()
+            } else {
+
+            }
             System.out.println("  "+ (i+1) + " - " + ((TextField) player.getChildren().get(GP_NOM_JOUEUR_INDEX)).getText() +
                     " - " + (((Toggle) player.getChildren().get(GP_IA_TOGGLE_INDEX)).isSelected()?"IA " +
                     ((ComboBox) player.getChildren().get(GP_IA_DIFFICULTE_INDEX)).getSelectionModel()
