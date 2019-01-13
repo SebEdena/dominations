@@ -38,8 +38,6 @@ public class SimpleIA extends AbstractIA
      * @param cartesSurBoard Pioche contenant les dominos restants
      * @param joueursAdverses Liste des joueurs en jeu
      * @return Le numéro du domino à piocher
-     * @throws DominoException
-     * @throws TuileException
      */
     @Override
     public int pickInPioche(List<IDomino> cartesSurBoard, List<Joueur> joueursAdverses) {

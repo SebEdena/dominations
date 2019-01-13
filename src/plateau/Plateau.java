@@ -461,13 +461,13 @@ public class Plateau {
      * @see Orientation#getOffsetX
      * @see Orientation#getOffsetY
      * @see Case#getTerrain
-     * @link #rechercheCaseSimilaire
+     * @see #rechercheCaseSimilaire
      */
     private void rechercheCaseSimilaire(int x, int y, List<Case> pileCasesVisitees, Case caseTemoin, List<Case> casesAdjacentes)
     {
         casesAdjacentes.add(caseTemoin);
         pileCasesVisitees.add(caseTemoin);
-        List<Case> casesTrouvées = new ArrayList<Case>();
+        List<Case> casesTrouvees = new ArrayList<Case>();
 
         for(Orientation o : Orientation.values()) // à chaque orientation on vérifie s'il y a une case de même domaine et non comptabilisée
         {
@@ -477,7 +477,7 @@ public class Plateau {
                     tableau[x + o.getOffsetX()][y + o.getOffsetY()].getTerrain().equals(caseTemoin.getTerrain()) &&
                     !pileCasesVisitees.contains(tableau[x + o.getOffsetX()][y + o.getOffsetY()]))
             {
-                casesTrouvées.add(tableau[x + o.getOffsetX()][y + o.getOffsetY()]);
+                casesTrouvees.add(tableau[x + o.getOffsetX()][y + o.getOffsetY()]);
                 pileCasesVisitees.add(tableau[x + o.getOffsetX()][y + o.getOffsetY()]);
                 rechercheCaseSimilaire(x + o.getOffsetX(), y + o.getOffsetY(),
                         pileCasesVisitees,tableau[x + o.getOffsetX()][y + o.getOffsetY()],casesAdjacentes);
