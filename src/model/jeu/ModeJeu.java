@@ -10,6 +10,12 @@ import java.util.List;
 
 import static model.jeu.NbJoueur.*;
 
+/**
+ * Enumération permettant de décrire les modes de jeu possible
+ * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
+ * @version 1.0
+ */
+
 public enum ModeJeu {
     STANDARD("Standard", 5, 0, 0, Arrays.asList(jeuA2, jeuA3, jeuA4)),
     GRAND_DUEL("Grand Duel",7,0,0, Arrays.asList(jeuA2)),
