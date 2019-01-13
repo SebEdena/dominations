@@ -6,6 +6,7 @@
 package model.jeu;
 
 import javafx.util.Pair;
+import model.joueur.Joueur;
 import model.plateau.*;
 import java.util.*;
 

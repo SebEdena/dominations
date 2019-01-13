@@ -1,6 +1,6 @@
 package model.test;
 
-import model.jeu.Joueur;
+import model.joueur.Joueur;
 import model.jeu.ModeJeu;
 import model.jeu.NbJoueur;
 import model.jeu.Roi;

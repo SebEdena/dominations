@@ -8,6 +8,7 @@ import javafx.application.Platform;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
 import model.jeu.*;
+import model.joueur.Joueur;
 import model.plateau.PlacementDomino;
 import model.exceptions.DominoException;
 import model.exceptions.TuileException;

@@ -2,6 +2,10 @@ package model.jeu;
 
 import model.exceptions.DominoException;
 import model.exceptions.TuileException;
+import model.joueur.AbstractIA;
+import model.joueur.DifficileIA;
+import model.joueur.NormalIA;
+import model.joueur.SimpleIA;
 
 public enum ModeIA {
     SIMPLE("Simple"),

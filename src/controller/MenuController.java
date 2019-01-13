@@ -16,6 +16,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import model.jeu.*;
+import model.joueur.Joueur;
 import model.plateau.Case;
 import model.plateau.Domino;
 import model.plateau.IDomino;

@@ -1,19 +1,25 @@
 /**
- * Classe permettant de décrire une partie de model.jeu
+ * Classe permettant de décrire un IA difficile
  * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
  * @version 1.0
  */
-package model.jeu;
+package model.joueur;
 
 import model.exceptions.DominoException;
 import model.exceptions.TuileException;
-import model.plateau.*;
+import model.jeu.ModeJeu;
+import model.jeu.NbJoueur;
+import model.jeu.Roi;
+import model.plateau.Domino;
+import model.plateau.IDomino;
+import model.plateau.PlacementDomino;
+import model.plateau.Plateau;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class NormalIA extends AbstractIA{
+public class DifficileIA extends AbstractIA {
 
     private List<PlacementDomino> positionDomino = new ArrayList<>();
 
@@ -28,7 +34,7 @@ public class NormalIA extends AbstractIA{
      * @throws TuileException
      * @see AbstractIA
      */
-    public NormalIA(String nom, Roi couleur, NbJoueur nbJoueur, ModeJeu modeJeu, int score) throws DominoException, TuileException {
+    public DifficileIA(String nom, Roi couleur, NbJoueur nbJoueur, ModeJeu modeJeu, int score) throws DominoException, TuileException {
         super(nom, couleur, nbJoueur, modeJeu, score);
     }
 

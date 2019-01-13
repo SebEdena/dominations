@@ -18,7 +18,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
-import model.jeu.Joueur;
+import model.joueur.Joueur;
 import model.jeu.Partie;
 import model.jeu.Roi;
 import model.plateau.*;

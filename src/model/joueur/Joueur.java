@@ -3,10 +3,13 @@
  * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
  * @version 1.0
  */
-package model.jeu;
+package model.joueur;
 
 import model.exceptions.DominoException;
 import model.exceptions.TuileException;
+import model.jeu.ModeJeu;
+import model.jeu.NbJoueur;
+import model.jeu.Roi;
 import model.plateau.*;
 
 import java.util.ArrayList;

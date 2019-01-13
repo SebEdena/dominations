@@ -8,6 +8,7 @@ package model.jeu;
 import model.exceptions.DominoException;
 import model.exceptions.TuileException;
 import javafx.util.Pair;
+import model.joueur.Joueur;
 import model.plateau.*;
 import model.util.CSVParser;
 import java.io.IOException;
