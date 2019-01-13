@@ -1,5 +1,5 @@
 /**
- * Classe permettant de décrire une partie de model.jeu
+ * Classe permettant de décrire une partie de jeu
  * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
  * @version 1.0
  */
@@ -22,8 +22,8 @@ public class Partie {
      * Constructeur d'une partie de model.jeu
      * @param joueurs Liste des joueurs qui jouent
      * @param deckDominos Liste des dominos utilisés
-     * @param nbJoueur Paramètres de model.jeu
-     * @param modeJeu Mode de model.jeu
+     * @param nbJoueur Paramètres de jeu
+     * @param modeJeu Mode de jeu
      */
     public Partie(List<Joueur> joueurs, List<IDomino> deckDominos, NbJoueur nbJoueur, ModeJeu modeJeu) {
         this.nbJoueur = nbJoueur;
@@ -46,8 +46,8 @@ public class Partie {
     }
 
     /**
-     * Methode retournant les paramètres de model.jeu
-     * @return Paramètres de model.jeu
+     * Methode retournant les paramètres de jeu
+     * @return Paramètres de jeu
      */
     public NbJoueur getParamJeu() {
         return nbJoueur;
@@ -66,9 +66,9 @@ public class Partie {
     }
 
     /**
-     *
-     * @param i
-     * @return
+     * Methode retournant un domino contenu dans la pioche
+     * @param i Indice du domino dans la pioche
+     * @return Le domino de la pioche
      * @throws ArrayIndexOutOfBoundsException
      */
     public IDomino getDominoPioche(int i) throws ArrayIndexOutOfBoundsException {
@@ -111,7 +111,7 @@ public class Partie {
     }
 
     /**
-     * Methode de pioche de domino utilisés pendant un tour de model.jeu
+     * Methode de pioche de domino utilisés pendant un tour de jeu
      * @return La liste des dominos piochés pour le tour
      * @see Joueur#resetTirage
      * @see NbJoueur#getNbRoiParJoueur
@@ -142,11 +142,11 @@ public class Partie {
 
     /**
      * Methode retournant l'ordre de model.jeu des joueurs avec le domino pioché par le joueur
-     * @return L'ordre de model.jeu des joueurs avec le domino pioché par le joueur
+     * @return L'ordre de jeu des joueurs avec le domino pioché par le joueur
      * @see Joueur#piocheContainsDomino
      */
     public List<Pair<IDomino, Joueur>> getTourOrder(){
-        // Cas ou il reste des dominos en model.jeu (pioche non vide)
+        // Cas ou il reste des dominos en jeu (pioche non vide)
         if(tirage != null && tirage.size() != 0){
             List<Pair<IDomino, Joueur>> order = new ArrayList<>();
             // Ajout de joueurs et des dominos tirés par les joueurs en fonction
@@ -222,6 +222,10 @@ public class Partie {
         return tirage;
     }
 
+    /**
+     * Methode retournant les paramètres du jeu en cours
+     * @return Les paramètres du jeu en cours
+     */
     public NbJoueur getNbJoueur() {
         return nbJoueur;
     }
@@ -234,10 +238,18 @@ public class Partie {
         return joueurs;
     }
 
+    /**
+     * Methode retournant le mode de jeu en cours
+     * @return Le mode de jeu en cours
+     */
     public ModeJeu getModeJeu() {
         return modeJeu;
     }
 
+    /**
+     * Methode retournant le nombre de roi au total dans le jeu
+     * @return Le nombre de roi au total dans le jeu
+     */
     public int getTotalRois(){
         return nbJoueur.getNbJoueurs() * nbJoueur.getNbRoiParJoueur();
     }

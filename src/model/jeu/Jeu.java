@@ -1,5 +1,5 @@
 /**
- * Classe permettant de décrire le model.jeu
+ * Classe permettant de décrire le jeu
  * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
  * @version 1.0
  */
@@ -27,7 +27,7 @@ public class Jeu {
     private Partie partie;
 
     /**
-     * Constructeur du model.jeu (pattern singleton)
+     * Constructeur du jeu (pattern singleton)
      */
     private Jeu(){
         try {
@@ -43,7 +43,7 @@ public class Jeu {
 
     /**
      * Methode permettant de retourner l'instance du model.jeu en cours
-     * @return instance du model.jeu en cours
+     * @return instance du jeu en cours
      */
     public static Jeu getInstance(){
         if (instance == null) {
@@ -53,13 +53,13 @@ public class Jeu {
     }
 
     /**
-     * Methode d'initialisation des paramètres généraux du model.jeu comprenant :
-     *  - Le mode de model.jeu
+     * Methode d'initialisation des paramètres généraux du jeu comprenant :
+     *  - Le mode de jeu
      *  - Le nombre de joueurs
-     *  - Les paramètres du model.jeu
+     *  - Les paramètres du jeu
      *  - Les dominos à utiliser
      *  - La liste des rois
-     *  - La partie de model.jeu
+     *  - La partie de jeu
      * @see #chargementDominos
      * @see #allocateRoi
      * @throws Exception
@@ -113,7 +113,7 @@ public class Jeu {
      * Il y a aussi la possibilité de créer des IA
      * @param nbJoueur Le nombre de joueurs participant au model.jeu
      * @param modeJeu Le mode de model.jeu choisi
-     * @return La liste des joueurs inscris dans le model.jeu
+     * @return La liste des joueurs inscris dans le jeu
      * @throws Exception
      * @see ModeIA#getIAClasse
      * @see Joueur#getNomJoueur
@@ -228,7 +228,7 @@ public class Jeu {
      * @see IDomino#getIdentifiant
      * @see Joueur#pickInPioche
      * @see Joueur#addDomino
-     * @param rois Liste des rois en model.jeu
+     * @param rois Liste des rois en jeu
      */
     private void tirageJoueur(List<Roi> rois){
         System.out.println("Entrez le numéro pour choisir le domino");
@@ -310,14 +310,14 @@ public class Jeu {
                 try
                 {
                     System.out.println("IA Placement : " + joueur.getCouleurRoi().getLibelle());
-                    // Récupération d'un emplacement possible du domino sur son model.plateau
+                    // Récupération d'un emplacement possible du domino sur son plateau
                     PlacementDomino p = joueur.pickPossibilite(domino);
-                    // Ajout sur le model.plateau
+                    // Ajout sur le plateau
                     joueur.getPlateau().addDomino(p.getDomino(),p.getRow(),p.getColumn(),p.getCaseId(),p.getSens());
                     System.out.println("IA a décidé de placer son domino en x : " + p.getRow() + "/ y : " + p.getColumn() + " / sens : " + p.getSens().getText());
                     System.out.println("Domino concerné : " + p.getDomino().toString());
                     System.out.println(joueur.getPlateau().affichePlateau(true));
-                    //Thread.sleep(1000);
+                    Thread.sleep(1000);
                 }
                 catch(Exception e)
                 {
@@ -397,7 +397,6 @@ public class Jeu {
             for (IDomino domino : pioche) {
                 System.out.println("[ "+domino.getIdentifiant()+" ]");
             }
-            //Thread.sleep(1000);
             // Affichage des faces avec les terrains des mêmes dominos
             for (IDomino domino : pioche) {
                 System.out.println("[ "+domino.getCases()[0]+","+domino.getCases()[1]+" ]");
