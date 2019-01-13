@@ -22,10 +22,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DataFormat;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
@@ -90,8 +87,6 @@ public class PiocheController {
 
         piocheValidateJetonButton.setOnAction(event -> {
             validerAffectationDominoJoueur();
-            piocheValidateJetonButton.setDisable(true);
-
         });
 
         piocheRevertJetonButton.setOnAction(event -> {
@@ -209,15 +204,9 @@ public class PiocheController {
             boolean success = false;
             if (db.hasContent(roiFormat) && node.getChildren().size() == 0) {
                 success = true;
-                Node jeton = piocheJetonsContainer.getChildren().remove(0);
-                node.getChildren().add(jeton);
-                node.getParent().setDisable(true);
-                piocheValidateJetonButton.setDisable(false);
-                lastMovedJeton = jeton;
-                int position = positionAmongDominos(node.getParent());
-                Pair<IDomino, Joueur> choisi = choix.get(position);
-                Joueur j = partie.getJoueur((Roi) db.getContent(roiFormat));
-                choixEnCours = new Pair<>(choisi.getKey(), j);
+                Roi roi = (Roi) db.getContent(roiFormat);
+                Joueur j = partie.getJoueur(roi);
+                insertJeton(node, j);
             }
             event.setDropCompleted(success);
             event.consume();
@@ -262,6 +251,17 @@ public class PiocheController {
 
     private Roi getRoiFromLabel(Label jeton){
         return Roi.getRoiInt(Integer.parseInt(jeton.getText()) - 1);
+    }
+
+    private void insertJeton(VBox accepteur, Joueur joueur){
+        Node jeton = piocheJetonsContainer.getChildren().remove(0);
+        accepteur.getChildren().add(jeton);
+        accepteur.getParent().setDisable(true);
+        piocheValidateJetonButton.setDisable(false);
+        lastMovedJeton = jeton;
+        int position = positionAmongDominos(accepteur.getParent());
+        Pair<IDomino, Joueur> choisi = choix.get(position);
+        choixEnCours = new Pair<>(choisi.getKey(), joueur);
     }
 
     private void fillDomino(IDomino d, VBox dContainer){
@@ -334,6 +334,7 @@ public class PiocheController {
         }else{
             new Thread(this::nextPioche).start();
         }
+        piocheValidateJetonButton.setDisable(true);
     }
 
     public boolean isFinished() {
@@ -363,6 +364,35 @@ public class PiocheController {
                 fillPlateau(partie.getJoueurs().get(Integer.parseInt(jeton.getText()) - 1).getPlateau());
                 jeton.setDisable(false);
             });
-        } catch (InterruptedException ignored) { }
+            if(partie.getJoueurs().get(Integer.parseInt(jeton.getText()) - 1).isIA()){
+                List<IDomino> liste = new ArrayList<>();
+                for(Pair<IDomino, Joueur> paire : choix){
+                    if(paire.getValue() == null) liste.add(paire.getKey());
+                }
+                IDomino d = liste.get(partie.getJoueurs().get(Integer.parseInt(jeton.getText()) - 1).pickInPioche(liste, partie.getJoueurs()));
+                simulePickDomino(d);
+            }
+        } catch (Exception ignored) { }
+    }
+
+    private void simulePickDomino(IDomino domino) {
+        new Thread(() -> {
+            try {
+                Thread.sleep(status.getTotalTime());
+                for(Node dominoContainer : piocheDominosContainer.getChildren()){
+                    if(((Label)((VBox) dominoContainer).getChildren().get(indexIdDomino)).getText().equals(""+domino.getIdentifiant())){
+                        Label jeton = (Label) piocheJetonsContainer.getChildren().get(0);
+                        VBox accepteur = (VBox) ((VBox) dominoContainer).getChildren().get(indexAccepteurJeton);
+                        Thread.sleep(500);
+                        Platform.runLater(()->insertJeton(accepteur, partie.getJoueur(Roi.getRoiInt(Integer.parseInt(jeton.getText()) - 1))));
+                        Thread.sleep(2*500);
+                        validerAffectationDominoJoueur();
+                        break;
+                    }
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 }

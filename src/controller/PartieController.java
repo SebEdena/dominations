@@ -139,7 +139,7 @@ public class PartieController {
             joueurs.add(new Joueur("Seb", Roi.getRoiInt(0), nbJoueur, modeJeu, 0));
             joueurs.add(new Joueur("Laurent", Roi.getRoiInt(1), nbJoueur, modeJeu, 0));
             joueurs.add(new Joueur("Mathieu", Roi.getRoiInt(2), nbJoueur, modeJeu, 0));
-            joueurs.add(new Joueur("Kabir", Roi.getRoiInt(3), nbJoueur, modeJeu, 0));
+            joueurs.add(ModeIA.getIAClasse(ModeIA.SIMPLE,"Kabir", Roi.getRoiInt(3), nbJoueur, modeJeu, 0));
             partie = new Partie(joueurs, deck, nbJoueur, modeJeu);
         } catch (Exception e){
             e.printStackTrace();
@@ -175,8 +175,7 @@ public class PartieController {
 
         partieValidateButton.setOnAction(event -> {
             try {
-                validateDominoPlacement();
-                synchronized (partieLocker) { partieLocker.notifyAll(); }
+                validateDominoPlacement(placement);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -235,6 +234,7 @@ public class PartieController {
                             fillJoueurLabel(j);
                             status.display("Choisissez quoi faire de votre domino", j.getNomJoueur(), Color.web(j.getCouleurRoi().getColor()));
                         });
+                        if(j.isIA()) simulePlacementDomino();
                         synchronized(partieLocker) { partieLocker.wait(); }
                     }
                     Platform.runLater(() -> {
@@ -357,23 +357,7 @@ public class PartieController {
                                 placement.getCaseId(), placement.getSens()) == null) {
                     success = true;
                     Case c = (Case) event.getDragboard().getContent(caseDominoFormat);
-                    int row = getRow(child);
-                    int col = getCol(child);
-                    fillLabelWithCase(getCaseLabel(plateauDisplay, row, col, null), null, false);
-
-                    int[] translation = joueurActuel.getPlateau().calculTranslation(placement.getDomino(), row - 1, col - 1, placement.getCaseId(), placement.getSens());
-                    placement.setTranslation(translation);
-                    placement.positionOnPlateau(row, col);
-                    if(placement.needsTranslation()){
-                        translatePlateau();
-                        row += translation[0];
-                        col += translation[1];
-                    }
-                    recomputeLockedCases();
-                    fillLabelWithCase(getCaseLabel(plateauDisplay, row, col, null), c, false);
-                    fillLabelWithCase(getCaseLabel(plateauDisplay, row, col, placement.getSens()), placement.getCase(true), false);
-                    partieValidateButton.setDisable(false);
-                    partieDropDominoButton.setDisable(true);
+                    insertDomino(placement, child, c);
                 }
                 event.setDropCompleted(success);
                 event.consume();
@@ -483,6 +467,28 @@ public class PartieController {
             }
             placement.setSens(o);
         }
+    }
+
+    private void insertDomino(PlacementDomino placementDomino, Node label, Case c){
+        int row = getRow(label);
+        int col = getCol(label);
+        fillLabelWithCase(getCaseLabel(plateauDisplay, row, col, null), null, false);
+        fillLabelWithCase(getCaseLabel(plateauDisplay, row, col, placementDomino.getSens()), null, false);
+        int[] translation = joueurActuel.getPlateau().calculTranslation(placementDomino.getDomino(), row - 1, col - 1, placementDomino.getCaseId(), placementDomino.getSens());
+        placementDomino.setTranslation(translation);
+        placementDomino.positionOnPlateau(row, col);
+        if(placementDomino.needsTranslation()){
+            translatePlateau();
+            row += translation[0];
+            col += translation[1];
+        }
+        recomputeLockedCases(placementDomino);
+        fillLabelWithCase(getCaseLabel(plateauDisplay, row, col, null), c, false);
+        System.out.println(getRow(getCaseLabel(plateauDisplay, row, col, placementDomino.getSens())));
+        System.out.println(getCol(getCaseLabel(plateauDisplay, row, col, placementDomino.getSens())));
+        fillLabelWithCase(getCaseLabel(plateauDisplay, row, col, placementDomino.getSens()), placementDomino.getCase(true), false);
+        partieValidateButton.setDisable(false);
+        partieDropDominoButton.setDisable(true);
     }
 
     private void fillPlateau(Plateau p, Joueur joueur) {
@@ -606,10 +612,10 @@ public class PartieController {
         }
     }
 
-    private void recomputeLockedCases() {
-        int[] translation = placement.getTranslation();
-        int[] xBounds = placement.getNewXBounds(joueurActuel.getPlateau().getXBounds());
-        int[] yBounds = placement.getNewYBounds(joueurActuel.getPlateau().getYBounds());
+    private void recomputeLockedCases(PlacementDomino placementDomino) {
+        /*int[] translation = placementDomino.getTranslation();
+        int[] xBounds = placementDomino.getNewXBounds(joueurActuel.getPlateau().getXBounds());
+        int[] yBounds = placementDomino.getNewYBounds(joueurActuel.getPlateau().getYBounds());
 
         for(int i = 0; i < colRowSize; i++){
             for(int j = 0; j < colRowSize; j++){
@@ -626,7 +632,7 @@ public class PartieController {
                     }
                 }
             }
-        }
+        }*/
     }
 
     private void resetDomino() {
@@ -644,9 +650,10 @@ public class PartieController {
         partieDropDominoButton.setDisable(false);
     }
 
-    private void validateDominoPlacement() throws DominoException, TuileException {
-        joueurActuel.getPlateau().addDomino(placement.getDomino(), placement.getRow() - 1, placement.getColumn() - 1, placement.getCaseId(), placement.getSens());
+    private void validateDominoPlacement(PlacementDomino placementDomino) throws DominoException, TuileException {
+        joueurActuel.getPlateau().addDomino(placementDomino.getDomino(), placementDomino.getRow() - 1, placementDomino.getColumn() - 1, placementDomino.getCaseId(), placementDomino.getSens());
         fillMiniPlateau(joueurActuel);
+        synchronized (partieLocker) { partieLocker.notifyAll(); }
     }
 
     public void showPiocheDialog(){
@@ -663,6 +670,30 @@ public class PartieController {
                 e.printStackTrace();
             }
             Platform.runLater(()->partiePiocheParent.toBack());
+        }).start();
+    }
+
+    private void simulePlacementDomino(){
+        new Thread(() -> {
+            try {
+                Thread.sleep(status.getTotalTime());
+                PlacementDomino tmpPlacement = joueurActuel.pickPossibilite(dominoActuel);
+                //tmpPlacement.positionOnPlateau(tmpPlacement.getRow(), tmpPlacement.getColumn());
+                Thread.sleep(1500);
+                Platform.runLater(()->insertDomino(tmpPlacement, getCaseLabel(plateauDisplay, tmpPlacement.getRow()+1, tmpPlacement.getColumn()+1, null),
+                        tmpPlacement.getCase(false)));
+                Thread.sleep(2*500);
+                Platform.runLater(()-> {
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    try { validateDominoPlacement(tmpPlacement); } catch (Exception ignored) { }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }).start();
     }
 
@@ -749,7 +780,6 @@ public class PartieController {
         homeButton.setOnAction(event -> {
 
         });
-
 
         ImageView param = new ImageView("./view/img/settings.png");
         param.setFitHeight(configStyle.getResizedCrownSize());
