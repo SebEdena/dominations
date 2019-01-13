@@ -36,4 +36,12 @@ public enum ModeJeu {
     public List<NbJoueur> getListerefuse() {
         return this.listerefuse;
     }
+
+    public int getBonusPlacementMilieu() {
+        return bonusPlacementMilieu;
+    }
+
+    public int getBonusPlateauComplet() {
+        return bonusPlateauComplet;
+    }
 }

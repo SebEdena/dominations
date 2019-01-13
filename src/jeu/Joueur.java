@@ -240,7 +240,7 @@ public class Joueur {
                 return 0;
             case EMPIRE_DU_MILIEU:
                 // Recherche du chateau au milieu du royaume et attribution des points bonus si c'est le cas
-                return this.getPlateau().getCaseAt(2,2).getTerrain().equals(Terrain.CHATEAU)?10:0;
+                return this.getPlateau().getCaseAt(2,2).getTerrain().equals(Terrain.CHATEAU)?mode.getBonusPlacementMilieu():0;
             case HARMONIE:
                 // Recherche d'une case vide dans le royaume
                 Plateau plateau = this.getPlateau();
@@ -256,7 +256,7 @@ public class Joueur {
                     }
                 }
                 // Sinon retourne les points bonus
-                return 5;
+                return mode.getBonusPlateauComplet();
             default:
                 return 0;
         }
