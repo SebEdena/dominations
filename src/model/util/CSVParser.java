@@ -1,3 +1,8 @@
+/**
+ * Classe permettant de parser un fichier csv en une liste de domino en string
+ * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
+ * @version 1.0
+ */
 package model.util;
 
 import java.io.BufferedReader;
@@ -8,6 +13,14 @@ import java.util.List;
 
 public class CSVParser {
 
+    /**
+     * Methode permetant de parser un fichier csv en une liste de domino en string
+     * @param filePath Adresse de la location du fichier csv
+     * @param delimiter Caractère délimitant les données
+     * @param ignoreFirstLine (true) si la première ligne contient les titres des colonnes, (false) sinon
+     * @return Liste de domino en string
+     * @throws IOException
+     */
     public static List<String[]> parse(String filePath, String delimiter, boolean ignoreFirstLine) throws IOException {
         BufferedReader file = new BufferedReader(new FileReader(filePath));
         String line = null;
