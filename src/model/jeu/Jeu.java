@@ -14,12 +14,6 @@ import model.util.CSVParser;
 import java.io.IOException;
 import java.util.*;
 
-/**
- * Classe permettant de décrire le model.jeu
- * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
- * @version 1.0
- */
-
 public class Jeu {
     private static final int SCORE_DEFAUT = 0;
     private static final int NB_JOUEURS_MIN = 2;
@@ -48,7 +42,7 @@ public class Jeu {
     }
 
     /**
-     * Methode permettant de retourner l'instance du model.jeu en cours
+     * Methode permettant de retourner l'instance du jeu en cours
      * @return instance du jeu en cours
      */
     public static Jeu getInstance(){
@@ -71,8 +65,8 @@ public class Jeu {
      * @throws Exception
      */
     private void intitialisationJeu() throws Exception {
-        System.out.println("Bienvenue sur Dominations quel mode de model.jeu souhaitez-vous ?");
-        // Affichage des différents modes de model.jeu supportés
+        System.out.println("Bienvenue sur Dominations quel mode de jeu souhaitez-vous ?");
+        // Affichage des différents modes de jeu supportés
         for(int compteur = 0; compteur < ModeJeu.values().length; compteur++)
         {
             System.out.println(""+ (compteur) + " - " + ModeJeu.values()[compteur].toString());
@@ -90,7 +84,7 @@ public class Jeu {
                 System.out.println("Veuillez saisir un bon numéro");
             }
         } while(modeJeu < 0 || modeJeu > ModeJeu.values().length - 1);
-        System.out.println("Vous avez sélectionné le mode de model.jeu : " + ModeJeu.values()[modeJeu].toString());
+        System.out.println("Vous avez sélectionné le mode de jeu : " + ModeJeu.values()[modeJeu].toString());
         // Récupération du nombre de joueur pour la partie
         int nbJoueurs = 0;
         if(!ModeJeu.values()[modeJeu].getLibelle().equals("Grand Duel")){
@@ -104,21 +98,21 @@ public class Jeu {
             } while(nbJoueurs < NB_JOUEURS_MIN || nbJoueurs > NB_JOUEURS_MAX);
         } else nbJoueurs = NB_JOUEURS_MIN;
         scan.nextLine();
-        // Récupération de l'énum des paramètres du model.jeu
+        // Récupération de l'énum des paramètres du jeu
         NbJoueur paramJeu = NbJoueur.getParamsJeu(nbJoueurs);
         // Récupération de la liste des joueurs
         List<Joueur> joueurs = allocateRoi(paramJeu, ModeJeu.values()[modeJeu]);
-        // Récupération de la liste des dominos du model.jeu
+        // Récupération de la liste des dominos du jeu
         dominosDebut = chargementDominos("./dominos.csv");
-        // Création de la partie de model.jeu
+        // Création de la partie de jeu
         partie = new Partie(joueurs, dominosDebut, paramJeu, ModeJeu.values()[modeJeu]);
     }
 
     /**
      * Methode qui créée les joueurs en leur attribuant un ou deux roi(s) de couleur.
      * Il y a aussi la possibilité de créer des IA
-     * @param nbJoueur Le nombre de joueurs participant au model.jeu
-     * @param modeJeu Le mode de model.jeu choisi
+     * @param nbJoueur Le nombre de joueurs participant au jeu
+     * @param modeJeu Le mode de jeu choisi
      * @return La liste des joueurs inscris dans le jeu
      * @throws Exception
      * @see ModeIA#getIAClasse
@@ -197,7 +191,7 @@ public class Jeu {
     }
 
     /**
-     * Methode permettant de dérouler le model.jeu tant qu'il reste des dominos à joueur
+     * Methode permettant de dérouler le jeu tant qu'il reste des dominos à joueur
      * Un tour est composé en plusieurs étapes :
      *  - tirage des dominos de la pioche
      *  - afficher la pioche
@@ -224,7 +218,7 @@ public class Jeu {
             }
         } while(!partie.partieFinie());
         afficheScore();
-        System.out.println("Fin du model.jeu !");
+        System.out.println("Fin du jeu !");
     }
 
     /**
@@ -377,7 +371,7 @@ public class Jeu {
                         System.out.println("Erreur de saisie");
                     }
                 }
-                // Essai de l'ajout au model.plateau, sinon le domino est défaussé
+                // Essai de l'ajout au plateau, sinon le domino est défaussé
                 try {
                     joueur.getPlateau().addDomino(domino,x,y,0, sens);
                 } catch (TuileException | DominoException e) {

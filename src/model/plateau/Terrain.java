@@ -1,5 +1,5 @@
 /**
- * Enumération permettant de décrire  les types de terrains possible du model.jeu
+ * Enumération permettant de décrire  les types de terrains possible du jeu
  * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
  * @version 1.0
  */

@@ -1,5 +1,5 @@
 /**
- * Classe permettant de décrire un model.plateau de model.jeu
+ * Classe permettant de décrire un plateau de jeu
  * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
  * @version 1.0
  */
@@ -20,7 +20,7 @@ public class Plateau {
     private boolean tuileAjoutee = false;
 
     /**
-     * Constructeur d'un model.plateau avec une taille donnée en paramètre
+     * Constructeur d'un plateau avec une taille donnée en paramètre
      * @param NB_COL_LIG
      */
     public Plateau(int NB_COL_LIG){
@@ -30,7 +30,7 @@ public class Plateau {
     }
 
     /**
-     * Methode permettant de récupérer les index minimal et maximal en x du model.plateau
+     * Methode permettant de récupérer les index minimal et maximal en x du plateau
      * @return retourne un tableau de deux entiers [index minimal en x, index maximal en x]
      */
     public int[] getXBounds(){
@@ -41,7 +41,7 @@ public class Plateau {
     }
 
     /**
-     * Methode permettant de récupérer les index minimal et maximal en y du model.plateau
+     * Methode permettant de récupérer les index minimal et maximal en y du plateau
      * @return retourne un tableau de deux entiers [index minimal en y, index maximal en y]
      */
     public int[] getYBounds(){
@@ -60,15 +60,15 @@ public class Plateau {
     }
 
     /**
-     * Methode permettant de dire si la tuille du château est placée sur le model.plateau
-     * @return retourne un booléen permettant de dire si la tuille du château est placée sur le model.plateau
+     * Methode permettant de dire si la tuille du château est placée sur le plateau
+     * @return retourne un booléen permettant de dire si la tuille du château est placée sur le plateau
      */
     public boolean tuilePresente(){
         return tuileAjoutee;
     }
 
     /**
-     * Methode permettant de récupérer une case du model.plateau en fonction de la ligne et sa colonne
+     * Methode permettant de récupérer une case du plateau en fonction de la ligne et sa colonne
      * @param row numéro de ligne demandé
      * @param col numéro de colonne demandé
      * @return renvoie la case présente à la ligne row et à la colonne col
@@ -82,7 +82,7 @@ public class Plateau {
     }
 
     /**
-     * Methode permettant de dire si aux coordonnées(row,col) on se trouve dans les limites des dominos placés sur le model.plateau
+     * Methode permettant de dire si aux coordonnées(row,col) on se trouve dans les limites des dominos placés sur le plateau
      * @param row numéro de ligne demandé
      * @param col numéro de colonne demandé
      * @return renvoie vrai si les coordonnées sont dans les limites, faux sinon
@@ -92,7 +92,7 @@ public class Plateau {
     }
 
     /**
-     * Methode permettant d'ajouter un domino sur le model.plateau
+     * Methode permettant d'ajouter un domino sur le plateau
      * @param d représente le domino
      * @param xCase numéro de ligne souhaitée
      * @param yCase numéro de colonne souhaitée
@@ -312,7 +312,7 @@ public class Plateau {
     }
 
     /**
-     * Methode permettant de faire la translation du model.plateau en fonction du calcul de translation
+     * Methode permettant de faire la translation du plateau en fonction du calcul de translation
      * @param deplacement tableau d'entiers [nombre de cases à décaler x, nombre de cases à décaler y]
      */
     private void translationPlateau(int[] deplacement) {
@@ -358,8 +358,8 @@ public class Plateau {
     }
 
     /**
-     * Methode permettant de calculer le score total du model.plateau
-     * @return retour le score du model.plateau
+     * Methode permettant de calculer le score total du plateau
+     * @return retour le score du plateau
      * @see Case#getTerrain
      * @see #rechercheCaseSimilaire
      * @see Case#getNbCouronne
@@ -395,7 +395,7 @@ public class Plateau {
     }
 
     /**
-     * Methode permettant de calculer le plus gros domaine du model.plateau
+     * Methode permettant de calculer le plus gros domaine du plateau
      * @return renvoie le nombre de case contenu dans le plus grand domaine
      * @see Case#getTerrain
      * @see #rechercheCaseSimilaire
@@ -434,8 +434,8 @@ public class Plateau {
     }
 
     /**
-     * Methode permettant de calculer le nombre de couronnes présentes sur le model.plateau
-     * @return le nombre de couronne total du model.plateau
+     * Methode permettant de calculer le nombre de couronnes présentes sur le plateau
+     * @return le nombre de couronne total du plateau
      * @see Case#getNbCouronne
      */
     public int calculCouronne() {
@@ -484,9 +484,9 @@ public class Plateau {
     }
 
     /**
-     * Methode permettant d'afficher en mode console le model.plateau
+     * Methode permettant d'afficher en mode console le plateau
      * @param modeAjout (true) pour afficher, (false) sinon
-     * @return Le model.plateau sous forme de chaîne de caractère
+     * @return Le plateau sous forme de chaîne de caractère
      * @see Case#getSeparateurPlateau
      * @see Case#affichagePlateau
      */
@@ -543,7 +543,7 @@ public class Plateau {
     }
 
     /**
-     * Methode affichant des possibilités de positionnement d'un domino sur le model.plateau
+     * Methode affichant des possibilités de positionnement d'un domino sur le plateau
      * @param domino domino concerné
      * @return La liste des possibilités de placement pour un domino
      * @see IDomino#getNbCases
@@ -603,7 +603,7 @@ public class Plateau {
     }
 
     /**
-     * Methode ajoutant une case dans le tableau du model.plateau
+     * Methode ajoutant une case dans le tableau du plateau
      * @param row Ligne de la case
      * @param col Colonne de la case
      * @param c Case à ajouter
@@ -633,8 +633,8 @@ public class Plateau {
     }
 
     /**
-     * Methode d'initialisation permettant de dire que le chateau est dans le model.plateau
-     * @param bool (true) le château est dans le model.plateau, (false) sinon
+     * Methode d'initialisation permettant de dire que le chateau est dans le plateau
+     * @param bool (true) le château est dans le plateau, (false) sinon
      */
     public void setTuileAjoutee(boolean bool){
         this.tuileAjoutee = bool;

@@ -19,7 +19,7 @@ public class Partie {
     private ModeJeu modeJeu;
 
     /**
-     * Constructeur d'une partie de model.jeu
+     * Constructeur d'une partie de jeu
      * @param joueurs Liste des joueurs qui jouent
      * @param deckDominos Liste des dominos utilisés
      * @param nbJoueur Paramètres de jeu
@@ -80,7 +80,7 @@ public class Partie {
      * @see NbJoueur#getNbDominosRetires
      */
     private void retirerDominos(){
-        // Récupération du nombre de domino à retirer e, fonction du nombre de joueur et du mode de model.jeu utilisé
+        // Récupération du nombre de domino à retirer e, fonction du nombre de joueur et du mode de jeu utilisé
         if(!modeJeu.getLibelle().equals("Grand Duel")) {
             int nbDominos = nbJoueur.getNbDominosRetires();
             Random rand = new Random();
@@ -141,7 +141,7 @@ public class Partie {
     }
 
     /**
-     * Methode retournant l'ordre de model.jeu des joueurs avec le domino pioché par le joueur
+     * Methode retournant l'ordre de jeu des joueurs avec le domino pioché par le joueur
      * @return L'ordre de jeu des joueurs avec le domino pioché par le joueur
      * @see Joueur#piocheContainsDomino
      */

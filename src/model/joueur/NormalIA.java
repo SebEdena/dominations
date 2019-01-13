@@ -1,5 +1,5 @@
 /**
- * Classe permettant de décrire une partie de model.jeu
+ * Classe permettant de décrire une partie de jeu
  * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
  * @version 1.0
  */
@@ -24,8 +24,8 @@ public class NormalIA extends AbstractIA{
      * Constructeur d'un IA normal
      * @param nom Pseudo de l'IA
      * @param couleur Roi attribué à l'IA
-     * @param nbJoueur Paramètre du model.jeu
-     * @param modeJeu Mode du model.jeu
+     * @param nbJoueur Paramètre du jeu
+     * @param modeJeu Mode du jeu
      * @param score Score de départ de l'IA
      * @throws DominoException
      * @throws TuileException
@@ -38,7 +38,7 @@ public class NormalIA extends AbstractIA{
     /**
      * Methode permettant de choisir un domino dans la pioche
      * @param cartesSurBoard Pioche contenant les dominos restants
-     * @param joueursAdverses Liste des joueurs en model.jeu
+     * @param joueursAdverses Liste des joueurs en jeu
      * @return Le numéro du domino à piocher
      * @throws DominoException
      * @throws TuileException
@@ -96,9 +96,9 @@ public class NormalIA extends AbstractIA{
     }
 
     /**
-     * Methode permettant de créer une nouvelle instance du model.plateau du model.plateau de l'IA
-     * @param plateau Instance du model.plateau de l'IA
-     * @return Le model.plateau cloné
+     * Methode permettant de créer une nouvelle instance du plateau du plateau de l'IA
+     * @param plateau Instance du plateau de l'IA
+     * @return Le plateau cloné
      * @see Plateau#getSize
      * @see Plateau#setCaseAt
      * @see Plateau#getCaseAt

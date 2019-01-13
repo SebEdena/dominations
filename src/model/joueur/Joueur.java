@@ -32,8 +32,8 @@ public class Joueur {
      * Constructeur d'un joueur
      * @param nom Pseudo du joueur
      * @param couleur Roi attribué au joueur
-     * @param nbJoueur Paramètre du model.jeu
-     * @param modeJeu Mode du model.jeu
+     * @param nbJoueur Paramètre du jeu
+     * @param modeJeu Mode du jeu
      * @param score Score de départ du joueur
      * @throws DominoException
      * @throws TuileException
@@ -194,8 +194,8 @@ public class Joueur {
     }
 
     /**
-     * Methode retournant le model.plateau du joueur
-     * @return Le model.plateau du joueur
+     * Methode retournant le plateau du joueur
+     * @return Le plateau du joueur
      */
     public Plateau getPlateau() {
         return plateau;
@@ -211,8 +211,8 @@ public class Joueur {
     }
 
     /**
-     * Methode affectant les scores du model.plateau du joueur, au joueur
-     * @param mode Mode du model.jeu joué
+     * Methode affectant les scores du plateau du joueur, au joueur
+     * @param mode Mode du jeu joué
      * @see #setScore
      * @see Plateau#calculPoint
      * @see #bonusPoint
@@ -228,8 +228,8 @@ public class Joueur {
     }
 
     /**
-     * Methode permettant de calculer les points bonus obtenu par le joueur en fonctin du mode de model.jeu joué
-     * @param mode Mode de model.jeu joué
+     * Methode permettant de calculer les points bonus obtenu par le joueur en fonction du mode de jeu joué
+     * @param mode Mode de jeu joué
      * @return Le nombre de points bonus
      */
     private int bonusPoint(ModeJeu mode)
@@ -273,7 +273,7 @@ public class Joueur {
     /**
      * Methode permettant de choisir un domino dans la pioche
      * @param cartesSurBoard Pioche contenant les dominos restants
-     * @param joueursAdverses Liste des joueurs en model.jeu
+     * @param joueursAdverses Liste des joueurs en jeu
      * @return Le numéro du domino à piocher
      * @throws DominoException
      * @throws TuileException

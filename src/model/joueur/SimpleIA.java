@@ -23,8 +23,8 @@ public class SimpleIA extends AbstractIA
      * Constructeur d'un IA simple
      * @param nom Pseudo de l'IA
      * @param couleur Roi attribué à l'IA
-     * @param nbJoueur Paramètre du model.jeu
-     * @param modeJeu Mode du model.jeu
+     * @param nbJoueur Paramètre du jeu
+     * @param modeJeu Mode du jeu
      * @param score Score de départ de l'IA
      * @throws DominoException
      * @throws TuileException
@@ -38,7 +38,7 @@ public class SimpleIA extends AbstractIA
     /**
      * Methode permettant de choisir un domino dans la pioche
      * @param cartesSurBoard Pioche contenant les dominos restants
-     * @param joueursAdverses Liste des joueurs en model.jeu
+     * @param joueursAdverses Liste des joueurs en jeu
      * @return Le numéro du domino à piocher
      */
     @Override
