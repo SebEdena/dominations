@@ -5,6 +5,8 @@
  */
 package plateau;
 
+import static jdk.nashorn.internal.objects.NativeString.toUpperCase;
+
 public enum Orientation {
 
     NORD(-1, 0, "N"), EST(0, 1, "E"), SUD(1, 0, "S"), OUEST(0, -1, "O");
@@ -62,6 +64,24 @@ public enum Orientation {
             case SUD: return OUEST;
             case OUEST: return NORD;
             default: return null;
+        }
+    }
+
+    public static Orientation getOrientationByText(String nom)
+    {
+        nom = nom.toUpperCase();
+        switch(nom)
+        {
+            case "N":
+                return NORD;
+            case "S" :
+                return SUD;
+            case "O" :
+                return OUEST;
+            case "E" :
+                return EST;
+            default :
+                return null;
         }
     }
 }
