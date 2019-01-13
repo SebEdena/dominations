@@ -20,12 +20,23 @@ public enum Terrain
     private String diminutif;
     private String hexColor;
 
+    /**
+     * Constructeur de la classe d'énumération du terrain
+     * @param libelle
+     * @param diminutif
+     * @param hexColor
+     */
     Terrain(String libelle, String diminutif, String hexColor){
         this.libelle = libelle;
         this.diminutif = diminutif;
         this.hexColor = hexColor;
     }
 
+    /**
+     * Methode retournant le terrain en fonction du nom du terrain
+     * @param nom Le nom du terrain
+     * @return Le terrain
+     */
     public static Terrain getTerrain(String nom)
     {
         for(int i = 0; i < values().length; i++){
@@ -36,12 +47,24 @@ public enum Terrain
         return null;
     }
 
+    /**
+     * Methode retournant le nom du terrain
+     * @return Le nom du terrain
+     */
     public String getLibelle() { return libelle; }
 
+    /**
+     * Methode retournant le diminutif du nom du terrain
+     * @return Le diminutif du nom du terrain
+     */
     public String getDiminutif(){
         return this.diminutif;
     }
 
+    /**
+     * Methode retournant la couleur du terrain (en héxadécimal)
+     * @return La couleur du terrain (en héxadécimal)
+     */
     public String getColor() { return hexColor; }
 }
 
