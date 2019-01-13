@@ -34,21 +34,18 @@ public enum Roi implements Serializable
         }
     }
 
-    public static Roi getRoiCol(String couleur)
-    {
-        switch(couleur)
-        {
-            case "Rose" :
-                return Rose;
-            case "Jaune" :
-                return Jaune;
-            case "Vert" :
-                return Vert;
-            case "Bleu" :
-                return Bleu;
-            default :
-                return null;
+    public static int getRoiIndex(Roi roi){
+        for(int i = 0; i < values().length; i++){
+            if(roi.equals(values()[i])) return i;
         }
+        return -1;
+    }
+
+    public static Roi getByColor(String color){
+        for(Roi r : values()){
+            if(r.getColor().equals(color)) return r;
+        }
+        return null;
     }
 
     public String getLibelle() {

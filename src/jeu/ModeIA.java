@@ -32,4 +32,11 @@ public enum ModeIA {
                 return null;
         }
     }
+
+    public static ModeIA getModeIA(String modeIA){
+        for(ModeIA m : values()){
+            if(m.getLibelle().equals(modeIA)) return m;
+        }
+        return null;
+    }
 }

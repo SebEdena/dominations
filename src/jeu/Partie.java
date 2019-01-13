@@ -40,6 +40,10 @@ public class Partie {
         return dominosRestants.size() == 0 && tirage == null; //vérifier que le tirage n'est pas vide aussi. c'est bien is null car à chaque fois on clear le tirage
     }
 
+    public boolean hasNextTurn(){
+        return dominosRestants.size() != 0;
+    }
+
     /**
      * Methode retournant les paramètres de jeu
      * @return Paramètres de jeu
@@ -217,11 +221,23 @@ public class Partie {
         return tirage;
     }
 
+    public NbJoueur getNbJoueur() {
+        return nbJoueur;
+    }
+
     /**
      * Methode retournant la liste des joueurs
      * @return La liste des joueurs
      */
     public List<Joueur> getJoueurs(){
         return joueurs;
+    }
+
+    public ModeJeu getModeJeu() {
+        return modeJeu;
+    }
+
+    public int getTotalRois(){
+        return nbJoueur.getNbJoueurs() * nbJoueur.getNbRoiParJoueur();
     }
 }
