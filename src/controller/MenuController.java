@@ -30,6 +30,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
+/**
+ * Classe du controlleur de la scène de menu
+ * @author Mathieu Valentin, Sébastien Viguier, Laurent Yu
+ * @version 1.0
+ */
 public class MenuController {
 
     private static final int GP_JOUEUR_LABEL_INDEX = 0;
@@ -72,6 +77,9 @@ public class MenuController {
 
     private List<GridPane> players;
 
+    /**
+     * Fonction appelée automatiquement à l'instantiation de la classe
+     */
     @FXML
     void initialize() {
         assert menuModeJeuCBox != null : "fx:id=\"menuModeJeuCBox\" was not injected: check your FXML file 'menu.fxml'.";
@@ -89,6 +97,9 @@ public class MenuController {
         initData();
     }
 
+    /**
+     * Initialise les données du controlleur
+     */
     private void initData(){
         initGameMode();
         initPlayerPanes();
@@ -99,9 +110,14 @@ public class MenuController {
         menuStartButton.setOnAction(event -> {
             validateForm();
         });
-        menuModeJeuCBox.valueProperty().addListener((observable, oldValue, newValue) -> updateNbJoueursCBox(oldValue, newValue));
+        menuModeJeuCBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            updateNbJoueursCBox(oldValue, newValue);
+        });
     }
 
+    /**
+     * Initialise les selecteurs de mode de jeu et de nombre de joueurs
+     */
     private void initGameMode(){
         for(ModeJeu modeJeu : ModeJeu.values()){
             Label label = new Label(modeJeu.getLibelle());
@@ -122,10 +138,15 @@ public class MenuController {
         menuNbJoueursCBox.getValidators().add(new RequiredFieldValidator("Le champ est obligatoire"));
     }
 
-    private void fillNbJoueursCBox(List<NbJoueur> listeModesJeuAcceptes, NbJoueur selectedItem) {
+    /**
+     * Initialise la liste des options dans le sélecteur de nombre de joueurs
+     * @param listeNbJoueursAcceptes la liste des nombres de joueurs acceptés
+     * @param selectedItem l'item à sélectionner
+     */
+    private void fillNbJoueursCBox(List<NbJoueur> listeNbJoueursAcceptes, NbJoueur selectedItem) {
         Label selectedOption = null;
         menuNbJoueursCBox.getItems().clear();
-        for(NbJoueur nbJoueur : listeModesJeuAcceptes) {
+        for(NbJoueur nbJoueur : listeNbJoueursAcceptes) {
             Label label = new Label(nbJoueur.getNbJoueurs() + " Joueurs");
             label.setUserData(nbJoueur.getNbJoueurs());
             if(selectedItem != null && nbJoueur.equals(selectedItem)) selectedOption = label;
@@ -134,6 +155,9 @@ public class MenuController {
         if(selectedOption != null) menuNbJoueursCBox.getSelectionModel().select(selectedOption);
     }
 
+    /**
+     * Initialise le sous-menu d'option pour les joueurs
+     */
     private void initPlayerPanes() {
         int colorIndex = 0;
         for(GridPane player : players){
@@ -175,6 +199,11 @@ public class MenuController {
         }
     }
 
+    /**
+     * Active ou désactive le sous-menu pour un joueur
+     * @param player l'élément graphique du sous-menu
+     * @param active si le sous-menu doit être activé ou désactivé
+     */
     private void togglePlayerPane(GridPane player, boolean active){
         if(player.getParent().equals(menuPlayerPanesContainer)){
             for (Node child : player.getChildren()){
@@ -187,6 +216,11 @@ public class MenuController {
         }
     }
 
+    /**
+     * Met à jour la disponibilté du sélecteur de difficulté d'IA selon que le bouton d'IA soit activé ou non
+     * @param sourceButton le bouton source
+     * @param player le sous-menu du joueur concerné
+     */
     private void updateIADifficulteStatut(Toggle sourceButton, GridPane player){
         Node targetCombo = player.getChildren().get(GP_IA_DIFFICULTE_INDEX);
         if(sourceButton.isSelected()){
@@ -196,6 +230,11 @@ public class MenuController {
         }
     }
 
+    /**
+     * Met à jour le nb de joueurs sélectionné en fonction des changements du mode de jeu
+     * @param oldValue l'ancien mode de jeu
+     * @param newValue le nouveau mode de jeu
+     */
     private void updateNbJoueursCBox(Label oldValue, Label newValue){
         if(newValue != null){
             NbJoueur selectedItem = null;
@@ -213,6 +252,9 @@ public class MenuController {
         }
     }
 
+    /**
+     * Réinitialise le formulaire complet
+     */
     private void resetForm(){
         menuModeJeuCBox.getSelectionModel().clearSelection();
         menuNbJoueursCBox.getSelectionModel().clearSelection();
@@ -221,6 +263,10 @@ public class MenuController {
         }
     }
 
+    /**
+     * Réinitialise le sous-menu d'un joueur
+     * @param player le sous-menu d'un joueur
+     */
     private void resetPlayerPane(GridPane player){
         if(player.getParent().equals(menuPlayerPanesContainer)){
             List<Node> child = player.getChildren();
@@ -232,6 +278,9 @@ public class MenuController {
         }
     }
 
+    /**
+     * Essaie de valider le formulaire et de lancer la partie si le formulaire est correct
+     */
     private void validateForm() {
         boolean validated = true;
         validated = validated & menuModeJeuCBox.validate();
@@ -249,6 +298,9 @@ public class MenuController {
         }
     }
 
+    /**
+     * Lance un partie
+     */
     private void lancerPartie(){
         List<IDomino> deck = null;
         try {
