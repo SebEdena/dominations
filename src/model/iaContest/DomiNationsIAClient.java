@@ -3,12 +3,16 @@ package model.iaContest;
 import grooptown.ia.PlayerConnector;
 import grooptown.ia.model.AvailableMoves;
 import grooptown.ia.model.GameState;
+import grooptown.ia.model.Move;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class DomiNationsIAClient {
 
-    public static final String gameUUID = "ad740105-9850-449a-9fdd-89dd0ee6d2ab";
+    public static final String gameUUID = "79341723-da4c-483c-a2de-dd29a08196ec";
     public static final String baseUrl = "https://domi-nation.grooptown.com";
     public static final String playerName = "IA_2";
 
@@ -19,14 +23,17 @@ public class DomiNationsIAClient {
         playerConnector = new PlayerConnector(gameUUID);
         playerConnector.joinGame(playerName);
 
+        int playerNumber = -1;
         GameState g = null;
 
         do {
             waitUntilItsMyTurn();
             g = PlayerConnector.getGameState(gameUUID);
+            if(playerNumber < 0) playerNumber = Utils.getPlayerNumber(g, playerName);
             if(g.getCurrentPlayer() != null && g.getCurrentPlayer().getName().equals(playerConnector.getPlayer().getName())){
-                AvailableMoves availableMoves = playerConnector.getAvailableMove();
-                System.out.println(availableMoves.getMoves()[0]);
+                List<Move> availableMoves = Arrays.asList(playerConnector.getAvailableMove().getMoves());
+                System.out.println(availableMoves);
+
                 playerConnector.playMove(0);
             }
         } while (!g.isGameOver());
