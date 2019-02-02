@@ -12,7 +12,7 @@ import java.util.List;
 
 public class DomiNationsIAClient {
 
-    public static final String gameUUID = "79341723-da4c-483c-a2de-dd29a08196ec";
+    public static final String gameUUID = "14ca3028-afa2-4800-bba2-6aa98fa80087";
     public static final String baseUrl = "https://domi-nation.grooptown.com";
     public static final String playerName = "IA_2";
 
@@ -27,24 +27,33 @@ public class DomiNationsIAClient {
         GameState g = null;
 
         do {
-            waitUntilItsMyTurn();
-            g = PlayerConnector.getGameState(gameUUID);
-            if(playerNumber < 0) playerNumber = Utils.getPlayerNumber(g, playerName);
-            if(g.getCurrentPlayer() != null && g.getCurrentPlayer().getName().equals(playerConnector.getPlayer().getName())){
-                List<Move> availableMoves = Arrays.asList(playerConnector.getAvailableMove().getMoves());
-                System.out.println(availableMoves);
-
-                playerConnector.playMove(0);
+            if(waitUntilItsMyTurn()){
+                g = PlayerConnector.getGameState(gameUUID);
+                if(playerNumber < 0) playerNumber = Utils.getPlayerNumber(g, playerName);
+                if(g.getCurrentPlayer() != null && g.getCurrentPlayer().getName().equals(playerConnector.getPlayer().getName())){
+                    List<Move> availableMoves = Arrays.asList(playerConnector.getAvailableMove().getMoves());
+                    System.out.println("TOUR : " + g.getTurn());
+                    Plateau p = Plateau.fromKingdom(g.getKingdoms()[playerNumber]);
+                    System.out.println("CASES : " + p.getCases().size());
+                    if(availableMoves.get(0).getPlacedDomino() != null) p.addPlacedDomino(availableMoves.get(0).getPlacedDomino());
+                    System.out.println("SCORE : " + Score.getTotalScore(p));
+                    playerConnector.playMove(0);
+                    System.out.println();
+                }
+            } else{
+                System.out.println("Game Over.");
+                break;
             }
-        } while (!g.isGameOver());
+        } while (true);
     }
 
-    public static void waitUntilItsMyTurn(){
+    public static boolean waitUntilItsMyTurn(){
         while (true) {
             try {
                 GameState gameState = PlayerConnector.getGameState(gameUUID);
-                if (gameState.getCurrentPlayer().getName().equals(playerConnector.getPlayer().getName())) {
-                    return;
+                if(gameState.isGameOver()) return false;
+                if (gameState.getCurrentPlayer() != null && gameState.getCurrentPlayer().getName().equals(playerConnector.getPlayer().getName())) {
+                    return true;
                 }
             } catch (HttpClientErrorException e) {
                 if (e.getStatusCode().equals(HttpStatus.NOT_FOUND)) {

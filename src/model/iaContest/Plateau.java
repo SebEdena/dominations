@@ -1,9 +1,6 @@
 package model.iaContest;
 
-import grooptown.ia.model.Kingdom;
-import grooptown.ia.model.PlacedDomino;
-import grooptown.ia.model.PlacedTiles;
-import grooptown.ia.model.Tile;
+import grooptown.ia.model.*;
 import model.plateau.Case;
 import model.plateau.Orientation;
 import model.plateau.Terrain;
@@ -14,11 +11,12 @@ import java.util.List;
 
 public class Plateau {
 
-    private static final int NB_COL_LIG = 9, DECAL_TABLEAU = 4;
+    private static final int NB_COL_LIG = 9, DECAL_TABLEAU = 4, FULL_KINGDOM = 5;
     private int minX, minY, maxX, maxY;
     private int[] tmpBounds;
     private Case[][] tableau;
-    private List<Tile> tiles;
+    private List<Case> cases;
+    private Position castlePosition;
     private PlacedDomino placedDomino = null;
 
     private Plateau(){
@@ -27,7 +25,9 @@ public class Plateau {
         minY = DECAL_TABLEAU;
         maxY = DECAL_TABLEAU;
         tmpBounds = new int[4];
-        tiles = new ArrayList<>();
+        cases = new ArrayList<>();
+        castlePosition = new Position();
+        tableau = new Case[NB_COL_LIG][NB_COL_LIG];
     }
 
     public static Plateau fromKingdom(Kingdom k){
@@ -44,25 +44,52 @@ public class Plateau {
         return DECAL_TABLEAU;
     }
 
+    public static int getFullKingdom() {
+        return FULL_KINGDOM;
+    }
+
     public Case[][] getTableau() {
         return tableau;
     }
 
-    public List<Tile> getTiles() {
-        return tiles;
+    public List<Case> getCases() {
+        return cases;
     }
 
     public PlacedDomino getPlacedDomino() {
         return placedDomino;
     }
 
+    public int getMinX() {
+        return minX;
+    }
+
+    public int getMinY() {
+        return minY;
+    }
+
+    public int getMaxX() {
+        return maxX;
+    }
+
+    public int getMaxY() {
+        return maxY;
+    }
+
+    public Position getCastlePosition() {
+        return castlePosition;
+    }
+
     private void importPlateau(Kingdom k) {
-        tableau = new Case[NB_COL_LIG][NB_COL_LIG];
         for(PlacedTiles pl : k.getPlacedTiles()){
-            tiles.add(pl.getTile());
-            tableau[pl.getPosition().getRow() + DECAL_TABLEAU][pl.getPosition().getCol() + DECAL_TABLEAU] =
-                    new Case(pl.getTile().getCrowns(), Terrain.getTerrainEN(pl.getTile().getTerrain()));
+            Case caseDom = new Case(pl.getTile().getCrowns(), Terrain.getTerrainEN(pl.getTile().getTerrain()));
+            cases.add(caseDom);
+            tableau[pl.getPosition().getRow() + DECAL_TABLEAU][pl.getPosition().getCol() + DECAL_TABLEAU] = caseDom;
             updateBounds(pl.getPosition().getRow() + DECAL_TABLEAU, pl.getPosition().getCol() + DECAL_TABLEAU);
+            if(caseDom.getTerrain().equals(Terrain.CHATEAU)){
+                castlePosition.setRow(pl.getPosition().getRow() + DECAL_TABLEAU);
+                castlePosition.setCol(pl.getPosition().getCol() + DECAL_TABLEAU);
+            }
         }
     }
 
@@ -73,13 +100,16 @@ public class Plateau {
         tmpBounds[2] = minY;
         tmpBounds[3] = maxY;
 
-        tableau[placedDomino.getTile1Position().getRow() + DECAL_TABLEAU][placedDomino.getTile1Position().getCol() + DECAL_TABLEAU] =
-                new Case(placedDomino.getDomino().getTile1().getCrowns(), Terrain.getTerrainEN(placedDomino.getDomino().getTile1().getTerrain()));
-        updateBounds(placedDomino.getTile1Position().getRow() + DECAL_TABLEAU, placedDomino.getTile1Position().getCol() + DECAL_TABLEAU);
+        Case case1 = new Case(placedDomino.getDomino().getTile1().getCrowns(), Terrain.getTerrainEN(placedDomino.getDomino().getTile1().getTerrain()));
+        Case case2 = new Case(placedDomino.getDomino().getTile2().getCrowns(), Terrain.getTerrainEN(placedDomino.getDomino().getTile2().getTerrain()));
 
-        tableau[placedDomino.getTile2Position().getRow() + DECAL_TABLEAU][placedDomino.getTile2Position().getCol() + DECAL_TABLEAU] =
-                new Case(placedDomino.getDomino().getTile2().getCrowns(), Terrain.getTerrainEN(placedDomino.getDomino().getTile2().getTerrain()));
+        tableau[placedDomino.getTile1Position().getRow() + DECAL_TABLEAU][placedDomino.getTile1Position().getCol() + DECAL_TABLEAU] = case1;
+        updateBounds(placedDomino.getTile1Position().getRow() + DECAL_TABLEAU, placedDomino.getTile1Position().getCol() + DECAL_TABLEAU);
+        cases.add(case1);
+
+        tableau[placedDomino.getTile2Position().getRow() + DECAL_TABLEAU][placedDomino.getTile2Position().getCol() + DECAL_TABLEAU] = case2;
         updateBounds(placedDomino.getTile2Position().getRow() + DECAL_TABLEAU, placedDomino.getTile2Position().getCol() + DECAL_TABLEAU);
+        cases.add(case2);
     }
 
     public void resetPlacedDomino(){
@@ -90,6 +120,7 @@ public class Plateau {
         maxX = tmpBounds[1];
         minY = tmpBounds[2];
         maxY = tmpBounds[3];
+        cases = cases.subList(0, cases.size() - 2);
     }
 
     public int getXLength() {
