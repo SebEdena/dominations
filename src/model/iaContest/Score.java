@@ -79,28 +79,39 @@ public class Score {
 
     public static int getCrownScore(Plateau p){
         int crownScore = 0;
-        PlacedDomino pld = p.getPlacedDomino();
-        for(Tile t : p.getTiles()){
-            crownScore += t.getCrowns();
-        }
-        if(pld != null){
-            crownScore += pld.getDomino().getTile1().getCrowns() + pld.getDomino().getTile2().getCrowns();
+        for(Case c : p.getCases()){
+            crownScore += c.getNbCouronne();
         }
         return crownScore;
     }
 
     public static int getCentralCastleBonus(Plateau p){
-        if(p.getXLength() >= 4 || p.getYLength() >= 4){
-            int x = p.getXLength(), y = p.getYLength();
-            int xOff = x - 3, yOff = y - 3;
-            return 0;
-        }else{
+        int xOff = Math.max(p.getXLength() - 3, 0);
+        int yOff = Math.max(p.getYLength() - 3, 0);
+        int xMin = p.getMinX();
+        int xMax = p.getMaxX();
+        int yMin = p.getMinY();
+        int yMax = p.getMaxY();
+        int x = p.getCastlePosition().getRow();
+        int y = p.getCastlePosition().getCol();
+        boolean xCenter = false, yCenter = false;
+
+        if(x >= xMin + xOff && x <= xMax - xOff) xCenter = true;
+        if(y >= yMin + yOff && y <= yMax - yOff) yCenter = true;
+
+        if(xCenter && yCenter){
             return 10;
+        }else{
+            return 0;
         }
     }
 
     public static int getFullKingdomBonus(Plateau p){
-        return 0;
+        if(p.getCases().size() == Plateau.getFullKingdom() * Plateau.getFullKingdom()){
+            return 5;
+        }else{
+            return 0;
+        }
     }
 
     private static void rechercheCaseSimilaire(Plateau p, int x, int y, List<Case> pileCasesVisitees, Case caseTemoin, List<Case> casesAdjacentes)

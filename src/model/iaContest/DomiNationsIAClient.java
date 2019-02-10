@@ -27,24 +27,33 @@ public class DomiNationsIAClient {
         GameState g = null;
 
         do {
-            waitUntilItsMyTurn();
-            g = PlayerConnector.getGameState(gameUUID);
-            if(playerNumber < 0) playerNumber = Utils.getPlayerNumber(g, playerName);
-            if(g.getCurrentPlayer() != null && g.getCurrentPlayer().getName().equals(playerConnector.getPlayer().getName())){
-                List<Move> availableMoves = Arrays.asList(playerConnector.getAvailableMove().getMoves());
-                System.out.println(availableMoves);
-
-                playerConnector.playMove(0);
+            if(waitUntilItsMyTurn()){
+                g = PlayerConnector.getGameState(gameUUID);
+                if(playerNumber < 0) playerNumber = Utils.getPlayerNumber(g, playerName);
+                if(g.getCurrentPlayer() != null && g.getCurrentPlayer().getName().equals(playerConnector.getPlayer().getName())){
+                    List<Move> availableMoves = Arrays.asList(playerConnector.getAvailableMove().getMoves());
+                    System.out.println("TOUR : " + g.getTurn());
+                    Plateau p = Plateau.fromKingdom(g.getKingdoms()[playerNumber]);
+                    System.out.println("CASES : " + p.getCases().size());
+                    if(availableMoves.get(0).getPlacedDomino() != null) p.addPlacedDomino(availableMoves.get(0).getPlacedDomino());
+                    System.out.println("SCORE : " + Score.getTotalScore(p));
+                    playerConnector.playMove(0);
+                    System.out.println();
+                }
+            } else{
+                System.out.println("Game Over.");
+                break;
             }
-        } while (!g.isGameOver());
+        } while (true);
     }
 
-    public static void waitUntilItsMyTurn(){
+    public static boolean waitUntilItsMyTurn(){
         while (true) {
             try {
                 GameState gameState = PlayerConnector.getGameState(gameUUID);
-                if (gameState.getCurrentPlayer().getName().equals(playerConnector.getPlayer().getName())) {
-                    return;
+                if(gameState.isGameOver()) return false;
+                if (gameState.getCurrentPlayer() != null && gameState.getCurrentPlayer().getName().equals(playerConnector.getPlayer().getName())) {
+                    return true;
                 }
             } catch (HttpClientErrorException e) {
                 if (e.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
