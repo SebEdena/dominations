@@ -79,12 +79,8 @@ public class Score {
 
     public static int getCrownScore(Plateau p){
         int crownScore = 0;
-        PlacedDomino pld = p.getPlacedDomino();
         for(Case c : p.getCases()){
             crownScore += c.getNbCouronne();
-        }
-        if(pld != null){
-            crownScore += pld.getDomino().getTile1().getCrowns() + pld.getDomino().getTile2().getCrowns();
         }
         return crownScore;
     }
