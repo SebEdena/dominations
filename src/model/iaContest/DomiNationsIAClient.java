@@ -12,7 +12,7 @@ import java.util.List;
 
 public class DomiNationsIAClient {
 
-    public static final String gameUUID = "2b911dd8-40c4-4ddb-967c-58381f8d1c2a";
+    public static final String gameUUID = "fc17596e-8d71-4974-93d6-5e89bf365164";
     public static final String baseUrl = "https://domi-nation.grooptown.com";
     public static final String playerName = "IA_2";
 
