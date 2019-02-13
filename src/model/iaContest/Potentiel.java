@@ -56,4 +56,9 @@ public class Potentiel
     public void setPotentiel(int potentiel) {
         this.potentiel = potentiel;
     }
+
+    @Override
+    public String toString() {
+        return "[" + terrain.getLibelle() + " | Couronnes : " + nbCouronne + " | Cases : " + nbCases + "]";
+    }
 }

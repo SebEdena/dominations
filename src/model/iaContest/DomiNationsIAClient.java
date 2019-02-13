@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class DomiNationsIAClient {
 
-    public static final String gameUUID = "0e1b501c-985c-4231-b940-6b753805cdc2";
+    public static final String gameUUID = "8563bb04-b1b8-4418-9f6e-f3218c6c9fc5";
     public static final String baseUrl = "https://domi-nation.grooptown.com";
     public static final String playerName = "IA_2";
 
@@ -36,6 +36,8 @@ public class DomiNationsIAClient {
                     List<Move> availableMoves = Arrays.asList(playerConnector.getAvailableMove().getMoves());
                     List<Move> copyMoves = new ArrayList<>(availableMoves);
                     Plateau p = Plateau.fromKingdom(g.getKingdoms()[playerNumber]);
+                    List<Potentiel> potentielList = Utils.getPotentiels(p);
+                    System.out.println(potentielList);
                     PlacedDomino tmpPlacedDomino = null;
 
                     //Filtrage par les scores plateau
