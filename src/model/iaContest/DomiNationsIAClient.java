@@ -36,9 +36,10 @@ public class DomiNationsIAClient {
                     List<Move> availableMoves = Arrays.asList(playerConnector.getAvailableMove().getMoves());
                     List<Move> copyMoves = new ArrayList<>(availableMoves);
                     Plateau p = Plateau.fromKingdom(g.getKingdoms()[playerNumber]);
+                    PlacedDomino tmpPlacedDomino = null;
+
                     List<Potentiel> potentielList = Utils.getPotentiels(p);
                     System.out.println(potentielList);
-                    PlacedDomino tmpPlacedDomino = null;
 
                     //Filtrage par les scores plateau
                     copyMoves = copyMoves.stream().sorted((o1, o2) -> Utils.sortByScore(p, o1, o2)).collect(Collectors.toList());
