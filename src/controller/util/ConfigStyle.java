@@ -25,7 +25,7 @@ public class ConfigStyle {
     private final double resizeCrownLimit = 50;
     private final double resizedCrownSize = 40;
     private final double offsetMaximizedDialog = 100;
-    private final long standardWaitTime = 500;
+    private final long standardWaitTime = 50;
     private final long technicalWaitTime = 100;
 
     private Map<String, Background> correspondanceStyleBackground;
