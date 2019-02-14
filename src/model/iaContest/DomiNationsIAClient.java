@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class DomiNationsIAClient {
 
-    public static final String gameUUID = "fc17596e-8d71-4974-93d6-5e89bf365164";
+    public static final String gameUUID = "c0aeb7b1-b633-4c8a-bda2-3fc8b450ca55";
     public static final String baseUrl = "https://domi-nation.grooptown.com";
     public static final String playerName = "IA_2";
 
