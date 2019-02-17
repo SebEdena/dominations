@@ -105,7 +105,7 @@ public class Utils {
                         couronne = couronne + c.getNbCouronne();
                     }
                     Terrain terrain = caseTemoin.getTerrain();
-                    listePotentiels.add(new Potentiel(terrain,couronne,compteurCase));
+                    listePotentiels.add(new Potentiel(terrain,couronne,compteurCase,couronne*compteurCase));
                 }
             }
         }
@@ -134,5 +134,12 @@ public class Utils {
                         pileCasesVisitees,tableau[x + o.getOffsetX()][y + o.getOffsetY()],casesAdjacentes);
             }
         }
+    }
+
+    public static int getSumPotentiel(List<Potentiel> liste){
+        int sum = 0;
+        for(Potentiel p : liste)
+            sum += p.getPotentiel();
+        return sum;
     }
 }

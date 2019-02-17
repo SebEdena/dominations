@@ -9,12 +9,12 @@ public class Potentiel
     private int nbCases;
     private int potentiel;
 
-    public Potentiel(Terrain terrain)
+    public Potentiel(Terrain terrain, int couronne, int compteurCase, int value)
     {
         nbCouronne = 0;
         nbCases = 0;
         this.terrain = terrain;
-        potentiel = 0;
+        potentiel = value;
     }
 
     public Potentiel(Terrain terrain, int nbCou, int nbCas)
