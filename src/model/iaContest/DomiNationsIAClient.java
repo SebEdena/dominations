@@ -1,9 +1,7 @@
 package model.iaContest;
 
 import grooptown.ia.PlayerConnector;
-import grooptown.ia.model.GameState;
-import grooptown.ia.model.Move;
-import grooptown.ia.model.PlacedDomino;
+import grooptown.ia.model.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -14,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class DomiNationsIAClient {
 
-    public static final String gameUUID = "c0aeb7b1-b633-4c8a-bda2-3fc8b450ca55";
+    public static final String gameUUID = "c9f90eb4-1466-481b-84be-a008a5247c6b";
     public static final String baseUrl = "https://domi-nation.grooptown.com";
     public static final String playerName = "IA_2";
 
@@ -22,6 +20,7 @@ public class DomiNationsIAClient {
 
     public static void main(String[] args) {
         PlayerConnector.baseUrl = baseUrl;
+
         playerConnector = new PlayerConnector(gameUUID);
         playerConnector.joinGame(playerName);
 
@@ -37,9 +36,6 @@ public class DomiNationsIAClient {
                     List<Move> copyMoves = new ArrayList<>(availableMoves);
                     Plateau p = Plateau.fromKingdom(g.getKingdoms()[playerNumber]);
                     PlacedDomino tmpPlacedDomino = null;
-
-                    List<Potentiel> potentielList = Utils.getPotentiels(p);
-                    System.out.println(potentielList);
 
                     //Filtrage par les scores plateau
                     copyMoves = copyMoves.stream().sorted((o1, o2) -> Utils.sortByScore(p, o1, o2)).collect(Collectors.toList());
@@ -64,6 +60,12 @@ public class DomiNationsIAClient {
                     int bestCrowns = Score.getCrownScore(p);
                     if(tmpPlacedDomino != null) p.resetPlacedDomino();
                     copyMoves = copyMoves.stream().filter(move -> Utils.filterByHighestCrowns(p, move, bestCrowns)).collect(Collectors.toList());
+
+                    // Récupération des dominos restants
+                    List<DominoesElement> dominos = Arrays.asList(g.getCurrentDraft().getDominoes());
+                    System.out.println(dominos);
+
+                    // Calcul du potentiel de l'autre joueur
 
                     System.out.println("TOUR : " + g.getTurn());
                     System.out.println("BEST SCORE : " + bestScore);
