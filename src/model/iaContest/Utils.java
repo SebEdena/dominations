@@ -1,6 +1,7 @@
 package model.iaContest;
 
 import grooptown.ia.model.*;
+import javafx.util.Pair;
 import model.plateau.Case;
 import model.plateau.Orientation;
 import model.plateau.Terrain;
@@ -44,7 +45,7 @@ public class Utils {
         if(move.getPlacedDomino() != null) p.addPlacedDomino(move.getPlacedDomino());
         int moveScore = Score.getTotalScore(p);
         if(move.getPlacedDomino() != null) p.resetPlacedDomino();
-        System.out.print(moveScore+", ");
+
         return moveScore == bestScore;
     }
 
@@ -86,9 +87,9 @@ public class Utils {
         return moveScore == bestScore;
     }
 
-    public static ArrayList<Potentiel> getPotentiels(Plateau p, Domino d)
+    private static List<Potentiel> getPotentiels(Plateau p, Domino d)
     {
-        ArrayList<Potentiel> listePotentiels = new ArrayList<Potentiel>();
+        List<Potentiel> listePotentiels = new ArrayList<Potentiel>();
         Case[][] tableau = p.getTableau();
         List<Case> pileCasesVisitees = new ArrayList<Case>();
         int NB_COL_LIG = Plateau.getNbColLig();
@@ -157,5 +158,36 @@ public class Utils {
         for(Potentiel p : liste)
             sum += p.getPotentiel();
         return sum;
+    }
+
+    public static List<Pair<Integer, Integer>> getListScorePotentiel(Plateau p, List<DominoesElement> dominos) {
+        List<Pair<Integer, Integer>> liste = new ArrayList<>();
+        int potentielAvant = getSumPotentiel(getPotentiels(p,null));
+        int score = Score.getTotalScore(p);
+        for (DominoesElement d : dominos) {
+            if(d.getPlayer() == null){
+                liste.add(new Pair<>(d.getDomino().getNumber(),score + ( getSumPotentiel(getPotentiels(p,d.getDomino())) - potentielAvant)));
+            }
+        }
+        return liste;
+    }
+
+    public static boolean peutJouer(String name, List<DominoesElement> dominos) {
+        int nbDominos = 0;
+        for (DominoesElement d : dominos) {
+            if(d.getPlayer().getName().equals(name)){
+                nbDominos++;
+            }
+        }
+        return nbDominos < 2;
+    }
+
+    public static List<Integer> getListeDominoMostValuable(List<Move> copyMoves) {
+        List<Integer> liste = new ArrayList<>();
+        for (Move m : copyMoves){
+            if(!liste.contains(m.getChosenDomino().getNumber()))
+                liste.add(m.getChosenDomino().getNumber());
+        }
+        return liste;
     }
 }
