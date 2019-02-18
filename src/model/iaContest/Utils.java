@@ -46,6 +46,7 @@ public class Utils {
         int moveScore = Score.getTotalScore(p);
         if(move.getPlacedDomino() != null) p.resetPlacedDomino();
 
+        System.out.print(moveScore+", ");
         return moveScore == bestScore;
     }
 
@@ -57,6 +58,7 @@ public class Utils {
         if(m2.getPlacedDomino() != null) p.addPlacedDomino(m2.getPlacedDomino());
         int m2Score = Score.getDomainScore(p);
         if(m1.getPlacedDomino() != null) p.resetPlacedDomino();
+
 
         return m2Score - m1Score;
     }
@@ -84,6 +86,7 @@ public class Utils {
         if(move.getPlacedDomino() != null) p.addPlacedDomino(move.getPlacedDomino());
         int moveScore = Score.getCrownScore(p);
         if(move.getPlacedDomino() != null) p.resetPlacedDomino();
+        System.out.print(moveScore+", ");
         return moveScore == bestScore;
     }
 
@@ -175,8 +178,9 @@ public class Utils {
     public static boolean peutJouer(String name, List<DominoesElement> dominos) {
         int nbDominos = 0;
         for (DominoesElement d : dominos) {
-            if(d.getPlayer().getName().equals(name)){
-                nbDominos++;
+            if(d.getPlayer() != null)
+                if(d.getPlayer().getName().equals(name)){
+                    nbDominos++;
             }
         }
         return nbDominos < 2;
@@ -185,9 +189,27 @@ public class Utils {
     public static List<Integer> getListeDominoMostValuable(List<Move> copyMoves) {
         List<Integer> liste = new ArrayList<>();
         for (Move m : copyMoves){
-            if(!liste.contains(m.getChosenDomino().getNumber()))
-                liste.add(m.getChosenDomino().getNumber());
+            if(m.getChosenDomino() != null)
+                if(!liste.contains(m.getChosenDomino().getNumber()))
+                    liste.add(m.getChosenDomino().getNumber());
         }
         return liste;
+    }
+
+    public static int choisirDomino(List<Move> copyMoves, List<Pair<Integer, Integer>> finalSumPotentials) {
+        List<Integer> dominoPreferable = getListeDominoMostValuable(copyMoves);
+        for (int i = 0; i < finalSumPotentials.size(); i++) {
+            if(dominoPreferable.contains(finalSumPotentials.get(i).getKey()))
+                return finalSumPotentials.get(i).getKey();
+        }
+        return dominoPreferable.get(0);
+    }
+
+    public static int getMove(int dominoAJouer, List<Move> copyMoves) {
+        for (Move m : copyMoves) {
+            if(m.getChosenDomino() != null && m.getChosenDomino().getNumber() == dominoAJouer)
+                return m.getNumber();
+        }
+        return 0;
     }
 }

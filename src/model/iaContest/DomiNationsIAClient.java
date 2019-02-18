@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class DomiNationsIAClient {
 
-    public static final String gameUUID = "3bcfa637-0aed-451f-ac84-49d6484ff72e";
+    public static final String gameUUID = "1f16f20d-3b91-45ff-8565-1e5c2b123c4f";
     public static final String baseUrl = "https://domi-nation.grooptown.com";
     public static final String playerName = "IA_2";
 
@@ -38,31 +38,11 @@ public class DomiNationsIAClient {
                 if(otherPlayerNumber < 0) otherPlayerNumber = Utils.getOtherPlayer(g, playerName);
                 if(g.getCurrentPlayer() != null && g.getCurrentPlayer().getName().equals(playerConnector.getPlayer().getName())){
                     List<Move> availableMoves = Arrays.asList(playerConnector.getAvailableMove().getMoves());
+
                     List<Move> copyMoves = new ArrayList<>(availableMoves);
                     Plateau p = Plateau.fromKingdom(g.getKingdoms()[playerNumber]);
                     Plateau pOther = Plateau.fromKingdom(g.getKingdoms()[otherPlayerNumber]);
                     PlacedDomino tmpPlacedDomino = null;
-
-                    // Récupération des dominos restants
-                    List<DominoesElement> dominos = Arrays.asList(g.getCurrentDraft().getDominoes());
-
-                    // Le joueur adverse peut jouer ?
-                    boolean peutJouer = Utils.peutJouer(g.getKingdoms()[otherPlayerNumber].getPlayer().getName(), dominos);
-                    List<Pair<Integer,Integer>> finalSumPotentials = null;
-                    if(peutJouer){
-                        // Création des listes de potentiels
-                        finalSumPotentials = new ArrayList<>();
-                        List<Pair<Integer, Integer>> myPotentials = Utils.getListScorePotentiel(p, dominos);
-                        List<Pair<Integer, Integer>> hisPotentials = Utils.getListScorePotentiel(pOther, dominos);
-                        for (int i = 0; i < myPotentials.size(); i++) {
-                            finalSumPotentials.add(new Pair<>(myPotentials.get(i).getKey(),myPotentials.get(i).getValue()+hisPotentials.get(i).getValue()));
-                        }
-                    } else {
-                        finalSumPotentials = Utils.getListScorePotentiel(p, dominos);
-                    }
-
-                    // Comparaison de potentiel
-                    finalSumPotentials.sort((o1, o2) -> o2.getValue()-o1.getValue());
 
                     //Filtrage par les scores plateau
                     copyMoves = copyMoves.stream().sorted((o1, o2) -> Utils.sortByScore(p, o1, o2)).collect(Collectors.toList());
@@ -71,6 +51,7 @@ public class DomiNationsIAClient {
                     int bestScore = Score.getTotalScore(p);
                     if(tmpPlacedDomino != null) p.resetPlacedDomino();
                     copyMoves = copyMoves.stream().filter(move -> Utils.filterByBestScore(p, move, bestScore)).collect(Collectors.toList());
+                    System.out.println();
 
                     //Filtrage par les plus gros domaines
                     copyMoves = copyMoves.stream().sorted((o1, o2) -> Utils.sortByBigDomain(p, o1, o2)).collect(Collectors.toList());
@@ -87,14 +68,36 @@ public class DomiNationsIAClient {
                     int bestCrowns = Score.getCrownScore(p);
                     if(tmpPlacedDomino != null) p.resetPlacedDomino();
                     copyMoves = copyMoves.stream().filter(move -> Utils.filterByHighestCrowns(p, move, bestCrowns)).collect(Collectors.toList());
+                    System.out.println();
 
-                    // Choix du domino
-                    List<Integer> dominoPreferable = Utils.getListeDominoMostValuable(copyMoves);
-                    boolean isChosen = false;
-                    if(peutJouer){
+                    // Partie Potentiel
+                    if(playerName=="IA_2"){
+                        if(availableMoves.get(0) != null && availableMoves.get(0).getChosenDomino() != null){
+                            // Récupération des dominos restants
+                            List<DominoesElement> dominos = Arrays.asList(g.getCurrentDraft().getDominoes());
 
-                    } else {
+                            // Le joueur adverse peut jouer ?
+                            boolean peutJouer = Utils.peutJouer(g.getKingdoms()[otherPlayerNumber].getPlayer().getName(), dominos);
+                            List<Pair<Integer,Integer>> finalSumPotentials = null;
+                            if(peutJouer){
+                                // Création des listes de potentiels
+                                finalSumPotentials = new ArrayList<>();
+                                List<Pair<Integer, Integer>> myPotentials = Utils.getListScorePotentiel(p, dominos);
+                                List<Pair<Integer, Integer>> hisPotentials = Utils.getListScorePotentiel(pOther, dominos);
+                                for (int i = 0; i < myPotentials.size(); i++) {
+                                    finalSumPotentials.add(new Pair<>(myPotentials.get(i).getKey(),myPotentials.get(i).getValue()+hisPotentials.get(i).getValue()));
+                                }
+                            } else {
+                                finalSumPotentials = Utils.getListScorePotentiel(p, dominos);
+                            }
 
+                            // Comparaison de potentiel
+                            finalSumPotentials.sort((o1, o2) -> o2.getValue()-o1.getValue());
+
+                            // Choix du domino
+                            int dominoAJouer = Utils.choisirDomino(copyMoves,finalSumPotentials);
+                            copyMoves = copyMoves.stream().filter(move -> move.getChosenDomino().getNumber() == dominoAJouer).collect(Collectors.toList());
+                        }
                     }
 
                     System.out.println("TOUR : " + g.getTurn());
