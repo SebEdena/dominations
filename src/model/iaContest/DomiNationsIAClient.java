@@ -12,11 +12,13 @@ import java.util.stream.Collectors;
 
 public class DomiNationsIAClient {
 
-    public static final String gameUUID = "c9f90eb4-1466-481b-84be-a008a5247c6b";
+    public static final String gameUUID = "3bcfa637-0aed-451f-ac84-49d6484ff72e";
     public static final String baseUrl = "https://domi-nation.grooptown.com";
     public static final String playerName = "IA_2";
 
     public static PlayerConnector playerConnector;
+
+
 
     public static void main(String[] args) {
         PlayerConnector.baseUrl = baseUrl;
@@ -24,21 +26,25 @@ public class DomiNationsIAClient {
         playerConnector = new PlayerConnector(gameUUID);
         playerConnector.joinGame(playerName);
 
-        int playerNumber = -1;
+        int playerNumber = -1, otherPlayerNumber = -1;
         GameState g = null;
 
         do {
             if(waitUntilItsMyTurn()){
                 g = PlayerConnector.getGameState(gameUUID);
+                //g.getPreviousDraft().getDominoes()[0].getPlayer();
                 if(playerNumber < 0) playerNumber = Utils.getPlayerNumber(g, playerName);
+                if(otherPlayerNumber < 0) otherPlayerNumber = Utils.getOtherPlayer(g, playerName);
                 if(g.getCurrentPlayer() != null && g.getCurrentPlayer().getName().equals(playerConnector.getPlayer().getName())){
                     List<Move> availableMoves = Arrays.asList(playerConnector.getAvailableMove().getMoves());
                     List<Move> copyMoves = new ArrayList<>(availableMoves);
                     Plateau p = Plateau.fromKingdom(g.getKingdoms()[playerNumber]);
+                    Plateau pOther = Plateau.fromKingdom(g.getKingdoms()[otherPlayerNumber]);
                     PlacedDomino tmpPlacedDomino = null;
 
-                    int potentielAvant = Utils.getSumPotentiel(Utils.getPotentiels(p));
-
+                    int potentielAvant = Utils.getSumPotentiel(Utils.getPotentiels(p,null));
+                    System.out.print("Potentiel avant : ");
+                    System.out.println(potentielAvant);
                     //Filtrage par les scores plateau
                     copyMoves = copyMoves.stream().sorted((o1, o2) -> Utils.sortByScore(p, o1, o2)).collect(Collectors.toList());
                     tmpPlacedDomino = copyMoves.get(0).getPlacedDomino();
@@ -46,7 +52,7 @@ public class DomiNationsIAClient {
                     int bestScore = Score.getTotalScore(p);
                     if(tmpPlacedDomino != null) p.resetPlacedDomino();
                     copyMoves = copyMoves.stream().filter(move -> Utils.filterByBestScore(p, move, bestScore)).collect(Collectors.toList());
-
+                    System.out.println();
                     //Filtrage par les plus gros domaines
                     copyMoves = copyMoves.stream().sorted((o1, o2) -> Utils.sortByBigDomain(p, o1, o2)).collect(Collectors.toList());
                     tmpPlacedDomino = copyMoves.get(0).getPlacedDomino();
@@ -68,6 +74,14 @@ public class DomiNationsIAClient {
                     System.out.println(dominos);
 
                     // Calcul du potentiel de l'autre joueur
+                    for (DominoesElement d : dominos) {
+                        if(d.getPlayer() == null) {
+                            System.out.println("--------------------------");
+                            System.out.println(Utils.getSumPotentiel(Utils.getPotentiels(pOther, d.getDomino()))-
+                                    Utils.getSumPotentiel(Utils.getPotentiels(pOther, null)));
+                            System.out.println("--------------------------");
+                        }
+                    }
 
                     System.out.println("TOUR : " + g.getTurn());
                     System.out.println("BEST SCORE : " + bestScore);
@@ -76,6 +90,9 @@ public class DomiNationsIAClient {
                     /*System.out.println("CASES : " + p.getCases().size());
                     if(availableMoves.get(0).getPlacedDomino() != null) p.addPlacedDomino(availableMoves.get(0).getPlacedDomino());
                     System.out.println("SCORE : " + Score.getTotalScore(p));*/
+                    System.out.print("Potentiel après : ");
+                    System.out.println(Utils.getSumPotentiel(Utils.getPotentiels(p,copyMoves.get(0).getChosenDomino())));
+                    System.out.println("___________________________________________________________________________________________");
                     playerConnector.playMove(copyMoves.get(0).getNumber());
                     System.out.println();
                 }

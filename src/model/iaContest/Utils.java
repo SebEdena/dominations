@@ -1,10 +1,6 @@
 package model.iaContest;
 
-import grooptown.ia.PlayerConnector;
-import grooptown.ia.model.GameState;
-import grooptown.ia.model.Kingdom;
-import grooptown.ia.model.Move;
-import grooptown.ia.model.Player;
+import grooptown.ia.model.*;
 import model.plateau.Case;
 import model.plateau.Orientation;
 import model.plateau.Terrain;
@@ -18,6 +14,15 @@ public class Utils {
         int i = 0;
         for (Kingdom k : g.getKingdoms()) {
             if (k.getPlayer().getName().equals(playerName)) return i;
+            i++;
+        }
+        return -1;
+    }
+
+    public static int getOtherPlayer(GameState g, String playerName) {
+        int i = 0;
+        for (Kingdom k : g.getKingdoms()) {
+            if (!k.getPlayer().getName().equals(playerName)) return i;
             i++;
         }
         return -1;
@@ -39,6 +44,7 @@ public class Utils {
         if(move.getPlacedDomino() != null) p.addPlacedDomino(move.getPlacedDomino());
         int moveScore = Score.getTotalScore(p);
         if(move.getPlacedDomino() != null) p.resetPlacedDomino();
+        System.out.print(moveScore+", ");
         return moveScore == bestScore;
     }
 
@@ -80,7 +86,7 @@ public class Utils {
         return moveScore == bestScore;
     }
 
-    public static ArrayList<Potentiel> getPotentiels(Plateau p)
+    public static ArrayList<Potentiel> getPotentiels(Plateau p, Domino d)
     {
         ArrayList<Potentiel> listePotentiels = new ArrayList<Potentiel>();
         Case[][] tableau = p.getTableau();
@@ -105,7 +111,17 @@ public class Utils {
                         couronne = couronne + c.getNbCouronne();
                     }
                     Terrain terrain = caseTemoin.getTerrain();
-                    listePotentiels.add(new Potentiel(terrain,couronne,compteurCase,couronne*compteurCase));
+                    if(d != null){
+                        if(d.getTile1().getTerrain().equals(terrain.getLibelleEN())){
+                            compteurCase++;
+                            couronne += d.getTile1().getCrowns();
+                        }
+                        if(d.getTile2().getTerrain().equals(terrain.getLibelleEN())){
+                            compteurCase++;
+                            couronne += d.getTile2().getCrowns();
+                        }
+                    }
+                    listePotentiels.add(new Potentiel(terrain,couronne,compteurCase,(couronne)*compteurCase));
                 }
             }
         }
