@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class DomiNationsIAClient {
 
-    public static final String gameUUID = "1f16f20d-3b91-45ff-8565-1e5c2b123c4f";
+    public static final String gameUUID = "f95d233f-da57-415e-a019-91e69f409fc9";
     public static final String baseUrl = "https://domi-nation.grooptown.com";
     public static final String playerName = "IA_2";
 
@@ -85,7 +85,7 @@ public class DomiNationsIAClient {
                                 List<Pair<Integer, Integer>> myPotentials = Utils.getListScorePotentiel(p, dominos);
                                 List<Pair<Integer, Integer>> hisPotentials = Utils.getListScorePotentiel(pOther, dominos);
                                 for (int i = 0; i < myPotentials.size(); i++) {
-                                    finalSumPotentials.add(new Pair<>(myPotentials.get(i).getKey(),myPotentials.get(i).getValue()+hisPotentials.get(i).getValue()));
+                                    finalSumPotentials.add(new Pair<>(myPotentials.get(i).getKey(),3*myPotentials.get(i).getValue()+7*hisPotentials.get(i).getValue()));
                                 }
                             } else {
                                 finalSumPotentials = Utils.getListScorePotentiel(p, dominos);
