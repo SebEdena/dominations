@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class DomiNationsIAClient {
 
-    public static final String gameUUID = "5e49c1f7-45a3-4da6-af32-01be865b24c7";
+    public static final String gameUUID = "14d73e74-b0f8-4e8e-9904-63bd60c8fa1c";
     public static final String baseUrl = "https://domi-nation.grooptown.com";
     public static final String playerName = "Société Générale - Groupe Renault IA Team";
 
@@ -27,7 +27,6 @@ public class DomiNationsIAClient {
 
         int playerNumber = -1, otherPlayerNumber = -1;
         GameState g = null;
-        Random rd = new Random();
 
         do {
             if(waitUntilItsMyTurn()){
