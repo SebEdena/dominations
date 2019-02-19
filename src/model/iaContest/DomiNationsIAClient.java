@@ -78,7 +78,7 @@ public class DomiNationsIAClient {
                             List<Pair<Integer, Integer>> myPotentials = Utils.getListScorePotentiel(p, dominos);
                             List<Pair<Integer, Integer>> hisPotentials = Utils.getListScorePotentiel(pOther, dominos);
                             for (int i = 0; i < myPotentials.size(); i++) {
-                                finalSumPotentials.add(new Pair<>(myPotentials.get(i).getKey(),2*myPotentials.get(i).getValue()+3*hisPotentials.get(i).getValue()));
+                                finalSumPotentials.add(new Pair<>(myPotentials.get(i).getKey(),myPotentials.get(i).getValue()+hisPotentials.get(i).getValue()));
                             }
                         } else {
                             finalSumPotentials = Utils.getListScorePotentiel(p, dominos);
