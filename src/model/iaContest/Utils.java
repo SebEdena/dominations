@@ -46,7 +46,6 @@ public class Utils {
         int moveScore = Score.getTotalScore(p);
         if(move.getPlacedDomino() != null) p.resetPlacedDomino();
 
-        System.out.print(moveScore+", ");
         return moveScore == bestScore;
     }
 
@@ -86,7 +85,7 @@ public class Utils {
         if(move.getPlacedDomino() != null) p.addPlacedDomino(move.getPlacedDomino());
         int moveScore = Score.getCrownScore(p);
         if(move.getPlacedDomino() != null) p.resetPlacedDomino();
-        System.out.print(moveScore+", ");
+
         return moveScore == bestScore;
     }
 

@@ -38,7 +38,6 @@ public class Score {
                         couronne = couronne + c.getNbCouronne();
                     }
                     sommePoints = sommePoints + compteurCase * couronne;
-                    //System.out.println(sommePoints);
                 }
             }
         }
